@@ -1,0 +1,9 @@
+{
+  "generator-node": {
+    "promptValues": {
+      "authorName": "Jeff Balboni",
+      "authorEmail": "jeff@adhocteam.us",
+      "authorUrl": ""
+    }
+  }
+}
