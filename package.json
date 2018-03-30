@@ -55,5 +55,5 @@
     "plugins": ["prettier"]
   },
   "repository": "department-of-veterans-affairs/generator-vets-website",
-  "license": "MIT"
+  "license": "CC0-1.0"
 }
