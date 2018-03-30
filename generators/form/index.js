@@ -32,7 +32,8 @@ module.exports = class extends Generator {
       {
         type: 'input',
         name: 'benefitDescription',
-        message: "What's the benefit description for this form?"
+        message:
+          "What's the benefit description for this form? Something like 'health care benefits'"
       }
     ];
 

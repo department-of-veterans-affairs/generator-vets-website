@@ -12,12 +12,13 @@ module.exports = class extends Generator {
       {
         type: 'input',
         name: 'appName',
-        message: "What's the name of your application?"
+        message:
+          "What's the name of your application? This will be the default page title."
       },
       {
         type: 'input',
         name: 'folderName',
-        message: 'What folder in src/js should your app live in?'
+        message: 'What folder in src/js should your app live in? This can be a subfolder.'
       },
       {
         type: 'input',
@@ -27,7 +28,14 @@ module.exports = class extends Generator {
       {
         type: 'input',
         name: 'rootUrl',
-        message: "What's the root url for this app?"
+        message: "What's the root url for this app?",
+        validate: url => {
+          if (url.startsWith('/') && !url.endsWith('/')) {
+            return true;
+          }
+
+          return 'Urls should start with a / and not end with one';
+        }
       },
       {
         type: 'confirm',
