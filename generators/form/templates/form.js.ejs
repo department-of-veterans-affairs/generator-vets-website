@@ -1,0 +1,46 @@
+// import fullSchema from 'vets-json-schema/dist/<%= formNumber %>-schema.json';
+
+import IntroductionPage from '../containers/IntroductionPage';
+import ConfirmationPage from '../containers/ConfirmationPage';
+
+// const { } = fullSchema.properties;
+
+// const { } = fullSchema.definitions;
+
+const formConfig = {
+  urlPrefix: '/',
+  submitUrl: '/v0/api',
+  trackingPrefix: '<%= trackingPrefix %>',
+  introduction: IntroductionPage,
+  confirmation: ConfirmationPage,
+  formId: '<%= formNumber %>',
+  version: 0,
+  prefillEnabled: true,
+  savedFormMessages: {
+    notFound: 'Please start over to apply for <%= benefitDescription %>.',
+    noAuth: 'Please sign in again to continue your application for <%= benefitDescription %>.'
+  },
+  title: '<%= appName %>',
+  defaultDefinitions: {
+  },
+  chapters: {
+    chapter1: {
+      title: 'Chapter 1',
+      pages: {
+        page1: {
+          path: 'first-page',
+          title: 'First Page',
+          uiSchema: {
+          },
+          schema: {
+            type: 'object',
+            properties: {
+            }
+          }
+        }
+      }
+    }
+  }
+};
+
+export default formConfig;
