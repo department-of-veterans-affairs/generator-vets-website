@@ -18,12 +18,27 @@ module.exports = class extends Generator {
       {
         type: 'input',
         name: 'folderName',
-        message: 'What folder in src/js should your app live in? This can be a subfolder.'
+        message:
+          'What folder in src/js should your app live in? This can be a subfolder.',
+        validate: folder => {
+          if (!folder.includes(' ')) {
+            return true;
+          }
+
+          return 'Folder names should not include spaces';
+        }
       },
       {
         type: 'input',
         name: 'entryName',
-        message: "What should be the name of your app's entry bundle?"
+        message: "What should be the name of your app's entry bundle?",
+        validate: name => {
+          if (!name.includes(' ')) {
+            return true;
+          }
+
+          return 'Bundle names should not include spaces';
+        }
       },
       {
         type: 'input',
