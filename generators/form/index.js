@@ -45,9 +45,10 @@ module.exports = class extends Generator {
   writing() {
     const appPath = `src/js/${this.props.folderName}`;
 
-    this.fs.copy(
-      this.templatePath('entry.scss'),
-      this.destinationPath(`src/sass/${this.props.entryName}.scss`)
+    this.fs.copyTpl(
+      this.templatePath('entry.scss.ejs'),
+      this.destinationPath(`${appPath}/sass/${this.props.entryName}.scss`),
+      this.props
     );
 
     this.fs.copyTpl(

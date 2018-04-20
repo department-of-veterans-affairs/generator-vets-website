@@ -99,7 +99,7 @@ module.exports = class extends Generator {
     this.fs.copyTpl(
       this.templatePath('e2e.spec.js.ejs'),
       this.destinationPath(
-        `test/${this.props.folderName}/00.${this.props.entryName}.e2e.spec.js`
+        `src/js/${this.props.folderName}/tests/00.${this.props.entryName}.e2e.spec.js`
       ),
       this.props
     );
@@ -112,7 +112,9 @@ module.exports = class extends Generator {
     if (!this.props.isForm) {
       this.fs.copy(
         this.templatePath('entry.scss'),
-        this.destinationPath(`src/sass/${this.props.entryName}.scss`)
+        this.destinationPath(
+          `src/js/${this.props.folderName}/sass/${this.props.entryName}.scss`
+        )
       );
 
       this.fs.copy(
