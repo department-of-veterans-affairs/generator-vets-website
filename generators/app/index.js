@@ -2,6 +2,7 @@
 const Generator = require('yeoman-generator');
 const chalk = require('chalk');
 const yosay = require('yosay');
+const camelCase = require('camelcase');
 
 module.exports = class extends Generator {
   prompting() {
@@ -13,20 +14,22 @@ module.exports = class extends Generator {
         type: 'input',
         name: 'appName',
         message:
-          "What's the name of your application? This will be the default page title."
+          "What's the name of your application? This will be the default page title.",
+        default: 'A New Form'
       },
       {
         type: 'input',
         name: 'folderName',
         message:
-          'What folder in src/js should your app live in? This can be a subfolder.',
+          'What folder in `src/applications/` should your app live in? This can be a subfolder.',
         validate: folder => {
           if (!folder.includes(' ')) {
             return true;
           }
 
           return 'Folder names should not include spaces';
-        }
+        },
+        default: 'new-form'
       },
       {
         type: 'input',
@@ -38,7 +41,8 @@ module.exports = class extends Generator {
           }
 
           return 'Bundle names should not include spaces';
-        }
+        },
+        default: answers => camelCase(answers.folderName)
       },
       {
         type: 'input',
@@ -50,7 +54,8 @@ module.exports = class extends Generator {
           }
 
           return 'Urls should start with a / and not end with one';
-        }
+        },
+        default: answers => `/${answers.folderName}`
       },
       {
         type: 'confirm',
@@ -84,7 +89,8 @@ module.exports = class extends Generator {
   }
 
   writing() {
-    const appPath = `src/js/${this.props.folderName}`;
+    const rootPath = `src/applications/`;
+    const appPath = `${rootPath}${this.props.folderName}`;
 
     this.fs.copyTpl(
       this.templatePath('manifest.json.ejs'),
@@ -98,9 +104,7 @@ module.exports = class extends Generator {
     );
     this.fs.copyTpl(
       this.templatePath('e2e.spec.js.ejs'),
-      this.destinationPath(
-        `src/js/${this.props.folderName}/tests/00.${this.props.entryName}.e2e.spec.js`
-      ),
+      this.destinationPath(`${appPath}/tests/00.${this.props.entryName}.e2e.spec.js`),
       this.props
     );
     this.fs.copyTpl(
@@ -112,9 +116,7 @@ module.exports = class extends Generator {
     if (!this.props.isForm) {
       this.fs.copy(
         this.templatePath('entry.scss'),
-        this.destinationPath(
-          `src/js/${this.props.folderName}/sass/${this.props.entryName}.scss`
-        )
+        this.destinationPath(`${appPath}/sass/${this.props.entryName}.scss`)
       );
 
       this.fs.copy(
