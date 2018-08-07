@@ -8,6 +8,16 @@ module.exports = class extends Generator {
   prompting() {
     // Have Yeoman greet the user.
     this.log(yosay(`Welcome to the ${chalk.red('vets-website')} generator!`));
+    this.log(
+      `A guide for using this Yeoman generator, including example answers for each prompt, can be found at:\n${chalk.cyan(
+        'https://github.com/department-of-veterans-affairs/vets-website/blob/master/docs/GeneratorOptions.md'
+      )}\n`
+    );
+    this.log(
+      `'Tutorial - Creating Your First Form' can be found at:\n${chalk.cyan(
+        'https://department-of-veterans-affairs.github.io/va-digital-services-platform-docs/docs/vets-developer-docs/vets-website/forms/form-tutorial.html'
+      )}\n`
+    );
 
     const prompts = [
       {
@@ -29,6 +39,16 @@ module.exports = class extends Generator {
 
           return 'Folder names should not include spaces';
         },
+        // Remove leading and trailing forward slashes
+        filter: val => {
+          if (val.startsWith('/')) {
+            val = val.substring(1);
+          }
+          if (val.endsWith('/')) {
+            val = val.substring(0, -1);
+          }
+          return val;
+        },
         default: 'new-form'
       },
       {
@@ -42,18 +62,20 @@ module.exports = class extends Generator {
 
           return 'Bundle names should not include spaces';
         },
-        default: answers => camelCase(answers.folderName)
+        default: answers => camelCase(answers.folderName.split('/').pop())
       },
       {
         type: 'input',
         name: 'rootUrl',
         message: "What's the root url for this app?",
-        validate: url => {
-          if (url.startsWith('/') && !url.endsWith('/')) {
-            return true;
+        // Add leading slash and remove trailing slash, as needed
+        filter: val => {
+          if (val.endsWith('/')) {
+            val = val.substring(0, -1);
           }
-
-          return 'Urls should start with a / and not end with one';
+          if (!val.startsWith('/')) {
+            val = `/${val}`;
+          }
         },
         default: answers => `/${answers.folderName}`
       },
