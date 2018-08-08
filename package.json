@@ -1,14 +1,21 @@
 {
   "name": "@department-of-veterans-affairs/generator-vets-website",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Generate a React app for vets-website",
   "homepage": "",
   "author": {
     "name": "DSVA"
   },
-  "files": ["generators"],
+  "files": [
+    "generators"
+  ],
   "main": "generators/index.js",
-  "keywords": ["VA", "vets.gov", "dsva", "yeoman-generator"],
+  "keywords": [
+    "VA",
+    "vets.gov",
+    "dsva",
+    "yeoman-generator"
+  ],
   "devDependencies": {
     "eslint": "^4.19.1",
     "eslint-config-prettier": "^2.9.0",
@@ -25,8 +32,8 @@
     "node": ">= 8.0.0"
   },
   "dependencies": {
-    "yeoman-generator": "^2.0.1",
     "chalk": "^2.1.0",
+    "yeoman-generator": "^2.0.1",
     "yosay": "^2.0.1"
   },
   "scripts": {
@@ -35,11 +42,20 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.js": ["eslint --fix", "git add"],
-    "*.json": ["prettier --write", "git add"]
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.json": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "eslintConfig": {
-    "extends": ["xo", "prettier"],
+    "extends": [
+      "xo",
+      "prettier"
+    ],
     "env": {
       "node": true
     },
@@ -48,11 +64,14 @@
         "error",
         {
           "singleQuote": true,
-          "printWidth": 90
+          "printWidth": 90,
+          "trailingComma": "all"
         }
       ]
     },
-    "plugins": ["prettier"]
+    "plugins": [
+      "prettier"
+    ]
   },
   "repository": "department-of-veterans-affairs/generator-vets-website",
   "license": "CC0-1.0"

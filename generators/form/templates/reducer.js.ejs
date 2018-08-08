@@ -1,6 +1,6 @@
 import formConfig from '../config/form';
-import createSchemaFormReducer from '<%= subFolder %>../../common/schemaform/state';
+import { createSaveInProgressFormReducer } from '<%= subFolder %>../../../platform/forms/save-in-progress/reducers';
 
 export default {
-  form: createSchemaFormReducer(formConfig)
+  form: createSaveInProgressFormReducer(formConfig)
 };
