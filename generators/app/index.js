@@ -2,7 +2,6 @@
 const Generator = require('yeoman-generator');
 const chalk = require('chalk');
 const yosay = require('yosay');
-const camelCase = require('camelcase');
 
 module.exports = class extends Generator {
   prompting() {
@@ -63,13 +62,13 @@ module.exports = class extends Generator {
 
           return 'Bundle names should not include spaces';
         },
-        default: answers => camelCase(answers.folderName.split('/').pop()),
+        default: answers => answers.folderName.split('/').pop(),
       },
       {
         type: 'input',
         name: 'rootUrl',
         message:
-          "What's the root url for this app? Examples: 'gi-bill-comparison-tool/' or '/education/opt-out-information-sharing/opt-out-form-0993'",
+          "What's the root url for this app? Examples: '/gi-bill-comparison-tool/' or '/education/opt-out-information-sharing/opt-out-form-0993'",
         filter: val => {
           // Add leading slash if needed
           if (!val.startsWith('/')) {
