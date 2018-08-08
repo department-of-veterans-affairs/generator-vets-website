@@ -1,11 +1,8 @@
-// import fullSchema from 'vets-json-schema/dist/<%= formNumber %>-schema.json';
+<%- include('partials/formHeader', {formNumber: formNumber}); %>
 
-import IntroductionPage from '../containers/IntroductionPage';
-import ConfirmationPage from '../containers/ConfirmationPage';
-
-// const { } = fullSchema.properties;
-
-// const { } = fullSchema.definitions;
+const formFields = {
+  firstName: 'firstName'
+};
 
 const formConfig = {
   urlPrefix: '/',
@@ -25,16 +22,23 @@ const formConfig = {
   },
   chapters: {
     chapter1: {
-      title: 'Chapter 1',
+      title: 'Personal Information',
       pages: {
         page1: {
-          path: 'first-page',
-          title: 'First Page',
+          path: 'first-name',
+          title: 'Personal Info - Page 1',
           uiSchema: {
+            [formFields.firstName]: {
+              'ui:title': 'First Name'
+            }
           },
           schema: {
+            required: [formFields.firstName],
             type: 'object',
             properties: {
+              [formFields.firstName]: {
+                type: 'string'
+              }
             }
           }
         }

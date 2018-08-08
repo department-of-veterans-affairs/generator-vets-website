@@ -1,6 +1,12 @@
 'use strict';
 const Generator = require('yeoman-generator');
 
+const TEMPLATE_TYPES = {
+  BLANK: 'BLANK',
+  SIMPLE: 'SIMPLE',
+  COMPLEX: 'COMPLEX'
+};
+
 /**
  * Helper that returns a date one year from today in the dumb standard USA style
  * of M/D/YYYY
@@ -26,7 +32,7 @@ module.exports = class extends Generator {
       {
         type: 'input',
         name: 'trackingPrefix',
-        message: "What's the Google Analytics event prefix you want to use?",
+        message: "What's the Google Analytics event prefix that you want to use?",
         default: `${this.options.folderName}-`
       },
       {
@@ -52,6 +58,17 @@ module.exports = class extends Generator {
         name: 'benefitDescription',
         message: "What's the benefit description for this form?",
         default: `${this.options.appName} Benefits`
+      },
+      {
+        type: 'list',
+        name: 'templateType',
+        message: 'What kind of form template would you like to start with?',
+        choices: [
+          `${TEMPLATE_TYPES.BLANK}: A form without any fields'`,
+          `${TEMPLATE_TYPES.SIMPLE}: A single-chapter form with a single field'`,
+          `${TEMPLATE_TYPES.COMPLEX}: A complex, multi-chapter form with multiple fields`
+        ],
+        filter: choice => choice.split(':')[0]
       }
     ];
 
@@ -86,11 +103,6 @@ module.exports = class extends Generator {
       this.props
     );
     this.fs.copyTpl(
-      this.templatePath('form.js.ejs'),
-      this.destinationPath(`${appPath}/config/form.js`),
-      this.props
-    );
-    this.fs.copyTpl(
       this.templatePath('IntroductionPage.jsx.ejs'),
       this.destinationPath(`${appPath}/containers/IntroductionPage.jsx`),
       this.props
@@ -100,5 +112,30 @@ module.exports = class extends Generator {
       this.destinationPath(`${appPath}/containers/ConfirmationPage.jsx`),
       this.props
     );
+    switch (this.props.templateType) {
+      case TEMPLATE_TYPES.BLANK:
+        this.fs.copyTpl(
+          this.templatePath('formBlank.js.ejs'),
+          this.destinationPath(`${appPath}/config/form.js`),
+          this.props
+        );
+        break;
+      case TEMPLATE_TYPES.SIMPLE:
+        this.fs.copyTpl(
+          this.templatePath('formSimple.js.ejs'),
+          this.destinationPath(`${appPath}/config/form.js`),
+          this.props
+        );
+        break;
+      case TEMPLATE_TYPES.COMPLEX:
+        this.fs.copyTpl(
+          this.templatePath('formComplex.js.ejs'),
+          this.destinationPath(`${appPath}/config/form.js`),
+          this.props
+        );
+        break;
+      default:
+        break;
+    }
   }
 };
