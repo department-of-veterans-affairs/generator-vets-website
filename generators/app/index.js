@@ -68,7 +68,7 @@ module.exports = class extends Generator {
         type: 'input',
         name: 'rootUrl',
         message:
-          "What's the root url for this app? Examples: '/gi-bill-comparison-tool/' or '/education/opt-out-information-sharing/opt-out-form-0993'",
+          "What's the root url for this app? Examples: '/gi-bill-comparison-tool' or '/education/opt-out-information-sharing/opt-out-form-0993'",
         filter: val => {
           // Add leading slash if needed
           if (!val.startsWith('/')) {
