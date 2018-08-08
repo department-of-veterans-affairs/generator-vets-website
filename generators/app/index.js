@@ -24,14 +24,14 @@ module.exports = class extends Generator {
         type: 'input',
         name: 'appName',
         message:
-          "What's the name of your application? This will be the default page title.",
+          "What's the name of your application? This will be the default page title. Examples: '21P-530 Burials benefits form' or 'GI Bill School Feedback Tool'",
         default: 'A New Form'
       },
       {
         type: 'input',
         name: 'folderName',
         message:
-          'What folder in `src/applications/` should your app live in? This can be a subfolder.',
+          "What folder in `src/applications/` should your app live in? This can be a subfolder. Examples: 'burials' or 'edu-benefits/0993'",
         validate: folder => {
           if (!folder.includes(' ')) {
             return true;
@@ -54,7 +54,8 @@ module.exports = class extends Generator {
       {
         type: 'input',
         name: 'entryName',
-        message: "What should be the name of your app's entry bundle?",
+        message:
+          "What should be the name of your app's entry bundle? Examples: '0993-edu-benefits' or 'complaint-tool'",
         validate: name => {
           if (!name.includes(' ')) {
             return true;
@@ -67,15 +68,18 @@ module.exports = class extends Generator {
       {
         type: 'input',
         name: 'rootUrl',
-        message: "What's the root url for this app?",
-        // Add leading slash and remove trailing slash, as needed
+        message:
+          "What's the root url for this app? Examples: 'gi-bill-comparison-tool/' or '/education/opt-out-information-sharing/opt-out-form-0993'",
         filter: val => {
-          if (val.endsWith('/')) {
-            val = val.substring(0, -1);
-          }
+          // Add leading slash if needed
           if (!val.startsWith('/')) {
             val = `/${val}`;
           }
+          // Add `index` if a page name was not included
+          if (val.endsWith('/')) {
+            val = `${val}index`;
+          }
+          return val;
         },
         default: answers => `/${answers.folderName}`
       },

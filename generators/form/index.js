@@ -8,16 +8,14 @@ const TEMPLATE_TYPES = {
 };
 
 /**
- * Helper that returns a date one year from today in the dumb standard USA style
+ * Helper that returns the last day of next year
  * of M/D/YYYY
- * 8/3/2019
+ * 12/31/2019
  */
 function getDate() {
   const now = new Date();
-  const month = now.getMonth();
-  const date = now.getDate();
   const year = now.getFullYear() + 1;
-  return `${month}/${date}/${year}`;
+  return `12/31/${year}`;
 }
 
 module.exports = class extends Generator {
@@ -26,14 +24,15 @@ module.exports = class extends Generator {
       {
         type: 'input',
         name: 'formNumber',
-        message: "What's your form number?",
+        message: "What's your form number? Examples: '22-0993' or '21P-530'",
         default: 'XX-230'
       },
       {
         type: 'input',
         name: 'trackingPrefix',
-        message: "What's the Google Analytics event prefix that you want to use?",
-        default: `${this.options.folderName}-`
+        message:
+          "What's the Google Analytics event prefix that you want to use? Examples: 'burials-530-' or 'edu-0993-'",
+        default: `${this.options.entryName}-`
       },
       {
         type: 'input',
@@ -44,25 +43,26 @@ module.exports = class extends Generator {
       {
         type: 'input',
         name: 'ombNumber',
-        message: "What's the OMB control number for this form?",
-        default: answers => answers.formNumber
+        message: "What's the OMB control number for this form? Example: '2900-0797'"
       },
       {
         type: 'input',
         name: 'expirationDate',
-        message: "What's the OMB expiration date for this form?",
+        message:
+          "What's the OMB expiration date (in M/D/YYYY format) for this form? Example: '1/31/2019'",
         default: getDate
       },
       {
         type: 'input',
         name: 'benefitDescription',
-        message: "What's the benefit description for this form?",
-        default: `${this.options.appName} Benefits`
+        message:
+          "What's the benefit description for this form? Examples: 'education benefits' or 'disability claims increase'",
+        default: `benefits`
       },
       {
         type: 'list',
         name: 'templateType',
-        message: 'What kind of form template would you like to start with?',
+        message: 'Which form template would you like to start with?',
         choices: [
           `${TEMPLATE_TYPES.BLANK}: A form without any fields'`,
           `${TEMPLATE_TYPES.SIMPLE}: A single-chapter form with a single field'`,
