@@ -71,7 +71,8 @@ const formPages = {
 
 const formConfig = {
   urlPrefix: '/',
-  submitUrl: '/v0/api',
+  <!-- submitUrl: '/v0/api', -->
+  submit: () => Promise.resolve({ attributes: { confirmationNumber: '123123123' } }),
   trackingPrefix: '<%= trackingPrefix %>',
   introduction: IntroductionPage,
   confirmation: ConfirmationPage,
