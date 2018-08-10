@@ -17,9 +17,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 - Sample answers and default answers to guide users.
 
 ### Changed
-- Updated the templates to be in line with current best practices for the vets.gov website.
+- Updated the templates to be in line with current best practices for the Vets.gov website.
 - Improved prompt answer validators and filters.
 
 ### Fixed
-- Updated all file names and paths to make the generated form work with the current structure of the vets.gov website.
+- Updated all file names and paths to make the generated form work with the current structure of the Vets.gov website.
 
