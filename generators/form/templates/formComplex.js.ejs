@@ -1,4 +1,73 @@
-<%- include('partials/formHeader', {formNumber: formNumber}); %>
+import _ from 'lodash/fp';
+import pensionsSchema from 'vets-json-schema/dist/21P-527EZ-schema.json';
+import burialsSchema from 'vets-json-schema/dist/21P-530-schema.json';
+
+import fullNameUI from 'us-forms-system/lib/js/definitions/fullName';
+import ssnUI from 'us-forms-system/lib/js/definitions/ssn';
+import bankAccountUI from 'us-forms-system/lib/js/definitions/bankAccount';
+import phoneUI from 'us-forms-system/lib/js/definitions/phone';
+import * as address from 'us-forms-system/lib/js/definitions/address';
+
+import IntroductionPage from '../containers/IntroductionPage';
+import ConfirmationPage from '../containers/ConfirmationPage';
+
+import { directDepositWarning } from '../helpers';
+import { validateCentralMailPostalCode } from '../validation';
+import toursOfDutyUI from '../definitions/toursOfDuty';
+
+const {
+  veteranFullName,
+  veteranSocialSecurityNumber,
+  email,
+  altEmail,
+  dayPhone
+} = pensionsSchema.properties;
+
+const {
+  fullName,
+  ssn,
+  bankAccount,
+  usaPhone,
+} = pensionsSchema.definitions;
+
+const {
+  toursOfDuty,
+} = burialsSchema.properties;
+
+const {
+  date,
+  dateRange
+} = burialsSchema.definitions;
+
+function usingDirectDeposit(formData) {
+  return formData['view:noDirectDeposit'] !== true;
+}
+
+// Define all the fields in the form to aid reuse
+const formFields = {
+  fullName: 'fullName',
+  ssn: 'ssn',
+  toursOfDuty: 'toursOfDuty',
+  viewNoDirectDeposit: 'view:noDirectDeposit',
+  viewStopWarning: 'view:stopWarning',
+  bankAccount: 'bankAccount',
+  accountType: 'accountType',
+  accountNumber: 'accountNumber',
+  bankName: 'bankName',
+  routingNumber: 'routingNumber',
+  address: 'address',
+  email: 'email',
+  altEmail: 'altEmail',
+  phoneNumber: 'phoneNumber'
+};
+
+// Define all the form pages to help ensure uniqueness across all form chapters
+const formPages = {
+  applicantInfo: 'applicantInfo',
+  serviceHistory: 'serviceHistory',
+  contactInfo: 'contactInfo',
+  directDeposit: 'directDeposit'
+};
 
 const formConfig = {
   urlPrefix: '/',
@@ -15,19 +84,131 @@ const formConfig = {
   },
   title: '<%= appName %>',
   defaultDefinitions: {
+    fullName,
+    ssn,
+    date,
+    dateRange,
+    usaPhone
   },
   chapters: {
-    chapter1: {
-      title: 'Chapter 1',
+    chapterApplicantInfo: {
+      title: 'Applicant Information',
       pages: {
-        page1: {
-          path: 'first-page',
-          title: 'First Page',
+        [formPages.applicantInfo]: {
+          path: 'applicant-information',
+          title: 'Applicant Information',
           uiSchema: {
+            [formFields.fullName]: fullNameUI,
+            [formFields.ssn]: ssnUI
+          },
+          schema: {
+            type: 'object',
+            required: [formFields.fullName],
+            properties: {
+              [formFields.fullName]: veteranFullName,
+              [formFields.ssn]: veteranSocialSecurityNumber,
+            }
+          }
+        }
+      }
+    },
+    chapterServiceHistory: {
+      title: 'Service History',
+      pages: {
+        [formPages.serviceHistory]: {
+          path: 'service-history',
+          title: 'Service History',
+          uiSchema: {
+            [formFields.toursOfDuty]: toursOfDutyUI
           },
           schema: {
             type: 'object',
             properties: {
+              [formFields.toursOfDuty]: toursOfDuty
+            }
+          }
+        }
+      }
+    },
+    chapterAdditionalInfo: {
+      title: 'Additional Information',
+      pages: {
+        [formPages.contactInfo]: {
+          path: 'contact-information',
+          title: 'Contact Information',
+          uiSchema: {
+            [formFields.address]: _.set(
+              'ui:validations[1]',
+              validateCentralMailPostalCode,
+              address.uiSchema('Mailing address')
+            ),
+            [formFields.email]: {
+              'ui:title': 'Primary email'
+            },
+            [formFields.altEmail]: {
+              'ui:title': 'Secondary email'
+            },
+            [formFields.phoneNumber]: phoneUI('Daytime phone'),
+          },
+          schema: {
+            type: 'object',
+            properties: {
+              [formFields.address]: address.schema(pensionsSchema, true),
+              [formFields.email]: email,
+              [formFields.altEmail]: altEmail,
+              [formFields.phoneNumber]: dayPhone
+            }
+          }
+        },
+        [formPages.directDeposit]: {
+          path: 'direct-deposit',
+          title: 'Direct Deposit',
+          uiSchema: {
+            'ui:title': 'Direct deposit',
+            [formFields.viewNoDirectDeposit]: {
+              'ui:title': 'I don’t want to use direct deposit'
+            },
+            [formFields.bankAccount]: _.merge(bankAccountUI, {
+              'ui:order': [
+                formFields.accountType,
+                formFields.bankName,
+                formFields.accountNumber,
+                formFields.routingNumber
+              ],
+              'ui:options': {
+                hideIf: formData => !usingDirectDeposit(formData)
+              },
+              [formFields.accountType]: {
+                'ui:required': usingDirectDeposit
+              },
+              [formFields.bankName]: {
+                'ui:title': 'Bank name'
+              },
+              [formFields.accountNumber]: {
+                'ui:required': usingDirectDeposit
+              },
+              [formFields.routingNumber]: {
+                'ui:required': usingDirectDeposit
+              }
+            }),
+            [formFields.viewStopWarning]: {
+              'ui:description': directDepositWarning,
+              'ui:options': {
+                hideIf: usingDirectDeposit
+              }
+            }
+          },
+          schema: {
+            type: 'object',
+            properties: {
+              [formFields.viewNoDirectDeposit]: {
+                type: 'boolean',
+              },
+              [formFields.bankAccount]: bankAccount,
+              [formFields.viewStopWarning]: {
+                type: 'object',
+                properties: {}
+              }
             }
           }
         }

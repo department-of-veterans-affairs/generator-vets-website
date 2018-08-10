@@ -132,6 +132,20 @@ module.exports = class extends Generator {
           this.destinationPath(`${appPath}/config/form.js`),
           this.props,
         );
+        this.fs.copy(
+          this.templatePath('complexHelpers.js'),
+          this.destinationPath(`${appPath}/helpers.js`),
+        );
+        this.fs.copyTpl(
+          this.templatePath('complexValidation.js.ejs'),
+          this.destinationPath(`${appPath}/validation.js`),
+          this.props,
+        );
+        this.fs.copyTpl(
+          this.templatePath('toursOfDuty.js.ejs'),
+          this.destinationPath(`${appPath}/definitions/toursOfDuty.js`),
+          this.props,
+        );
         break;
       default:
         break;
