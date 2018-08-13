@@ -5,6 +5,8 @@ import fullSchema from '../<%= formNumber %>-schema.json';
 // In a real app this would be imported from `vets-json-schema`:
 // import fullSchema from 'vets-json-schema/dist/<%= formNumber %>-schema.json';
 
+// In a real app this would not be imported directly; instead the schema you
+// imported above would import and use these common definitions:
 import commonDefinitions from 'vets-json-schema/dist/definitions.json';
 
 import fullNameUI from 'us-forms-system/lib/js/definitions/fullName';
@@ -50,7 +52,7 @@ const formFields = {
   phoneNumber: 'phoneNumber'
 };
 
-function usingDirectDeposit(formData) {
+function hasDirectDeposit(formData) {
   return formData[formFields.viewNoDirectDeposit] !== true;
 }
 
@@ -171,22 +173,22 @@ const formConfig = {
                 formFields.routingNumber
               ],
               'ui:options': {
-                hideIf: formData => !usingDirectDeposit(formData)
+                hideIf: formData => !hasDirectDeposit(formData)
               },
               [formFields.accountType]: {
-                'ui:required': usingDirectDeposit
+                'ui:required': hasDirectDeposit
               },
               [formFields.accountNumber]: {
-                'ui:required': usingDirectDeposit
+                'ui:required': hasDirectDeposit
               },
               [formFields.routingNumber]: {
-                'ui:required': usingDirectDeposit
+                'ui:required': hasDirectDeposit
               }
             }),
             [formFields.viewStopWarning]: {
               'ui:description': directDepositWarning,
               'ui:options': {
-                hideIf: usingDirectDeposit
+                hideIf: hasDirectDeposit
               }
             }
           },
