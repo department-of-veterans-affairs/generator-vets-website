@@ -63,8 +63,8 @@ module.exports = class extends Generator {
         name: 'templateType',
         message: 'Which form template would you like to start with?',
         choices: [
-          `${TEMPLATE_TYPES.BLANK}: A form without any fields'`,
-          `${TEMPLATE_TYPES.SIMPLE}: A single-chapter form with a single field'`,
+          `${TEMPLATE_TYPES.BLANK}: A form without any fields`,
+          `${TEMPLATE_TYPES.SIMPLE}: A single-chapter form with a single field`,
           `${TEMPLATE_TYPES.COMPLEX}: A complex, multi-chapter form with multiple fields`,
         ],
         filter: choice => choice.split(':')[0],
