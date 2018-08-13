@@ -137,8 +137,8 @@ module.exports = class extends Generator {
           this.destinationPath(`${appPath}/helpers.js`),
         );
         this.fs.copyTpl(
-          this.templatePath('complexValidation.js.ejs'),
-          this.destinationPath(`${appPath}/validation.js`),
+          this.templatePath('complex-form-schema.json.ejs'),
+          this.destinationPath(`${appPath}/${this.props.formNumber}-schema.json`),
           this.props,
         );
         this.fs.copyTpl(

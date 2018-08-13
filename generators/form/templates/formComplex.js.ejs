@@ -1,6 +1,11 @@
 import _ from 'lodash/fp';
-import pensionsSchema from 'vets-json-schema/dist/21P-527EZ-schema.json';
-import burialsSchema from 'vets-json-schema/dist/21P-530-schema.json';
+
+// Example of an imported schema:
+import fullSchema from '../<%= formNumber %>-schema.json';
+// In a real app this would be imported from `vets-json-schema`:
+// import fullSchema from 'vets-json-schema/dist/<%= formNumber %>-schema.json';
+
+import commonDefinitions from 'vets-json-schema/dist/definitions.json';
 
 import fullNameUI from 'us-forms-system/lib/js/definitions/fullName';
 import ssnUI from 'us-forms-system/lib/js/definitions/ssn';
@@ -11,37 +16,22 @@ import * as address from 'us-forms-system/lib/js/definitions/address';
 import IntroductionPage from '../containers/IntroductionPage';
 import ConfirmationPage from '../containers/ConfirmationPage';
 
-import { directDepositWarning } from '../helpers';
-import { validateCentralMailPostalCode } from '../validation';
-import toursOfDutyUI from '../definitions/toursOfDuty';
+// const { } = fullSchema.properties;
 
-const {
-  veteranFullName,
-  veteranSocialSecurityNumber,
-  email,
-  altEmail,
-  dayPhone
-} = pensionsSchema.properties;
+// const { } = fullSchema.definitions;
+
+import { directDepositWarning } from '../helpers';
+import toursOfDutyUI from '../definitions/toursOfDuty';
 
 const {
   fullName,
   ssn,
-  bankAccount,
-  usaPhone,
-} = pensionsSchema.definitions;
-
-const {
-  toursOfDuty,
-} = burialsSchema.properties;
-
-const {
   date,
-  dateRange
-} = burialsSchema.definitions;
-
-function usingDirectDeposit(formData) {
-  return formData['view:noDirectDeposit'] !== true;
-}
+  dateRange,
+  usaPhone,
+  bankAccount,
+  toursOfDuty,
+} = commonDefinitions;
 
 // Define all the fields in the form to aid reuse
 const formFields = {
@@ -53,13 +43,16 @@ const formFields = {
   bankAccount: 'bankAccount',
   accountType: 'accountType',
   accountNumber: 'accountNumber',
-  bankName: 'bankName',
   routingNumber: 'routingNumber',
   address: 'address',
   email: 'email',
   altEmail: 'altEmail',
   phoneNumber: 'phoneNumber'
 };
+
+function usingDirectDeposit(formData) {
+  return formData[formFields.viewNoDirectDeposit] !== true;
+}
 
 // Define all the form pages to help ensure uniqueness across all form chapters
 const formPages = {
@@ -71,25 +64,25 @@ const formPages = {
 
 const formConfig = {
   urlPrefix: '/',
-  <!-- submitUrl: '/v0/api', -->
+  // submitUrl: '/v0/api',
   submit: () => Promise.resolve({ attributes: { confirmationNumber: '123123123' } }),
-  trackingPrefix: '<%= trackingPrefix %>',
+  trackingPrefix: 'complex-form-',
   introduction: IntroductionPage,
   confirmation: ConfirmationPage,
-  formId: '<%= formNumber %>',
+  formId: '1234',
   version: 0,
   prefillEnabled: true,
   savedFormMessages: {
-    notFound: 'Please start over to apply for <%= benefitDescription %>.',
-    noAuth: 'Please sign in again to continue your application for <%= benefitDescription %>.'
+    notFound: 'Please start over to apply for benefits.',
+    noAuth: 'Please sign in again to continue your application for benefits.'
   },
-  title: '<%= appName %>',
+  title: 'Complex Form',
   defaultDefinitions: {
     fullName,
     ssn,
     date,
     dateRange,
-    usaPhone
+    usaPhone,
   },
   chapters: {
     chapterApplicantInfo: {
@@ -106,8 +99,8 @@ const formConfig = {
             type: 'object',
             required: [formFields.fullName],
             properties: {
-              [formFields.fullName]: veteranFullName,
-              [formFields.ssn]: veteranSocialSecurityNumber,
+              [formFields.fullName]: fullName,
+              [formFields.ssn]: ssn,
             }
           }
         }
@@ -138,11 +131,7 @@ const formConfig = {
           path: 'contact-information',
           title: 'Contact Information',
           uiSchema: {
-            [formFields.address]: _.set(
-              'ui:validations[1]',
-              validateCentralMailPostalCode,
-              address.uiSchema('Mailing address')
-            ),
+            [formFields.address]: address.uiSchema('Mailing address'),
             [formFields.email]: {
               'ui:title': 'Primary email'
             },
@@ -154,10 +143,16 @@ const formConfig = {
           schema: {
             type: 'object',
             properties: {
-              [formFields.address]: address.schema(pensionsSchema, true),
-              [formFields.email]: email,
-              [formFields.altEmail]: altEmail,
-              [formFields.phoneNumber]: dayPhone
+              [formFields.address]: address.schema(fullSchema, true),
+              [formFields.email]: {
+                type: 'string',
+                format: 'email'
+              },
+              [formFields.altEmail]: {
+                type: 'string',
+                format: 'email'
+              },
+              [formFields.phoneNumber]: usaPhone
             }
           }
         },
@@ -172,7 +167,6 @@ const formConfig = {
             [formFields.bankAccount]: _.merge(bankAccountUI, {
               'ui:order': [
                 formFields.accountType,
-                formFields.bankName,
                 formFields.accountNumber,
                 formFields.routingNumber
               ],
@@ -181,9 +175,6 @@ const formConfig = {
               },
               [formFields.accountType]: {
                 'ui:required': usingDirectDeposit
-              },
-              [formFields.bankName]: {
-                'ui:title': 'Bank name'
               },
               [formFields.accountNumber]: {
                 'ui:required': usingDirectDeposit

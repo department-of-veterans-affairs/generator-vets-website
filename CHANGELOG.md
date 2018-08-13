@@ -6,9 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 ### Added
 - New complex form template that has the following features:
     - The form is multi-chapter with some single-page chapters and a multi-page chapter
-    - Imports and leverages schemas from `vets-json-schema`
-        - **NOTE:** A custom schema should be added to `vets-json-schema` solely for the use of this template.
-    - Depends on imported helper, validation, and definitions modules.
+    - Imports and leverages an external schema to demonstrate how a real app would leverage a schema from `vets-json-schema`
+    - Depends on imported helper and definitions modules.
 
 ## [3.1.0] - 2018-08-08
 ### Added
