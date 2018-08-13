@@ -63,8 +63,8 @@ module.exports = class extends Generator {
         name: 'templateType',
         message: 'Which form template would you like to start with?',
         choices: [
-          `${TEMPLATE_TYPES.BLANK}: A form without any fields'`,
-          `${TEMPLATE_TYPES.SIMPLE}: A single-chapter form with a single field'`,
+          `${TEMPLATE_TYPES.BLANK}: A form without any fields`,
+          `${TEMPLATE_TYPES.SIMPLE}: A single-chapter form with a single field`,
           `${TEMPLATE_TYPES.COMPLEX}: A complex, multi-chapter form with multiple fields`,
         ],
         filter: choice => choice.split(':')[0],
@@ -130,6 +130,20 @@ module.exports = class extends Generator {
         this.fs.copyTpl(
           this.templatePath('formComplex.js.ejs'),
           this.destinationPath(`${appPath}/config/form.js`),
+          this.props,
+        );
+        this.fs.copy(
+          this.templatePath('complexHelpers.js'),
+          this.destinationPath(`${appPath}/helpers.js`),
+        );
+        this.fs.copyTpl(
+          this.templatePath('complex-form-schema.json.ejs'),
+          this.destinationPath(`${appPath}/${this.props.formNumber}-schema.json`),
+          this.props,
+        );
+        this.fs.copyTpl(
+          this.templatePath('toursOfDuty.js.ejs'),
+          this.destinationPath(`${appPath}/definitions/toursOfDuty.js`),
           this.props,
         );
         break;
