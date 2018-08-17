@@ -54,7 +54,7 @@ module.exports = class extends Generator {
         type: 'input',
         name: 'entryName',
         message:
-          "What should be the name of your app's entry bundle? Examples: '0993-edu-benefits' or 'complaint-tool'",
+          "What should be the name of your app's entry bundle? Examples: '0993-edu-benefits' or 'feedback-tool'",
         validate: name => {
           if (!name.includes(' ')) {
             return true;
