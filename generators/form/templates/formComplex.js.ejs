@@ -58,9 +58,9 @@ function hasDirectDeposit(formData) {
 
 // Define all the form pages to help ensure uniqueness across all form chapters
 const formPages = {
-  applicantInfo: 'applicantInfo',
+  applicantInformation: 'applicantInformation',
   serviceHistory: 'serviceHistory',
-  contactInfo: 'contactInfo',
+  contactInformation: 'contactInformation',
   directDeposit: 'directDeposit'
 };
 
@@ -87,10 +87,10 @@ const formConfig = {
     usaPhone,
   },
   chapters: {
-    chapterApplicantInfo: {
+    chapterApplicantInformation: {
       title: 'Applicant Information',
       pages: {
-        [formPages.applicantInfo]: {
+        [formPages.applicantInformation]: {
           path: 'applicant-information',
           title: 'Applicant Information',
           uiSchema: {
@@ -126,10 +126,10 @@ const formConfig = {
         }
       }
     },
-    chapterAdditionalInfo: {
+    chapterAdditionalInformation: {
       title: 'Additional Information',
       pages: {
-        [formPages.contactInfo]: {
+        [formPages.contactInformation]: {
           path: 'contact-information',
           title: 'Contact Information',
           uiSchema: {
