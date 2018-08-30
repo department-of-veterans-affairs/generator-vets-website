@@ -25,8 +25,8 @@ module.exports = class extends Generator {
         type: 'input',
         name: 'formNumber',
         message: "What's your form number? Examples: '22-0993' or '21P-530'",
-        // Replace spaces and underscores with dashes
-        // Convert to ALL CAPS
+        // 1. Replace spaces and underscores with dashes
+        // 2. Convert to uppercase
         filter: val => {
           return val.replace(/\s|_/g, '-').toUpperCase();
         },
