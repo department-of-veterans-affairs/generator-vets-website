@@ -1,11 +1,9 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import { focusElement } from '<%= subFolder %>../../../platform/utilities/ui';
 import OMBInfo from '@department-of-veterans-affairs/formation/OMBInfo';
 import FormTitle from 'us-forms-system/lib/js/components/FormTitle';
-import SaveInProgressIntro, { introActions, introSelector } from '<%= subFolder %>../../../platform/forms/save-in-progress/SaveInProgressIntro';
+import SaveInProgressIntro from '<%= subFolder %>../../../platform/forms/save-in-progress/SaveInProgressIntro';
 
 
 class IntroductionPage extends React.Component {
@@ -23,8 +21,6 @@ class IntroductionPage extends React.Component {
           messages={this.props.route.formConfig.savedFormMessages}
           pageList={this.props.route.pageList}
           startText="Start the Application"
-          {...this.props.saveInProgressActions}
-          {...this.props.saveInProgress}>
           Please complete the <%= formNumber %> form to apply for <%= benefitDescription %>.
         </SaveInProgressIntro>
         <h4>Follow the steps below to apply for <%= benefitDescription %>.</h4>
@@ -58,8 +54,6 @@ class IntroductionPage extends React.Component {
           messages={this.props.route.formConfig.savedFormMessages}
           pageList={this.props.route.pageList}
           startText="Start the Application"
-          {...this.props.saveInProgressActions}
-          {...this.props.saveInProgress}/>
         <div className="omb-info--container" style={{ paddingLeft: '0px' }}>
           <OMBInfo resBurden={<%= respondentBurden %>} ombNumber="<%= ombNumber %>" expDate="<%= expirationDate %>"/>
         </div>
@@ -68,18 +62,4 @@ class IntroductionPage extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    saveInProgress: introSelector(state)
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    saveInProgressActions: bindActionCreators(introActions, dispatch)
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(IntroductionPage);
-
-export { IntroductionPage };
+export default IntroductionPage;
