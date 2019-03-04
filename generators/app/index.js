@@ -9,7 +9,7 @@ module.exports = class extends Generator {
     this.log(yosay(`Welcome to the ${chalk.red('vets-website')} generator!`));
     this.log(
       `If you are new to this generator, you might want to read: 'Tutorial - Creating Your First Form' at:\n${chalk.cyan(
-        'https://department-of-veterans-affairs.github.io/va-digital-services-platform-docs/docs/vets-developer-docs/vets-website/forms/form-tutorial.html',
+        'https://github.com/department-of-veterans-affairs/vets-external-teams/blob/master/DeveloperDocs/vets-website/forms/form-tutorial-basic.md',
       )}\n`,
     );
     this.log(
