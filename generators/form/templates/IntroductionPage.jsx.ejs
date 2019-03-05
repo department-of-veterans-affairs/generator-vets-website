@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { focusElement } from '<%= subFolder %>../../../platform/utilities/ui';
-import OMBInfo from '@department-of-veterans-affairs/formation/OMBInfo';
+import OMBInfo from '@department-of-veterans-affairs/formation-react/OMBInfo';
 import FormTitle from 'platform/forms-system/src/js/components/FormTitle';
 import SaveInProgressIntro from '<%= subFolder %>../../../platform/forms/save-in-progress/SaveInProgressIntro';
 
@@ -20,7 +20,7 @@ class IntroductionPage extends React.Component {
           prefillEnabled={this.props.route.formConfig.prefillEnabled}
           messages={this.props.route.formConfig.savedFormMessages}
           pageList={this.props.route.pageList}
-          startText="Start the Application"
+          startText="Start the Application">
           Please complete the <%= formNumber %> form to apply for <%= benefitDescription %>.
         </SaveInProgressIntro>
         <h4>Follow the steps below to apply for <%= benefitDescription %>.</h4>
@@ -53,7 +53,7 @@ class IntroductionPage extends React.Component {
           buttonOnly
           messages={this.props.route.formConfig.savedFormMessages}
           pageList={this.props.route.pageList}
-          startText="Start the Application"
+          startText="Start the Application"/>
         <div className="omb-info--container" style={{ paddingLeft: '0px' }}>
           <OMBInfo resBurden={<%= respondentBurden %>} ombNumber="<%= ombNumber %>" expDate="<%= expirationDate %>"/>
         </div>
