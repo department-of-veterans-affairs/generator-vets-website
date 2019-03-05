@@ -1,7 +1,7 @@
 # Changelog
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
-## [3.3.0] - 2019-04-19
+## [3.3.0] - 2019-03-04
 ### Changed
 - Removed Redux setup in IntroductionPage for props that are already available to SaveInProgressIntro
 - Updated documentation links
