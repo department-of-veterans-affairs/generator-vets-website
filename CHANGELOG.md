@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 ### Changed
 - Removed Redux setup in IntroductionPage for props that are already available to SaveInProgressIntro
 - Updated documentation links
+- renamed `jean-pants` to `formation`
+- `us-forms-system` moved to `platform/forms-system`
 ## [3.2.0] - 2018-08-10
 ### Added
 - New complex form template that has the following features:
