@@ -6,7 +6,7 @@ const yosay = require('yosay');
 module.exports = class extends Generator {
   prompting() {
     // Have Yeoman greet the user.
-    this.log(yosay(`Welcome to the ${chalk.red('vets-website')} generator!`));
+    this.log(yosay(`Welcome to the ${chalk.red('vets-website app')} generator!`));
     this.log(
       `If you are new to this generator, you might want to read: 'Tutorial - Creating Your First Form' at:\n${chalk.cyan(
         'https://github.com/department-of-veterans-affairs/vets-external-teams/blob/master/DeveloperDocs/vets-website/forms/form-tutorial-basic.md',
