@@ -10,10 +10,9 @@ const defaultContentRepoPath = '../vagov-content';
 function hasAccessTo(location) {
   try {
     fs.accessSync(location, fs.constants.F_OK | fs.constants.W_OK);
-    return path.resolve(location);
+    return true;
   } catch (e) {
-    // Couldn't find it / don't have write permissions
-    return null;
+    return false;
   }
 }
 
