@@ -7,6 +7,16 @@ const yosay = require('yosay');
 
 const defaultContentRepoPath = '../vagov-content';
 
+function hasAccessTo(location) {
+  try {
+    fs.accessSync(location, fs.constants.F_OK | fs.constants.W_OK);
+    return path.resolve(location);
+  } catch (e) {
+    // Couldn't find it / don't have write permissions
+    return null;
+  }
+}
+
 module.exports = class extends Generator {
   prompting() {
     // Have Yeoman greet the user.
@@ -99,27 +109,11 @@ module.exports = class extends Generator {
           'Where can I find the vagov-content repo? This path can be absolute or relative to vets-website.',
         default: () => {
           const location = path.join(this.destinationRoot(), defaultContentRepoPath);
-          try {
-            fs.accessSync(location, fs.constants.F_OK | fs.constants.W_OK);
-            this.log(`Can access ${path.resolve(location)}`);
-            return path.resolve(location);
-          } catch (e) {
-            // Couldn't find it / don't have write permissions
-            this.log(`Could NOT access ${path.resolve(location)}`);
-            return null;
-          }
+          return hasAccessTo(location) ? path.resolve(location) : null;
         },
-        validate: repoPath => {
-          if (repoPath) {
-            try {
-              fs.accessSync(repoPath, fs.constants.F_OK | fs.constants.W_OK);
-              return true;
-            } catch (e) {
-              return `Could not find the directory ${path.normalize(repoPath)}`;
-            }
-          }
-          return true;
-        },
+        validate: repoPath =>
+          hasAccessTo(repoPath) ||
+          `Could not find the directory ${path.normalize(repoPath)}`,
       },
     ];
 
