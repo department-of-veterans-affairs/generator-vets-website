@@ -100,10 +100,14 @@ module.exports = class extends Generator {
 	when: () => !fs.statSync(
 	  path.join(this.destinationRoot(), defaultContentRepoPath)
 	).isDirectory(),
-	message: 'Where can I find the vagov-content repo? This path can be absolute or relative to vets-website.',
+	message: 'Where can I find the vagov-content repo? This path can be absolute or relative to vets-website. (Leave blank to skip this step.)',
         filter: trimSlashes,
 	// Assumes read / write access
-	validate: repoPath => fs.statSync(repoPath).isDirectory() || `Could not find the directory ${path.normalize(repoPath)}`,
+	validate: repoPath => {
+	  if (repoPath)
+	    return fs.statSync(repoPath).isDirectory() || `Could not find the directory ${path.normalize(repoPath)}`;
+	  return true;
+	}
       }
     ];
 
