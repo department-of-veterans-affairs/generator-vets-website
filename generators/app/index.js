@@ -195,5 +195,10 @@ module.exports = class extends Generator {
         this.destinationPath(`${appPath}/routes.jsx`),
       );
     }
+
+    if (contentRepoMarkdownCopied)
+      this.log("Don't forget to make a pull request for vagov-content!");
+    else
+      this.log(`Don't forget to make a markdown file in the vagov-content repo at pages${this.props.rootUrl}.md!`);
   }
 };
