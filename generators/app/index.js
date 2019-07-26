@@ -7,18 +7,6 @@ const yosay = require('yosay');
 
 const defaultContentRepoPath = '../vagov-content';
 
-const trimSlashes = val => {
-  // Add leading slash if needed
-  if (!val.startsWith('/')) {
-    val = `/${val}`;
-  }
-  // Add `index` if a page name was not included
-  if (val.endsWith('/')) {
-    val = `${val}index`;
-  }
-  return val;
-};
-
 module.exports = class extends Generator {
   prompting() {
     // Have Yeoman greet the user.
@@ -85,7 +73,17 @@ module.exports = class extends Generator {
         name: 'rootUrl',
         message:
           "What's the root url for this app? Examples: '/gi-bill-comparison-tool' or '/education/opt-out-information-sharing/opt-out-form-0993'",
-        filter: trimSlashes,
+        filter: val => {
+          // Add leading slash if needed
+          if (!val.startsWith('/')) {
+            val = `/${val}`;
+          }
+          // Add `index` if a page name was not included
+          if (val.endsWith('/')) {
+            val = `${val}index`;
+          }
+          return val;
+        },
         default: answers => `/${answers.folderName}`,
       },
       {
@@ -95,20 +93,34 @@ module.exports = class extends Generator {
         default: false,
       },
       {
-	type: 'input',
-	name: 'contentRepoLocation',
-	when: () => !fs.statSync(
-	  path.join(this.destinationRoot(), defaultContentRepoPath)
-	).isDirectory(),
-	message: 'Where can I find the vagov-content repo? This path can be absolute or relative to vets-website. (Leave blank to skip this step.)',
-        filter: trimSlashes,
-	// Assumes read / write access
-	validate: repoPath => {
-	  if (repoPath)
-	    return fs.statSync(repoPath).isDirectory() || `Could not find the directory ${path.normalize(repoPath)}`;
-	  return true;
-	}
-      }
+        type: 'input',
+        name: 'contentRepoLocation',
+        message:
+          'Where can I find the vagov-content repo? This path can be absolute or relative to vets-website. (Leave blank to skip this step.)',
+        default: () => {
+          const location = path.join(this.destinationRoot(), defaultContentRepoPath);
+          try {
+            fs.accessSync(location, fs.constants.F_OK | fs.constants.W_OK);
+            this.log(`Can access ${path.resolve(location)}`);
+            return path.resolve(location);
+          } catch (e) {
+            // Couldn't find it / don't have write permissions
+            this.log(`Could NOT access ${path.resolve(location)}`);
+            return null;
+          }
+        },
+        validate: repoPath => {
+          if (repoPath) {
+            try {
+              fs.accessSync(repoPath, fs.constants.F_OK | fs.constants.W_OK);
+              return true;
+            } catch (e) {
+              return `Could not find the directory ${path.normalize(repoPath)}`;
+            }
+          }
+          return true;
+        },
+      },
     ];
 
     return this.prompt(prompts).then(props => {
@@ -137,22 +149,26 @@ module.exports = class extends Generator {
   writing() {
     const rootPath = `src/applications/`;
     const appPath = `${rootPath}${this.props.folderName}`;
-
-    // vagov-content files
     let contentRepoMarkdownCopied = false;
+
+    // Vagov-content files
     if (this.props.contentRepoLocation) {
       try {
-	this.fs.copyTpl(
-	  this.templatePath('index.md.ejs'),
-	  path.join(this.props.contentRepoLocation, 'pages', `${this.props.rootUrl}.md`,),
-	  this.props,
-	);
-	contentRepoMarkdownCopied = true;
+        this.fs.copyTpl(
+          this.templatePath('index.md.ejs'),
+          path.join(this.props.contentRepoLocation, 'pages', `${this.props.rootUrl}.md`),
+          this.props,
+        );
+        contentRepoMarkdownCopied = true;
       } catch (e) {
-	this.log(chalk.red(`Could not write to ${this.props.contentRepoLocation}; skipping this step.`))
+        this.log(
+          chalk.red(
+            `Could not write to ${this.props.contentRepoLocation}; skipping this step.`,
+          ),
+        );
       }
     }
-    
+
     // Normal vets-website files
     this.fs.copyTpl(
       this.templatePath('manifest.json.ejs'),
@@ -192,8 +208,14 @@ module.exports = class extends Generator {
     }
 
     if (contentRepoMarkdownCopied)
-      this.log("Don't forget to make a pull request for vagov-content!");
+      this.log(yosay("Don't forget to make a pull request for vagov-content!"));
     else
-      this.log(`Don't forget to make a markdown file in the vagov-content repo at pages${this.props.rootUrl}.md!`);
+      this.log(
+        yosay(
+          `Don't forget to make a markdown file in the vagov-content repo at pages${
+            this.props.rootUrl
+          }.md!`,
+        ),
+      );
   }
 };
