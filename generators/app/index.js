@@ -1,7 +1,23 @@
 'use strict';
+const fs = require('fs');
+const path = require('path');
 const Generator = require('yeoman-generator');
 const chalk = require('chalk');
 const yosay = require('yosay');
+
+const defaultContentRepoPath = '../vagov-content';
+
+const trimSlashes = val => {
+  // Add leading slash if needed
+  if (!val.startsWith('/')) {
+    val = `/${val}`;
+  }
+  // Add `index` if a page name was not included
+  if (val.endsWith('/')) {
+    val = `${val}index`;
+  }
+  return val;
+};
 
 module.exports = class extends Generator {
   prompting() {
@@ -69,17 +85,7 @@ module.exports = class extends Generator {
         name: 'rootUrl',
         message:
           "What's the root url for this app? Examples: '/gi-bill-comparison-tool' or '/education/opt-out-information-sharing/opt-out-form-0993'",
-        filter: val => {
-          // Add leading slash if needed
-          if (!val.startsWith('/')) {
-            val = `/${val}`;
-          }
-          // Add `index` if a page name was not included
-          if (val.endsWith('/')) {
-            val = `${val}index`;
-          }
-          return val;
-        },
+        filter: trimSlashes,
         default: answers => `/${answers.folderName}`,
       },
       {
@@ -88,6 +94,14 @@ module.exports = class extends Generator {
         message: 'Is this a form app?',
         default: false,
       },
+      {
+	type: 'input',
+	name: 'contentRepoLocation',
+	when: () => !fs.existsSync(path.join(this.destinationRoot(), defaultContentRepoPath)),
+	default: '../vagov-content',
+	message: "Where can I find the vagov-content repo? This path can be absolute or relative to vets-website.",
+        filter: trimSlashes,
+      }
     ];
 
     return this.prompt(prompts).then(props => {
