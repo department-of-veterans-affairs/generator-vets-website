@@ -97,10 +97,13 @@ module.exports = class extends Generator {
       {
 	type: 'input',
 	name: 'contentRepoLocation',
-	when: () => !fs.existsSync(path.join(this.destinationRoot(), defaultContentRepoPath)),
-	default: '../vagov-content',
-	message: "Where can I find the vagov-content repo? This path can be absolute or relative to vets-website.",
+	when: () => !fs.statSync(
+	  path.join(this.destinationRoot(), defaultContentRepoPath)
+	).isDirectory(),
+	message: 'Where can I find the vagov-content repo? This path can be absolute or relative to vets-website.',
         filter: trimSlashes,
+	// Assumes read / write access
+	validate: repoPath => fs.statSync(repoPath).isDirectory() || `Could not find the directory ${path.normalize(repoPath)}`,
       }
     ];
 
