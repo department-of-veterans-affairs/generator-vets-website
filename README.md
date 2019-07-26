@@ -2,26 +2,11 @@
 
 ## Installation
 
-Install [Yeoman](http://yeoman.io) and [generator-vets-website](https://github.com/department-of-veterans-affairs/generator-vets-website) globally using [npm](https://www.npmjs.com/) (we assume you have pre-installed [node.js](https://nodejs.org/)):
-
-```bash
-npm install -g yo
-npm install -g @department-of-veterans-affairs/generator-vets-website
-```
+The generator is already installed as a `devDependency` of [`vets-website`](https://github.com/department-of-veterans-affairs/vets-website).
 
 ## Using the generator
 
-First, make sure you have the latest version of the generator installed locally:
-
-```bash
-npm update -g @department-of-veterans-affairs/generator-vets-website
-```
-
-Then, to generate your new project or form, make sure you are in your local working copy of the [vets-website repo](https://github.com/department-of-veterans-affairs/vets-website) and run:
-
-```bash
-yo @department-of-veterans-affairs/vets-website
-```
+From `vets-website`, run `npm run new:app`.
 
 Follow the instructions on screen.
 
