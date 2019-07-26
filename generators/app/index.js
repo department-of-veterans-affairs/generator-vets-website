@@ -138,6 +138,22 @@ module.exports = class extends Generator {
     const rootPath = `src/applications/`;
     const appPath = `${rootPath}${this.props.folderName}`;
 
+    // vagov-content files
+    let contentRepoMarkdownCopied = false;
+    if (this.props.contentRepoLocation) {
+      try {
+	this.fs.copyTpl(
+	  this.templatePath('index.md.ejs'),
+	  path.join(this.props.contentRepoLocation, 'pages', `${this.props.rootUrl}.md`,),
+	  this.props,
+	);
+	contentRepoMarkdownCopied = true;
+      } catch (e) {
+	this.log(chalk.red(`Could not write to ${this.props.contentRepoLocation}; skipping this step.`))
+      }
+    }
+    
+    // Normal vets-website files
     this.fs.copyTpl(
       this.templatePath('manifest.json.ejs'),
       this.destinationPath(`${appPath}/manifest.json`),
@@ -159,6 +175,7 @@ module.exports = class extends Generator {
       this.props,
     );
 
+    // Form files
     if (!this.props.isForm) {
       this.fs.copy(
         this.templatePath('entry.scss'),
