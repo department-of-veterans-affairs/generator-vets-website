@@ -96,7 +96,7 @@ module.exports = class extends Generator {
         type: 'input',
         name: 'contentRepoLocation',
         message:
-          'Where can I find the vagov-content repo? This path can be absolute or relative to vets-website. (Leave blank to skip this step.)',
+          'Where can I find the vagov-content repo? This path can be absolute or relative to vets-website.',
         default: () => {
           const location = path.join(this.destinationRoot(), defaultContentRepoPath);
           try {
@@ -152,21 +152,19 @@ module.exports = class extends Generator {
     let contentRepoMarkdownCopied = false;
 
     // Vagov-content files
-    if (this.props.contentRepoLocation) {
-      try {
-        this.fs.copyTpl(
-          this.templatePath('index.md.ejs'),
-          path.join(this.props.contentRepoLocation, 'pages', `${this.props.rootUrl}.md`),
-          this.props,
-        );
-        contentRepoMarkdownCopied = true;
-      } catch (e) {
-        this.log(
-          chalk.red(
-            `Could not write to ${this.props.contentRepoLocation}; skipping this step.`,
-          ),
-        );
-      }
+    try {
+      this.fs.copyTpl(
+        this.templatePath('index.md.ejs'),
+        path.join(this.props.contentRepoLocation, 'pages', `${this.props.rootUrl}.md`),
+        this.props,
+      );
+      contentRepoMarkdownCopied = true;
+    } catch (e) {
+      this.log(
+        chalk.red(
+          `Could not write to ${this.props.contentRepoLocation}; skipping this step.`,
+        ),
+      );
     }
 
     // Normal vets-website files
