@@ -160,11 +160,6 @@ module.exports = class extends Generator {
       this.props,
     );
     this.fs.copyTpl(
-      this.templatePath('index.md.ejs'),
-      this.destinationPath(`content/pages${this.props.rootUrl}.md`),
-      this.props,
-    );
-    this.fs.copyTpl(
       this.templatePath('e2e.spec.js.ejs'),
       this.destinationPath(`${appPath}/tests/00.${this.props.entryName}.e2e.spec.js`),
       this.props,
