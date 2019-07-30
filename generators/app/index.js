@@ -1,12 +1,25 @@
 'use strict';
+const fs = require('fs');
+const path = require('path');
 const Generator = require('yeoman-generator');
 const chalk = require('chalk');
 const yosay = require('yosay');
 
+const defaultContentRepoPath = '../vagov-content';
+
+function hasAccessTo(location) {
+  try {
+    fs.accessSync(location, fs.constants.F_OK | fs.constants.W_OK);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 module.exports = class extends Generator {
   prompting() {
     // Have Yeoman greet the user.
-    this.log(yosay(`Welcome to the ${chalk.red('vets-website')} generator!`));
+    this.log(yosay(`Welcome to the ${chalk.red('vets-website app')} generator!`));
     this.log(
       `If you are new to this generator, you might want to read: 'Tutorial - Creating Your First Form' at:\n${chalk.cyan(
         'https://github.com/department-of-veterans-affairs/vets-external-teams/blob/master/DeveloperDocs/vets-website/forms/form-tutorial-basic.md',
@@ -88,6 +101,19 @@ module.exports = class extends Generator {
         message: 'Is this a form app?',
         default: false,
       },
+      {
+        type: 'input',
+        name: 'contentRepoLocation',
+        message:
+          'Where can I find the vagov-content repo? This path can be absolute or relative to vets-website.',
+        default: () => {
+          const location = path.join(this.destinationRoot(), defaultContentRepoPath);
+          return hasAccessTo(location) ? path.resolve(location) : null;
+        },
+        validate: repoPath =>
+          hasAccessTo(repoPath) ||
+          `Could not find the directory ${path.normalize(repoPath)}`,
+      },
     ];
 
     return this.prompt(prompts).then(props => {
@@ -116,15 +142,28 @@ module.exports = class extends Generator {
   writing() {
     const rootPath = `src/applications/`;
     const appPath = `${rootPath}${this.props.folderName}`;
+    let contentRepoMarkdownCopied = false;
 
+    // Vagov-content files
+    try {
+      this.fs.copyTpl(
+        this.templatePath('index.md.ejs'),
+        path.join(this.props.contentRepoLocation, 'pages', `${this.props.rootUrl}.md`),
+        this.props,
+      );
+      contentRepoMarkdownCopied = true;
+    } catch (e) {
+      this.log(
+        chalk.red(
+          `Could not write to ${this.props.contentRepoLocation}; skipping this step.`,
+        ),
+      );
+    }
+
+    // Normal vets-website files
     this.fs.copyTpl(
       this.templatePath('manifest.json.ejs'),
       this.destinationPath(`${appPath}/manifest.json`),
-      this.props,
-    );
-    this.fs.copyTpl(
-      this.templatePath('index.md.ejs'),
-      this.destinationPath(`content/pages${this.props.rootUrl}.md`),
       this.props,
     );
     this.fs.copyTpl(
@@ -138,6 +177,7 @@ module.exports = class extends Generator {
       this.props,
     );
 
+    // Form files
     if (!this.props.isForm) {
       this.fs.copy(
         this.templatePath('entry.scss'),
@@ -157,5 +197,16 @@ module.exports = class extends Generator {
         this.destinationPath(`${appPath}/routes.jsx`),
       );
     }
+
+    if (contentRepoMarkdownCopied)
+      this.log(yosay("Don't forget to make a pull request for vagov-content!"));
+    else
+      this.log(
+        yosay(
+          `Don't forget to make a markdown file in the vagov-content repo at pages${
+            this.props.rootUrl
+          }.md!`,
+        ),
+      );
   }
 };
