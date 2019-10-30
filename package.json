@@ -1,21 +1,14 @@
 {
   "name": "@department-of-veterans-affairs/generator-vets-website",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "Generate a React app for vets-website",
   "homepage": "",
   "author": {
     "name": "DSVA"
   },
-  "files": [
-    "generators"
-  ],
+  "files": ["generators"],
   "main": "generators/index.js",
-  "keywords": [
-    "VA",
-    "vets.gov",
-    "dsva",
-    "yeoman-generator"
-  ],
+  "keywords": ["VA", "vets.gov", "dsva", "yeoman-generator"],
   "devDependencies": {
     "eslint": "^4.19.1",
     "eslint-config-prettier": "^2.9.0",
@@ -42,20 +35,11 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "git add"
-    ],
-    "*.json": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.js": ["eslint --fix", "git add"],
+    "*.json": ["prettier --write", "git add"]
   },
   "eslintConfig": {
-    "extends": [
-      "xo",
-      "prettier"
-    ],
+    "extends": ["xo", "prettier"],
     "env": {
       "node": true
     },
@@ -69,9 +53,7 @@
         }
       ]
     },
-    "plugins": [
-      "prettier"
-    ]
+    "plugins": ["prettier"]
   },
   "repository": "department-of-veterans-affairs/generator-vets-website",
   "license": "CC0-1.0"
