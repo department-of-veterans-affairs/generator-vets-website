@@ -6,9 +6,16 @@
   "author": {
     "name": "DSVA"
   },
-  "files": ["generators"],
+  "files": [
+    "generators"
+  ],
   "main": "generators/index.js",
-  "keywords": ["VA", "vets.gov", "dsva", "yeoman-generator"],
+  "keywords": [
+    "VA",
+    "vets.gov",
+    "dsva",
+    "yeoman-generator"
+  ],
   "devDependencies": {
     "eslint": "^4.19.1",
     "eslint-config-prettier": "^2.9.0",
@@ -16,7 +23,6 @@
     "eslint-plugin-prettier": "^2.6.0",
     "husky": "^0.14.3",
     "lint-staged": "^6.1.1",
-    "nsp": "^2.8.0",
     "prettier": "^1.11.1",
     "yeoman-assert": "^3.1.0",
     "yeoman-test": "^1.7.0"
@@ -30,16 +36,25 @@
     "yosay": "^2.0.1"
   },
   "scripts": {
-    "prepublishOnly": "nsp check",
+    "prepublishOnly": "npm audit",
     "pretest": "eslint .",
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.js": ["eslint --fix", "git add"],
-    "*.json": ["prettier --write", "git add"]
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.json": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "eslintConfig": {
-    "extends": ["xo", "prettier"],
+    "extends": [
+      "xo",
+      "prettier"
+    ],
     "env": {
       "node": true
     },
@@ -53,7 +68,9 @@
         }
       ]
     },
-    "plugins": ["prettier"]
+    "plugins": [
+      "prettier"
+    ]
   },
   "repository": "department-of-veterans-affairs/generator-vets-website",
   "license": "CC0-1.0"
