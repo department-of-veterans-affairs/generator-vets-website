@@ -139,7 +139,7 @@ module.exports = class extends Generator {
     }
   }
 
-  writing() {
+  writingNewFiles() {
     const rootPath = `src/applications/`;
     const appPath = `${rootPath}${this.props.folderName}`;
     let contentRepoMarkdownCopied = false;
@@ -208,5 +208,20 @@ module.exports = class extends Generator {
           }.md!`,
         ),
       );
+  }
+
+  updateRegistry() {
+    const registryFile = 'src/applications/registry.json';
+    const registry = this.fs.readJSON(registryFile);
+    registry.push({
+      appName: this.props.appName,
+      entryName: this.props.entryName,
+      rootUrl: this.props.rootUrl,
+      template: {
+        vagovprod: false,
+        layout: 'page-react.html',
+      },
+    });
+    this.fs.writeJSON(registryFile, registry);
   }
 };
