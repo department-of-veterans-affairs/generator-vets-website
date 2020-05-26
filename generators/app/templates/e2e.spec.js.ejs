@@ -2,7 +2,7 @@ const Timeouts = require('<%= subFolder %>../../../platform/testing/e2e/timeouts
 const E2eHelpers = require('<%= subFolder %>../../../platform/testing/e2e/helpers');
 const manifest = require('../manifest.json');
 
-module.exports = E2eHelpers.createE2eTest((client) => {
+module.exports = E2eHelpers.createE2eTest(client => {
   client
     .url(`${E2eHelpers.baseUrl}<%= rootUrl %>`)
     .waitForElementVisible('body', Timeouts.normal)

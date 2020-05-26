@@ -1,7 +1,7 @@
-import '<%= subFolder %>../../platform/polyfills';
+import 'platform/polyfills';
 import './sass/<%= entryName %>.scss';
 
-import startApp from '<%= subFolder %>../../platform/startup';
+import startApp from 'platform/startup';
 
 import routes from './routes';
 import reducer from './reducers';
@@ -10,5 +10,5 @@ import manifest from './manifest.json';
 startApp({
   url: manifest.rootUrl,
   reducer,
-  routes
+  routes,
 });

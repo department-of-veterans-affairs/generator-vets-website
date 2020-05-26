@@ -49,7 +49,7 @@ const formFields = {
   address: 'address',
   email: 'email',
   altEmail: 'altEmail',
-  phoneNumber: 'phoneNumber'
+  phoneNumber: 'phoneNumber',
 };
 
 function hasDirectDeposit(formData) {
@@ -61,7 +61,7 @@ const formPages = {
   applicantInformation: 'applicantInformation',
   serviceHistory: 'serviceHistory',
   contactInformation: 'contactInformation',
-  directDeposit: 'directDeposit'
+  directDeposit: 'directDeposit',
 };
 
 const formConfig = {
@@ -76,7 +76,7 @@ const formConfig = {
   prefillEnabled: true,
   savedFormMessages: {
     notFound: 'Please start over to apply for benefits.',
-    noAuth: 'Please sign in again to continue your application for benefits.'
+    noAuth: 'Please sign in again to continue your application for benefits.',
   },
   title: 'Complex Form',
   defaultDefinitions: {
@@ -95,7 +95,7 @@ const formConfig = {
           title: 'Applicant Information',
           uiSchema: {
             [formFields.fullName]: fullNameUI,
-            [formFields.ssn]: ssnUI
+            [formFields.ssn]: ssnUI,
           },
           schema: {
             type: 'object',
@@ -103,10 +103,10 @@ const formConfig = {
             properties: {
               [formFields.fullName]: fullName,
               [formFields.ssn]: ssn,
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      },
     },
     serviceHistoryChapter: {
       title: 'Service History',
@@ -115,16 +115,16 @@ const formConfig = {
           path: 'service-history',
           title: 'Service History',
           uiSchema: {
-            [formFields.toursOfDuty]: toursOfDutyUI
+            [formFields.toursOfDuty]: toursOfDutyUI,
           },
           schema: {
             type: 'object',
             properties: {
-              [formFields.toursOfDuty]: toursOfDuty
-            }
-          }
-        }
-      }
+              [formFields.toursOfDuty]: toursOfDuty,
+            },
+          },
+        },
+      },
     },
     additionalInformationChapter: {
       title: 'Additional Information',
@@ -135,10 +135,10 @@ const formConfig = {
           uiSchema: {
             [formFields.address]: address.uiSchema('Mailing address'),
             [formFields.email]: {
-              'ui:title': 'Primary email'
+              'ui:title': 'Primary email',
             },
             [formFields.altEmail]: {
-              'ui:title': 'Secondary email'
+              'ui:title': 'Secondary email',
             },
             [formFields.phoneNumber]: phoneUI('Daytime phone'),
           },
@@ -148,15 +148,15 @@ const formConfig = {
               [formFields.address]: address.schema(fullSchema, true),
               [formFields.email]: {
                 type: 'string',
-                format: 'email'
+                format: 'email',
               },
               [formFields.altEmail]: {
                 type: 'string',
-                format: 'email'
+                format: 'email',
               },
-              [formFields.phoneNumber]: usaPhone
-            }
-          }
+              [formFields.phoneNumber]: usaPhone,
+            },
+          },
         },
         [formPages.directDeposit]: {
           path: 'direct-deposit',
@@ -164,33 +164,33 @@ const formConfig = {
           uiSchema: {
             'ui:title': 'Direct deposit',
             [formFields.viewNoDirectDeposit]: {
-              'ui:title': 'I don’t want to use direct deposit'
+              'ui:title': 'I don’t want to use direct deposit',
             },
             [formFields.bankAccount]: _.merge(bankAccountUI, {
               'ui:order': [
                 formFields.accountType,
                 formFields.accountNumber,
-                formFields.routingNumber
+                formFields.routingNumber,
               ],
               'ui:options': {
-                hideIf: formData => !hasDirectDeposit(formData)
+                hideIf: formData => !hasDirectDeposit(formData),
               },
               [formFields.accountType]: {
-                'ui:required': hasDirectDeposit
+                'ui:required': hasDirectDeposit,
               },
               [formFields.accountNumber]: {
-                'ui:required': hasDirectDeposit
+                'ui:required': hasDirectDeposit,
               },
               [formFields.routingNumber]: {
-                'ui:required': hasDirectDeposit
-              }
+                'ui:required': hasDirectDeposit,
+              },
             }),
             [formFields.viewStopWarning]: {
               'ui:description': directDepositWarning,
               'ui:options': {
-                hideIf: hasDirectDeposit
-              }
-            }
+                hideIf: hasDirectDeposit,
+              },
+            },
           },
           schema: {
             type: 'object',
@@ -201,14 +201,14 @@ const formConfig = {
               [formFields.bankAccount]: bankAccount,
               [formFields.viewStopWarning]: {
                 type: 'object',
-                properties: {}
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+                properties: {},
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 };
 
 export default formConfig;
