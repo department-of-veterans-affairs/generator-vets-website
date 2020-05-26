@@ -1,10 +1,9 @@
 import React from 'react';
 
-import { focusElement } from '<%= subFolder %>../../../platform/utilities/ui';
+import { focusElement } from 'platform/utilities/ui';
 import OMBInfo from '@department-of-veterans-affairs/formation-react/OMBInfo';
 import FormTitle from 'platform/forms-system/src/js/components/FormTitle';
-import SaveInProgressIntro from '<%= subFolder %>../../../platform/forms/save-in-progress/SaveInProgressIntro';
-
+import SaveInProgressIntro from 'platform/forms/save-in-progress/SaveInProgressIntro';
 
 class IntroductionPage extends React.Component {
   componentDidMount() {
@@ -53,7 +52,7 @@ class IntroductionPage extends React.Component {
           buttonOnly
           messages={this.props.route.formConfig.savedFormMessages}
           pageList={this.props.route.pageList}
-          startText="Start the Application"/>
+          startText="Start the Application" />
         <div className="omb-info--container" style={{ paddingLeft: '0px' }}>
           <OMBInfo resBurden={<%= respondentBurden %>} ombNumber="<%= ombNumber %>" expDate="<%= expirationDate %>"/>
         </div>
