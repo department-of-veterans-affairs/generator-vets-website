@@ -13,5 +13,6 @@ module.exports = E2eHelpers.createE2eTest(client => {
 });
 
 module.exports['@disabled'] =
-  !registry.find(entry => entry.appName === manifest.appName) ||
+  !registry.find(entry => entry.entryName === manifest.entryName) ||
   __BUILDTYPE__ !== 'production';
+  
