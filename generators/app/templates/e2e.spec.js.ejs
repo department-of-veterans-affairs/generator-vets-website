@@ -11,5 +11,5 @@ module.exports = E2eHelpers.createE2eTest(client => {
   client.end();
 });
 
-module.exports['@disabled'] = 
+module.exports['@disabled'] =
   !manifest.production || __BUILDTYPE__ !== 'production';
