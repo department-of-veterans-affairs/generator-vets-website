@@ -1,7 +1,6 @@
 <%- include('partials/formHeader', {formNumber: formNumber}); %>
-
 const formFields = {
-  firstName: 'firstName'
+  firstName: 'firstName',
 };
 
 const formConfig = {
@@ -15,11 +14,10 @@ const formConfig = {
   prefillEnabled: true,
   savedFormMessages: {
     notFound: 'Please start over to apply for <%= benefitDescription %>.',
-    noAuth: 'Please sign in again to continue your application for <%= benefitDescription %>.'
+    noAuth: 'Please sign in again to continue your application for <%= benefitDescription %>.',
   },
   title: '<%= appName %>',
-  defaultDefinitions: {
-  },
+  defaultDefinitions: {},
   chapters: {
     chapter1: {
       title: 'Personal Information',
@@ -29,22 +27,22 @@ const formConfig = {
           title: 'Personal Information - Page 1',
           uiSchema: {
             [formFields.firstName]: {
-              'ui:title': 'First Name'
-            }
+              'ui:title': 'First Name',
+            },
           },
           schema: {
             required: [formFields.firstName],
             type: 'object',
             properties: {
               [formFields.firstName]: {
-                type: 'string'
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+                type: 'string',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 };
 
 export default formConfig;

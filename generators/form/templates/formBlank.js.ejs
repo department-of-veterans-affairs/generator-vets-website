@@ -1,5 +1,4 @@
 <%- include('partials/formHeader', {formNumber: formNumber}); %>
-
 const formConfig = {
   urlPrefix: '/',
   submitUrl: '/v0/api',
@@ -11,11 +10,10 @@ const formConfig = {
   prefillEnabled: true,
   savedFormMessages: {
     notFound: 'Please start over to apply for <%= benefitDescription %>.',
-    noAuth: 'Please sign in again to continue your application for <%= benefitDescription %>.'
+    noAuth: 'Please sign in again to continue your application for <%= benefitDescription %>.',
   },
   title: '<%= appName %>',
-  defaultDefinitions: {
-  },
+  defaultDefinitions: {},
   chapters: {
     chapter1: {
       title: 'Chapter 1',
@@ -23,17 +21,15 @@ const formConfig = {
         page1: {
           path: 'first-page',
           title: 'First Page',
-          uiSchema: {
-          },
+          uiSchema: {},
           schema: {
             type: 'object',
-            properties: {
-            }
-          }
-        }
-      }
-    }
-  }
+            properties: {},
+          },
+        },
+      },
+    },
+  },
 };
 
 export default formConfig;
