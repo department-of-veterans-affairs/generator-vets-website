@@ -14,6 +14,6 @@ module.exports = E2eHelpers.createE2eTest(client => {
 
 // disable E2E test in CI if app is not in prod
 module.exports['@disabled'] =
-  !registry.find(entry => entry.entryName === manifest.entryName) &&
+  registry.find(entry => entry.entryName === manifest.entryName).template.vagovprod !== false &&
   __BUILDTYPE__ !== 'production';
   
