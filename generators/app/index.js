@@ -166,18 +166,14 @@ module.exports = class extends Generator {
       this.destinationPath(`${appPath}/manifest.json`),
       this.props,
     );
-    this.fs.copyTpl(
-      this.templatePath('e2e.spec.js.ejs'),
-      this.destinationPath(`${appPath}/tests/00.${this.props.entryName}.e2e.spec.js`),
-      this.props,
-    );
+
     this.fs.copyTpl(
       this.templatePath('app-entry.jsx.ejs'),
       this.destinationPath(`${appPath}/app-entry.jsx`),
       this.props,
     );
 
-    // Form files
+    // Non-form files
     if (!this.props.isForm) {
       this.fs.copy(
         this.templatePath('entry.scss'),
@@ -188,13 +184,21 @@ module.exports = class extends Generator {
         this.templatePath('reducer.js'),
         this.destinationPath(`${appPath}/reducers/index.js`),
       );
+
       this.fs.copy(
         this.templatePath('App.jsx'),
         this.destinationPath(`${appPath}/containers/App.jsx`),
       );
+
       this.fs.copy(
         this.templatePath('routes.jsx'),
         this.destinationPath(`${appPath}/routes.jsx`),
+      );
+
+      this.fs.copyTpl(
+        this.templatePath('cypress.spec.js.ejs'),
+        this.destinationPath(`${appPath}/tests/${this.props.entryName}.cypress.spec.js`),
+        this.props,
       );
     }
 
