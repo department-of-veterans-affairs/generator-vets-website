@@ -29,30 +29,37 @@ For specifics on writing a generator, [refer to the official Yeoman documentatio
 
 ### Testing changes
 
-From the root of this repo (`generator-vets-website`):
-```sh
-# Create a symlink in your global node_modules to this module.
-npm link
-```
+1. **Make your modified generator available as a global module.**
 
-From the root of `vets-website`:
-```sh
-# Link vets-website's local generator to your newly linked global module.
-npm link @department-of-veterans-affairs/generator-vets-website
+    From the root of this repo (`generator-vets-website`):
+    
+    ```sh
+    # Create a symlink in your global node_modules to this module.
+    npm link
+    ```
 
-# Start up Yeoman.
-npx yo
+2. **Run your modified generator in your local `vets-website`.**
 
-# Choose to run generator-vets-website in the Yeoman prompt.
-```
+    From the root of `vets-website`:
 
-Due to the link, any further changes to the generator will automatically be included when you run it within your local `vets-website` repo.
+    ```sh
+    # Point vets-website's local generator to your newly linked global module.
+    npm link @department-of-veterans-affairs/generator-vets-website
 
-When you're done testing your changes, clean up the links:
-```sh
-# From the root of vets-website:
-npm unlink --no-save @department-of-veterans-affairs/generator-vets-website
+    # Start up Yeoman.
+    npx yo
 
-# From the root of generator-vets-website:
-npm unlink
-```
+    # Choose to run generator-vets-website in the Yeoman prompt.
+    ```
+
+    Due to the link, any further changes to the generator will automatically be included when you run it within your local `vets-website` repo.
+
+3. **When you're done testing your changes, clean up the links:**
+
+    ```sh
+    # From the root of vets-website:
+    npm unlink --no-save @department-of-veterans-affairs/generator-vets-website
+
+    # From the root of generator-vets-website:
+    npm unlink
+    ```
