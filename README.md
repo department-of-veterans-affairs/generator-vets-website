@@ -22,7 +22,7 @@ These resources are also provided by the generator at startup.
 ### Making changes
 
 There are two generators: one for general (non-form) apps and one for form apps.
-- The latter runs on top of the former if certain prompts were answered to generate a form app.
+- The latter runs on top of the former if certain prompts are answered to generate a form app.
 - Each generator has its own set of template from which it generates files in the app structure.
 
 For specifics on writing a generator, [refer to the official Yeoman documentation](https://yeoman.github.io/generator/).
