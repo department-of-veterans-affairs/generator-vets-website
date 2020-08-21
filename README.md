@@ -12,10 +12,10 @@ Follow the instructions on screen.
 
 For more details on answering the prompts, the following documentation might be helpful.
 
-These resources are also provided by the generator at startup.
-
 - [Guide on using this Yeoman generator with example answers for each prompt](https://department-of-veterans-affairs.github.io/veteran-facing-services-tools/platform/tools/generator/)
 - [Basic tutorial for creating and modifying a form application](https://department-of-veterans-affairs.github.io/veteran-facing-services-tools/forms/form-tutorial-basic)
+
+These resources are also provided by the generator at startup.
 
 ## Contributing
 
@@ -25,7 +25,7 @@ There are two generators: one for general (non-form) apps and one for form apps.
 - The latter runs on top of the former if certain prompts were answered to generate a form app.
 - Each generator has its own set of template from which it generates files in the app structure.
 
-For specifics on writing a generator, (refer to the official Yeoman documentation)[https://yeoman.github.io/generator/].
+For specifics on writing a generator, [refer to the official Yeoman documentation](https://yeoman.github.io/generator/).
 
 ### Testing changes
 
