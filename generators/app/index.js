@@ -20,14 +20,16 @@ module.exports = class extends Generator {
   prompting() {
     // Have Yeoman greet the user.
     this.log(yosay(`Welcome to the ${chalk.red('vets-website app')} generator!`));
+
     this.log(
-      `If you are new to this generator, you might want to read: 'Tutorial - Creating Your First Form' at:\n${chalk.cyan(
-        'https://github.com/department-of-veterans-affairs/vets-external-teams/blob/master/DeveloperDocs/vets-website/forms/form-tutorial-basic.md',
+      `For a guide on using this Yeoman generator, including example answers for each prompt:\n${chalk.cyan(
+        'https://department-of-veterans-affairs.github.io/veteran-facing-services-tools/platform/tools/generator/',
       )}\n`,
     );
+
     this.log(
-      `You can also find a guide for using this Yeoman generator, including example answers for each prompt, at:\n${chalk.cyan(
-        'https://github.com/department-of-veterans-affairs/vets-website/blob/master/docs/GeneratorOptions.md',
+      `To follow a basic tutorial on creating and modifying a form application:\n${chalk.cyan(
+        'https://department-of-veterans-affairs.github.io/veteran-facing-services-tools/forms/form-tutorial-basic',
       )}\n`,
     );
 
