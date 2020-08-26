@@ -2,7 +2,7 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
-## 3.4.0 - 2020-08-26
+## [3.4.0] - 2020-08-26
 ### Changed
 - E2E tests are now Cypress tests instead of Nightwatch tests.
     - The form app test uses the form tester. There's also an empty data fixture that's used in the test.
