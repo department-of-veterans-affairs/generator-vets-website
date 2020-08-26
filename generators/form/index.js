@@ -95,27 +95,44 @@ module.exports = class extends Generator {
       this.destinationPath(`${appPath}/reducers/index.js`),
       this.props,
     );
+
     this.fs.copyTpl(
       this.templatePath('App.jsx.ejs'),
       // TODO: change the name of App.jsx to something like a ClassCase version of `${this.props.entryName}App.jsx`?
       this.destinationPath(`${appPath}/containers/App.jsx`),
       this.props,
     );
+
     this.fs.copyTpl(
       this.templatePath('routes.jsx.ejs'),
       this.destinationPath(`${appPath}/routes.jsx`),
       this.props,
     );
+
+    this.fs.copyTpl(
+      this.templatePath('test-data.json.ejs'),
+      this.destinationPath(`${appPath}/tests/fixtures/data/test-data.json`),
+      this.props,
+    );
+
+    this.fs.copyTpl(
+      this.templatePath('cypress.spec.js.ejs'),
+      this.destinationPath(`${appPath}/tests/${this.props.entryName}.cypress.spec.js`),
+      this.props,
+    );
+
     this.fs.copyTpl(
       this.templatePath('IntroductionPage.jsx.ejs'),
       this.destinationPath(`${appPath}/containers/IntroductionPage.jsx`),
       this.props,
     );
+
     this.fs.copyTpl(
       this.templatePath('ConfirmationPage.jsx.ejs'),
       this.destinationPath(`${appPath}/containers/ConfirmationPage.jsx`),
       this.props,
     );
+
     switch (this.props.templateType) {
       case TEMPLATE_TYPES.BLANK:
         this.fs.copyTpl(
