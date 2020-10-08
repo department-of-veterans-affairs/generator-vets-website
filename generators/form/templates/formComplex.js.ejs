@@ -69,10 +69,10 @@ const formConfig = {
   // submitUrl: '/v0/api',
   submit: () =>
     Promise.resolve({ attributes: { confirmationNumber: '123123123' } }),
-  trackingPrefix: 'complex-form-',
+  trackingPrefix: '<%= trackingPrefix %>',
   introduction: IntroductionPage,
   confirmation: ConfirmationPage,
-  formId: '1234',
+  formId: '<%= formNumber %>',
   version: 0,
   prefillEnabled: true,
   savedFormMessages: {
