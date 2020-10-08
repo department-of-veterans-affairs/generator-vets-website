@@ -15,12 +15,7 @@ import bankAccountUI from 'platform/forms-system/src/js/definitions/bankAccount'
 import phoneUI from 'platform/forms-system/src/js/definitions/phone';
 import * as address from 'platform/forms-system/src/js/definitions/address';
 
-import IntroductionPage from '../containers/IntroductionPage';
-import ConfirmationPage from '../containers/ConfirmationPage';
-
-// const { } = fullSchema.properties;
-
-// const { } = fullSchema.definitions;
+<%- include('partials/formHeader', {formNumber: formNumber}); %>
 
 import { directDepositWarning } from '../helpers';
 import toursOfDutyUI from '../definitions/toursOfDuty';
@@ -65,6 +60,7 @@ const formPages = {
 };
 
 const formConfig = {
+  rootUrl: manifest.rootUrl,
   urlPrefix: '/',
   // submitUrl: '/v0/api',
   submit: () =>
