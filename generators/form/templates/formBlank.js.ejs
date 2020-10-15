@@ -1,11 +1,19 @@
 <%- include('partials/formHeader', {formNumber: formNumber}); %>
 const formConfig = {
+  rootUrl: manifest.rootUrl,
   urlPrefix: '/',
   submitUrl: '/v0/api',
   trackingPrefix: '<%= trackingPrefix %>',
   introduction: IntroductionPage,
   confirmation: ConfirmationPage,
   formId: '<%= formNumber %>',
+  saveInProgress: {
+    // messages: {
+    //   inProgress: 'Your <%= benefitDescription %> application (<%= formId %>) is in progress.',
+    //   expired: 'Your saved <%= benefitDescription %> application (<%= formId %>) has expired. If you want to apply for <%= benefitDescription %>, please start a new application.',
+    //   saved: 'Your <%= benefitDescription %> application has been saved.',
+    // },
+  },
   version: 0,
   prefillEnabled: true,
   savedFormMessages: {

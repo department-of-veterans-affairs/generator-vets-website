@@ -15,12 +15,7 @@ import bankAccountUI from 'platform/forms-system/src/js/definitions/bankAccount'
 import phoneUI from 'platform/forms-system/src/js/definitions/phone';
 import * as address from 'platform/forms-system/src/js/definitions/address';
 
-import IntroductionPage from '../containers/IntroductionPage';
-import ConfirmationPage from '../containers/ConfirmationPage';
-
-// const { } = fullSchema.properties;
-
-// const { } = fullSchema.definitions;
+<%- include('partials/formHeader', {formNumber: formNumber}); %>
 
 import { directDepositWarning } from '../helpers';
 import toursOfDutyUI from '../definitions/toursOfDuty';
@@ -65,19 +60,27 @@ const formPages = {
 };
 
 const formConfig = {
+  rootUrl: manifest.rootUrl,
   urlPrefix: '/',
   // submitUrl: '/v0/api',
   submit: () =>
     Promise.resolve({ attributes: { confirmationNumber: '123123123' } }),
-  trackingPrefix: 'complex-form-',
+  trackingPrefix: '<%= trackingPrefix %>',
   introduction: IntroductionPage,
   confirmation: ConfirmationPage,
-  formId: '1234',
+  formId: '<%= formNumber %>',
+  saveInProgress: {
+    // messages: {
+    //   inProgress: 'Your <%= benefitDescription %> application (<%= formId %>) is in progress.',
+    //   expired: 'Your saved <%= benefitDescription %> application (<%= formId %>) has expired. If you want to apply for <%= benefitDescription %>, please start a new application.',
+    //   saved: 'Your <%= benefitDescription %> application has been saved.',
+    // },
+  },
   version: 0,
   prefillEnabled: true,
   savedFormMessages: {
-    notFound: 'Please start over to apply for benefits.',
-    noAuth: 'Please sign in again to continue your application for benefits.',
+    notFound: 'Please start over to apply for <%= benefitDescription %>.',
+    noAuth: 'Please sign in again to continue your application for <%= benefitDescription %>.',
   },
   title: 'Complex Form',
   defaultDefinitions: {
