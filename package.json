@@ -72,6 +72,9 @@
       "prettier"
     ]
   },
+  "resolutions": {
+    "**/axios": "^0.21.1"
+  },
   "repository": "department-of-veterans-affairs/generator-vets-website",
   "license": "CC0-1.0"
 }
