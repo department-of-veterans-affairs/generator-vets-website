@@ -217,17 +217,28 @@ module.exports = class extends Generator {
   }
 
   updateRegistry() {
-    const registryFile = 'src/applications/registry.json';
+    const registryFile = '../content-build/src/applications/registry.json';
     const registry = this.fs.readJSON(registryFile);
-    registry.push({
-      appName: this.props.appName,
-      entryName: this.props.entryName,
-      rootUrl: this.props.rootUrl,
-      template: {
-        vagovprod: false,
-        layout: 'page-react.html',
-      },
-    });
-    this.fs.writeJSON(registryFile, registry);
+
+    try {
+      registry.push({
+        appName: this.props.appName,
+        entryName: this.props.entryName,
+        rootUrl: this.props.rootUrl,
+        template: {
+          vagovprod: false,
+          layout: 'page-react.html',
+        },
+      });
+      this.fs.writeJSON(registryFile, registry);
+    } catch (error) {
+      this.log(
+        chalk.red(
+          `Could not write to ${registryFile}`,
+        ),
+      );
+    }
+
+
   }
 };
