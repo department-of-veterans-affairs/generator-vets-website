@@ -10,12 +10,10 @@ const testConfig = createTestConfig(
   {
     dataPrefix: 'data',
 
+    dataDir: path.join(__dirname, 'data'),
+
     // Rename and modify the test data as needed.
     dataSets: ['test-data'],
-
-    fixtures: {
-      data: path.join(__dirname, 'fixtures', 'data'),
-    },
 
     pageHooks: {
       introduction: ({ afterHook }) => {
