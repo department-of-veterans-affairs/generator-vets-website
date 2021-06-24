@@ -36,7 +36,7 @@
     "yosay": "^2.0.1"
   },
   "scripts": {
-    "prepublishOnly": "npm audit",
+    "prepublishOnly": "npm audit --audit-level=high",
     "pretest": "eslint .",
     "precommit": "lint-staged"
   },
@@ -73,7 +73,8 @@
     ]
   },
   "resolutions": {
-    "**/axios": "^0.21.1"
+    "**/axios": "^0.21.1",
+    "**/glob-parent": "^5.1.2"
   },
   "repository": "department-of-veterans-affairs/generator-vets-website",
   "license": "CC0-1.0"
