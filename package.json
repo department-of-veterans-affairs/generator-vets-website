@@ -36,7 +36,7 @@
     "yosay": "^2.0.1"
   },
   "scripts": {
-    "prepublishOnly": "npm --audit-level=high",
+    "prepublishOnly": "npm audit --audit-level=high",
     "pretest": "eslint .",
     "precommit": "lint-staged"
   },
