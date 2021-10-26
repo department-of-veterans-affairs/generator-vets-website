@@ -1,4 +1,4 @@
-import _ from 'lodash/fp';
+import { merge } from 'lodash';
 
 // Example of an imported schema:
 import fullSchema from '../<%= formNumber %>-schema.json';
@@ -170,7 +170,7 @@ const formConfig = {
             [formFields.viewNoDirectDeposit]: {
               'ui:title': 'I don’t want to use direct deposit',
             },
-            [formFields.bankAccount]: _.merge(bankAccountUI, {
+            [formFields.bankAccount]: merge({}, bankAccountUI, {
               'ui:order': [
                 formFields.accountType,
                 formFields.accountNumber,
