@@ -16,6 +16,13 @@ function hasAccessTo(location) {
   }
 }
 
+function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 module.exports = class extends Generator {
   prompting() {
     // Have Yeoman greet the user.
@@ -116,6 +123,13 @@ module.exports = class extends Generator {
           hasAccessTo(repoPath) ||
           `Could not find the directory ${path.normalize(repoPath)}`,
       },
+      {
+        type: 'input',
+        name: 'productId',
+        message:
+          "Select a UUID for your application. This should not overlap with any other application IDs to avoid overlapping data. Check the product-directory in GitHub to verify yours is not in use.",
+        default: uuidv4(),
+      },
     ];
 
     return this.prompt(prompts).then(props => {
@@ -209,6 +223,7 @@ module.exports = class extends Generator {
         appName: this.props.appName,
         entryName: this.props.entryName,
         rootUrl: this.props.rootUrl,
+        productId: this. props.productId,
         template: {
           vagovprod: false,
           layout: 'page-react.html',
