@@ -116,6 +116,13 @@ module.exports = class extends Generator {
           hasAccessTo(repoPath) ||
           `Could not find the directory ${path.normalize(repoPath)}`,
       },
+      {
+        type: 'input',
+        name: 'productId',
+        message:
+          "Select a UUID for your application. This should not overlap with any other application IDs to avoid overlapping data. Check the product-directory in GitHub to verify yours is not in use.",
+        default: crypto.randomUUID(),
+      },
     ];
 
     return this.prompt(prompts).then(props => {
