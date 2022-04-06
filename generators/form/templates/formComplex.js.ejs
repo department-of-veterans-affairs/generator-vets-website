@@ -13,18 +13,11 @@ import phoneUI from 'platform/forms-system/src/js/definitions/phone';
 import * as address from 'platform/forms-system/src/js/definitions/address';
 
 <%- include('partials/formHeader', {formNumber: formNumber}); %>
-
 // pages
 import directDeposit from '../pages/directDeposit';
 import serviceHistory from '../pages/serviceHistory';
 
-const {
-  fullName,
-  ssn,
-  date,
-  dateRange,
-  usaPhone,
-} = commonDefinitions;
+const { fullName, ssn, date, dateRange, usaPhone } = commonDefinitions;
 
 const formConfig = {
   rootUrl: manifest.rootUrl,
@@ -72,8 +65,8 @@ const formConfig = {
             type: 'object',
             required: ['fullName'],
             properties: {
-              fullName: fullName,
-              ssn: ssn,
+              fullName,
+              ssn,
             },
           },
         },
@@ -85,15 +78,8 @@ const formConfig = {
         serviceHistory: {
           path: 'service-history',
           title: 'Service History',
-          uiSchema: {
-            toursOfDuty: toursOfDutyUI,
-          },
-          schema: {
-            type: 'object',
-            properties: {
-              toursOfDuty: toursOfDuty,
-            },
-          },
+          uiSchema: serviceHistory.uiSchema,
+          schema: serviceHistory.schema,
         },
       },
     },
