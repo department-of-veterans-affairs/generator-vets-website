@@ -1,63 +1,23 @@
-import { merge } from 'lodash';
+// In a real app this would not be imported directly; instead the schema you
+// imported above would import and use these common definitions:
+import commonDefinitions from 'vets-json-schema/dist/definitions.json';
 
 // Example of an imported schema:
 import fullSchema from '../<%= formNumber %>-schema.json';
 // In a real app this would be imported from `vets-json-schema`:
 // import fullSchema from 'vets-json-schema/dist/<%= formNumber %>-schema.json';
 
-// In a real app this would not be imported directly; instead the schema you
-// imported above would import and use these common definitions:
-import commonDefinitions from 'vets-json-schema/dist/definitions.json';
-
 import fullNameUI from 'platform/forms-system/src/js/definitions/fullName';
 import ssnUI from 'platform/forms-system/src/js/definitions/ssn';
-import bankAccountUI from 'platform/forms-system/src/js/definitions/bankAccount';
 import phoneUI from 'platform/forms-system/src/js/definitions/phone';
 import * as address from 'platform/forms-system/src/js/definitions/address';
 
 <%- include('partials/formHeader', {formNumber: formNumber}); %>
+// pages
+import directDeposit from '../pages/directDeposit';
+import serviceHistory from '../pages/serviceHistory';
 
-import { directDepositWarning } from '../helpers';
-import toursOfDutyUI from '../definitions/toursOfDuty';
-
-const {
-  fullName,
-  ssn,
-  date,
-  dateRange,
-  usaPhone,
-  bankAccount,
-  toursOfDuty,
-} = commonDefinitions;
-
-// Define all the fields in the form to aid reuse
-const formFields = {
-  fullName: 'fullName',
-  ssn: 'ssn',
-  toursOfDuty: 'toursOfDuty',
-  viewNoDirectDeposit: 'view:noDirectDeposit',
-  viewStopWarning: 'view:stopWarning',
-  bankAccount: 'bankAccount',
-  accountType: 'accountType',
-  accountNumber: 'accountNumber',
-  routingNumber: 'routingNumber',
-  address: 'address',
-  email: 'email',
-  altEmail: 'altEmail',
-  phoneNumber: 'phoneNumber',
-};
-
-function hasDirectDeposit(formData) {
-  return formData[formFields.viewNoDirectDeposit] !== true;
-}
-
-// Define all the form pages to help ensure uniqueness across all form chapters
-const formPages = {
-  applicantInformation: 'applicantInformation',
-  serviceHistory: 'serviceHistory',
-  contactInformation: 'contactInformation',
-  directDeposit: 'directDeposit',
-};
+const { fullName, ssn, date, dateRange, usaPhone } = commonDefinitions;
 
 const formConfig = {
   rootUrl: manifest.rootUrl,
@@ -94,19 +54,19 @@ const formConfig = {
     applicantInformationChapter: {
       title: 'Applicant Information',
       pages: {
-        [formPages.applicantInformation]: {
+        applicantInformation: {
           path: 'applicant-information',
           title: 'Applicant Information',
           uiSchema: {
-            [formFields.fullName]: fullNameUI,
-            [formFields.ssn]: ssnUI,
+            fullName: fullNameUI,
+            ssn: ssnUI,
           },
           schema: {
             type: 'object',
-            required: [formFields.fullName],
+            required: ['fullName'],
             properties: {
-              [formFields.fullName]: fullName,
-              [formFields.ssn]: ssn,
+              fullName,
+              ssn,
             },
           },
         },
@@ -115,100 +75,51 @@ const formConfig = {
     serviceHistoryChapter: {
       title: 'Service History',
       pages: {
-        [formPages.serviceHistory]: {
+        serviceHistory: {
           path: 'service-history',
           title: 'Service History',
-          uiSchema: {
-            [formFields.toursOfDuty]: toursOfDutyUI,
-          },
-          schema: {
-            type: 'object',
-            properties: {
-              [formFields.toursOfDuty]: toursOfDuty,
-            },
-          },
+          uiSchema: serviceHistory.uiSchema,
+          schema: serviceHistory.schema,
         },
       },
     },
     additionalInformationChapter: {
       title: 'Additional Information',
       pages: {
-        [formPages.contactInformation]: {
+        contactInformation: {
           path: 'contact-information',
           title: 'Contact Information',
           uiSchema: {
-            [formFields.address]: address.uiSchema('Mailing address'),
-            [formFields.email]: {
+            address: address.uiSchema('Mailing address'),
+            email: {
               'ui:title': 'Primary email',
             },
-            [formFields.altEmail]: {
+            altEmail: {
               'ui:title': 'Secondary email',
             },
-            [formFields.phoneNumber]: phoneUI('Daytime phone'),
+            phoneNumber: phoneUI('Daytime phone'),
           },
           schema: {
             type: 'object',
             properties: {
-              [formFields.address]: address.schema(fullSchema, true),
-              [formFields.email]: {
+              address: address.schema(fullSchema, true),
+              email: {
                 type: 'string',
                 format: 'email',
               },
-              [formFields.altEmail]: {
+              altEmail: {
                 type: 'string',
                 format: 'email',
               },
-              [formFields.phoneNumber]: usaPhone,
+              phoneNumber: usaPhone,
             },
           },
         },
-        [formPages.directDeposit]: {
+        directDeposit: {
           path: 'direct-deposit',
           title: 'Direct Deposit',
-          uiSchema: {
-            'ui:title': 'Direct deposit',
-            [formFields.viewNoDirectDeposit]: {
-              'ui:title': 'I don’t want to use direct deposit',
-            },
-            [formFields.bankAccount]: merge({}, bankAccountUI, {
-              'ui:order': [
-                formFields.accountType,
-                formFields.accountNumber,
-                formFields.routingNumber,
-              ],
-              'ui:options': {
-                hideIf: formData => !hasDirectDeposit(formData),
-              },
-              [formFields.accountType]: {
-                'ui:required': hasDirectDeposit,
-              },
-              [formFields.accountNumber]: {
-                'ui:required': hasDirectDeposit,
-              },
-              [formFields.routingNumber]: {
-                'ui:required': hasDirectDeposit,
-              },
-            }),
-            [formFields.viewStopWarning]: {
-              'ui:description': directDepositWarning,
-              'ui:options': {
-                hideIf: hasDirectDeposit,
-              },
-            },
-          },
-          schema: {
-            type: 'object',
-            properties: {
-              [formFields.viewNoDirectDeposit]: {
-                type: 'boolean',
-              },
-              [formFields.bankAccount]: bankAccount,
-              [formFields.viewStopWarning]: {
-                type: 'object',
-                properties: {},
-              },
-            },
-          },
+          uiSchema: directDeposit.uiSchema,
+          schema: directDeposit.schema,
         },
       },
     },

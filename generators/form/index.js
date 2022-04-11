@@ -154,10 +154,6 @@ module.exports = class extends Generator {
           this.destinationPath(`${appPath}/config/form.js`),
           this.props,
         );
-        this.fs.copy(
-          this.templatePath('complexHelpers.js'),
-          this.destinationPath(`${appPath}/helpers.js`),
-        );
         this.fs.copyTpl(
           this.templatePath('complex-form-schema.json.ejs'),
           this.destinationPath(`${appPath}/${this.props.formNumber}-schema.json`),
@@ -166,6 +162,16 @@ module.exports = class extends Generator {
         this.fs.copyTpl(
           this.templatePath('toursOfDuty.js.ejs'),
           this.destinationPath(`${appPath}/definitions/toursOfDuty.js`),
+          this.props,
+        );
+        this.fs.copyTpl(
+          this.templatePath('pageDirectDeposit.js.ejs'),
+          this.destinationPath(`${appPath}/pages/directDeposit.js`),
+          this.props,
+        );
+        this.fs.copyTpl(
+          this.templatePath('pageServiceHistory.js.ejs'),
+          this.destinationPath(`${appPath}/pages/serviceHistory.js`),
           this.props,
         );
         break;

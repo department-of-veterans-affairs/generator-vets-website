@@ -1,12 +1,11 @@
 <%- include('partials/formHeader', {formNumber: formNumber}); %>
-const formFields = {
-  firstName: 'firstName',
-};
 
 const formConfig = {
   rootUrl: manifest.rootUrl,
   urlPrefix: '/',
-  submitUrl: '/v0/api',
+  // submitUrl: '/v0/api',
+  submit: () =>
+    Promise.resolve({ attributes: { confirmationNumber: '123123123' } }),
   trackingPrefix: '<%= trackingPrefix %>',
   introduction: IntroductionPage,
   confirmation: ConfirmationPage,
@@ -34,15 +33,15 @@ const formConfig = {
           path: 'first-name',
           title: 'Personal Information - Page 1',
           uiSchema: {
-            [formFields.firstName]: {
+            firstName: {
               'ui:title': 'First Name',
             },
           },
           schema: {
-            required: [formFields.firstName],
+            required: ['firstName'],
             type: 'object',
             properties: {
-              [formFields.firstName]: {
+              firstName: {
                 type: 'string',
               },
             },
