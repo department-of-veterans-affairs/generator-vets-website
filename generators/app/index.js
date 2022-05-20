@@ -130,6 +130,13 @@ module.exports = class extends Generator {
           "Select a UUID for your application. This should not overlap with any other application IDs to avoid overlapping data. Check the product-directory in GitHub to verify yours is not in use.",
         default: uuidv4(),
       },
+      {
+        type: 'input',
+        name: 'slackGroup',
+        message:
+          "What's the name of your team's Slack user group? Example: '@vaos-fe-dev'",
+        default: 'none',
+      },
     ];
 
     return this.prompt(prompts).then(props => {
@@ -239,5 +246,32 @@ module.exports = class extends Generator {
     }
 
 
+  }
+
+  updateAllowlist() {
+    const configPath = 'config/changed-apps-build.json';
+    const config = this.fs.readJSON(configPath);
+    const isSingleApp = !this.props.folderName.includes('/');
+
+    try {
+      if (isSingleApp) {
+        config.allow.singleApps.push({
+          entryName: this.props.entryName,
+          slackGroup: this.props.slackGroup,
+        });
+      } else if (
+        config.allow.groupedApps.find((app) => app.rootFolder === this.props.folderName)
+      ) {
+        // Only add an app when the group is on the allow-list
+        config.allow.groupedApps.push({
+          rootFolder: this.props.folderName,
+          slackGroup: this.props.slackGroup,
+        });
+      }
+
+      this.fs.writeJSON(configPath, config);
+    } catch (error) {
+      this.log(chalk.red(`Could not write to ${configPath}. ${error}`));
+    }
   }
 };
