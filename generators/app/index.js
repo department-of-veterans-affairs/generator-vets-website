@@ -134,7 +134,7 @@ module.exports = class extends Generator {
         type: 'input',
         name: 'slackGroup',
         message:
-          "What's the name of your team's Slack user group? Example: '@vaos-fe-dev'",
+          "What Slack user group should be notified for CI failures on the `main` branch? Example: '@vaos-fe-dev'",
         default: 'none',
       },
     ];
@@ -251,27 +251,30 @@ module.exports = class extends Generator {
   updateAllowlist() {
     const configPath = 'config/changed-apps-build.json';
     const config = this.fs.readJSON(configPath);
-    const isSingleApp = !this.props.folderName.includes('/');
 
-    try {
-      if (isSingleApp) {
-        config.allow.singleApps.push({
-          entryName: this.props.entryName,
-          slackGroup: this.props.slackGroup,
-        });
-      } else if (
-        config.allow.groupedApps.find((app) => app.rootFolder === this.props.folderName)
-      ) {
-        // Only add an app when the group is on the allow-list
-        config.allow.groupedApps.push({
-          rootFolder: this.props.folderName,
-          slackGroup: this.props.slackGroup,
-        });
+    if (this.props.slackGroup !== 'none') {
+      const isSingleApp = !this.props.folderName.includes('/');
+
+      try {
+        if (isSingleApp) {
+          config.allow.singleApps.push({
+            entryName: this.props.entryName,
+            slackGroup: this.props.slackGroup,
+          });
+
+          this.fs.writeJSON(configPath, config);
+        } else if (!fs.existsSync(path.join('src/applications', this.props.folderName))) {
+          // Only add new grouped apps to allow-list
+          config.allow.groupedApps.push({
+            rootFolder: this.props.folderName.split(path.sep)[0],
+            slackGroup: this.props.slackGroup,
+          });
+
+          this.fs.writeJSON(configPath, config);
+        }
+      } catch (error) {
+        this.log(chalk.red(`Could not write to ${configPath}. ${error}`));
       }
-
-      this.fs.writeJSON(configPath, config);
-    } catch (error) {
-      this.log(chalk.red(`Could not write to ${configPath}. ${error}`));
     }
   }
 };
