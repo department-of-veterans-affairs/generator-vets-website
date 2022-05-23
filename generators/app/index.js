@@ -249,11 +249,15 @@ module.exports = class extends Generator {
   }
 
   updateAllowlist() {
-    const configPath = 'config/changed-apps-build.json';
+    const configPath = path.join('config, changed-apps-build.json');
     const config = this.fs.readJSON(configPath);
+    const isNewApp = !fs.existsSync(
+      path.join('src', 'applications', this.props.folderName),
+    );
 
-    if (this.props.slackGroup !== 'none') {
-      const isSingleApp = !this.props.folderName.includes('/');
+    if (this.props.slackGroup !== 'none' && isNewApp) {
+      const appPaths = this.props.folderName.split(path.sep);
+      const isSingleApp = appPaths.length === 1;
 
       try {
         if (isSingleApp) {
@@ -261,17 +265,14 @@ module.exports = class extends Generator {
             entryName: this.props.entryName,
             slackGroup: this.props.slackGroup,
           });
-
-          this.fs.writeJSON(configPath, config);
-        } else if (!fs.existsSync(path.join('src/applications', this.props.folderName))) {
-          // Only add new grouped apps to allow-list
+        } else {
           config.allow.groupedApps.push({
-            rootFolder: this.props.folderName.split(path.sep)[0],
+            rootFolder: appPaths[0],
             slackGroup: this.props.slackGroup,
           });
-
-          this.fs.writeJSON(configPath, config);
         }
+
+        this.fs.writeJSON(configPath, config);
       } catch (error) {
         this.log(chalk.red(`Could not write to ${configPath}. ${error}`));
       }
