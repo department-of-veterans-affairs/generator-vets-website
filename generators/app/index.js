@@ -130,11 +130,61 @@ module.exports = class extends Generator {
           "Select a UUID for your application. This should not overlap with any other application IDs to avoid overlapping data. Check the product-directory in GitHub to verify yours is not in use.",
         default: uuidv4(),
       },
+      {
+        type: 'input',
+        name: 'slackGroup',
+        message:
+          "What Slack user group should be notified for CI failures on the `main` branch? Example: '@vaos-fe-dev'",
+        default: 'none',
+        validate: userGroup => {
+          if (userGroup !== 'none' && !userGroup.includes('@')) {
+            return "Slack user groups should begin with an at sign, '@'";
+          }
+
+          return true;
+        },
+      },
     ];
 
     return this.prompt(prompts).then(props => {
       this.props = props;
     });
+  }
+
+  _updateAllowlist() {
+    const configPath = path.join('config', 'changed-apps-build.json');
+    const config = this.fs.readJSON(configPath);
+    const isNewApp = !fs.existsSync(
+      path.join('src', 'applications', this.props.folderName),
+    );
+
+    if (this.props.slackGroup !== 'none' && isNewApp) {
+      const appPaths = this.props.folderName.split(path.sep);
+      const isSingleApp = appPaths.length === 1;
+
+      try {
+        if (isSingleApp) {
+          config.allow.singleApps.push({
+            entryName: this.props.entryName,
+            slackGroup: this.props.slackGroup,
+          });
+        } else {
+          config.allow.groupedApps.push({
+            rootFolder: appPaths[0],
+            slackGroup: this.props.slackGroup,
+          });
+        }
+
+        this.fs.writeJSON(configPath, config);
+      } catch (error) {
+        this.log(chalk.red(`Could not write to ${configPath}. ${error}`));
+      }
+    }
+  }
+
+  configuring() {
+    // This needs to run before writing to the app folder, so we can know if the root folder is new.
+    this._updateAllowlist();
   }
 
   default() {
