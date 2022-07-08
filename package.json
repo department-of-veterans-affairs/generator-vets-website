@@ -1,6 +1,6 @@
 {
   "name": "@department-of-veterans-affairs/generator-vets-website",
-  "version": "3.6.0",
+  "version": "3.6.5",
   "description": "Generate a React app for vets-website",
   "homepage": "",
   "author": {
