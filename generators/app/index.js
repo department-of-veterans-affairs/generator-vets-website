@@ -125,13 +125,6 @@ module.exports = class extends Generator {
       },
       {
         type: 'input',
-        name: 'productId',
-        message:
-          "Select a UUID for your application. This should not overlap with any other application IDs to avoid overlapping data. Check the product-directory in GitHub to verify yours is not in use.",
-        default: uuidv4(),
-      },
-      {
-        type: 'input',
         name: 'slackGroup',
         message:
           "What Slack user group should be notified for CI failures on the `main` branch? Example: '@vaos-fe-dev'",
@@ -148,6 +141,7 @@ module.exports = class extends Generator {
 
     return this.prompt(prompts).then(props => {
       this.props = props;
+      this.props.productId = uuidv4();
     });
   }
 
@@ -273,7 +267,7 @@ module.exports = class extends Generator {
         appName: this.props.appName,
         entryName: this.props.entryName,
         rootUrl: this.props.rootUrl,
-        productId: this. props.productId,
+        productId: this.props.productId,
         template: {
           vagovprod: false,
           layout: 'page-react.html',
