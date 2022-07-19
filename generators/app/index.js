@@ -24,6 +24,58 @@ function uuidv4() {
 }
 
 module.exports = class extends Generator {
+
+  constructor(args, options) {
+    super(args,options)
+    this.option('appName', {
+      type: String, 
+      required: false, 
+      default: 'my-app-name'
+    })
+    this.option('folderName', {
+      type: String, 
+      required: false, 
+      default: 'my-folder'
+    })
+    this.option('entryName', {
+      type: String, 
+      required: false, 
+      default: 'my-entry-name'
+    })
+    this.option('rootUrl', {
+      type: String, 
+      required: false, 
+      default: '/my-app'
+    })           
+    this.option('slackGroup', {
+      type: String, 
+      required: false, 
+      default: '@my-slack-group'
+    })              
+    this.option('isForm', {
+      type: Boolean, 
+      required: false,
+      default: false
+    })
+    this.option('contentLoc', {
+      type: String,
+      required: false,
+      default: 'docs'
+    })
+  }
+
+  initializing() {
+    // Add validation later
+    this.props = {
+      appName: this.options.appName,
+      folderName: this.options.folderName,
+      entryName: this.options.entryName,
+      rootUrl: this.options.rootUrl,
+      slackGroup: this.options.slackGroup,
+      isForm: this.options.isForm,
+      contentRepoLocation: this.options.contentLoc
+    }
+  }
   prompting() {
     // Have Yeoman greet the user.
     this.log(yosay(`Welcome to the ${chalk.red('vets-website app')} generator!`));
@@ -47,6 +99,7 @@ module.exports = class extends Generator {
         message:
           "What's the name of your application? This will be the default page title. Examples: '21P-530 Burials benefits form' or 'GI Bill School Feedback Tool'",
         default: 'A New Form',
+        when: !this.props.appName
       },
       {
         type: 'input',
@@ -71,6 +124,7 @@ module.exports = class extends Generator {
           return val;
         },
         default: 'new-form',
+        when: !this.props.folderName
       },
       {
         type: 'input',
@@ -85,6 +139,7 @@ module.exports = class extends Generator {
           return 'Bundle names should not include spaces';
         },
         default: answers => answers.folderName.split('/').pop(),
+        when: !this.props.entryName
       },
       {
         type: 'input',
@@ -103,12 +158,14 @@ module.exports = class extends Generator {
           return val;
         },
         default: answers => `/${answers.folderName}`,
+        when: !this.props.rootUrl
       },
       {
         type: 'confirm',
         name: 'isForm',
         message: 'Is this a form app?',
         default: false,
+        when: this.props.isForm != false
       },
       {
         type: 'input',
@@ -122,6 +179,7 @@ module.exports = class extends Generator {
         validate: repoPath =>
           hasAccessTo(repoPath) ||
           `Could not find the directory ${path.normalize(repoPath)}`,
+        when: !this.props.contentRepoLocation
       },
       {
         type: 'input',
@@ -136,16 +194,22 @@ module.exports = class extends Generator {
 
           return true;
         },
+        when: !this.props.slackGroup
       },
     ];
 
     return this.prompt(prompts).then(props => {
-      this.props = props;
+      this.props = {...this.props, ...props};
       this.props.productId = uuidv4();
     });
   }
 
   _updateAllowlist() {
+
+    this.log(
+      JSON.stringify(this.props),
+    );
+
     const configPath = path.join('config', 'changed-apps-build.json');
     const config = this.fs.readJSON(configPath);
     const isNewApp = !fs.existsSync(
@@ -177,6 +241,9 @@ module.exports = class extends Generator {
   }
 
   configuring() {
+    this.log(
+      `Configuring*****}\n`,
+    );
     // This needs to run before writing to the app folder, so we can know if the root folder is new.
     this._updateAllowlist();
   }
@@ -200,6 +267,9 @@ module.exports = class extends Generator {
   }
 
   writingNewFiles() {
+    this.log(
+      `hello, foldername is ${this.props.folderName}\n`,
+    );
     const rootPath = `src/applications/`;
     const appPath = `${rootPath}${this.props.folderName}`;
     let contentRepoMarkdownCopied = false;
@@ -259,7 +329,10 @@ module.exports = class extends Generator {
   }
 
   updateRegistry() {
-    const registryFile = '../content-build/src/applications/registry.json';
+    this.log(
+      `updatingRegistry\n`,
+    );
+    const registryFile = 'src/applications/registry.json';
     const registry = this.fs.readJSON(registryFile);
 
     try {
