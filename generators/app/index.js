@@ -4,7 +4,6 @@ const path = require('path');
 const Generator = require('yeoman-generator');
 const chalk = require('chalk');
 const yosay = require('yosay');
-const { check } = require('prettier');
 
 const defaultContentRepoPath = '../vagov-content';
 
@@ -57,16 +56,14 @@ module.exports = class extends Generator {
       type: String,
       required: false
     })
-    // Will overwrite if necessary
-    this.option('force', {
-      type: String,
-      required: true
-    })
   }
 
+  // Validators
   _isInvalidFolderName = folder => !folder.includes(' ') || 'Folder names should not include spaces';
-
   _isInvalidEntryName = entryName => !entryName.includes(' ') || 'Bundle names should not include spaces';
+  _isInvalidSlackGroup = userGroup => {
+    return userGroup !== 'none' && !userGroup.startsWith('@') ? `Slack user groups should begin with an at sign, '@'. Received: ${userGroup}` : true
+  }
 
   // Remove leading and trailing forward slashes
   _folderNameFilter= folder => {
@@ -91,21 +88,16 @@ module.exports = class extends Generator {
       return url;
   }
 
-  _isInvalidSlackGroup = userGroup => {
-    return userGroup !== 'none' && !userGroup.includes('@') ? "Slack user groups should begin with an at sign, '@'" : true
-  }
-
+ 
   initializing() {
-    // These don't require any validation
-
     this.props = {
       appName: this.options.appName,
       rootUrl: this.options.rootUrl,
       contentRepoLocation: this.options.contentLoc
     }
     
-    const makeBool = boolLike => {
-        
+
+    const makeBool = boolLike => {   
       switch (boolLike?.toUpperCase()) {
         case 'N':
         case 'FALSE':
@@ -268,9 +260,6 @@ module.exports = class extends Generator {
   }
 
   configuring() {
-    this.log(
-      `Configuring*****\n`,
-    );
     // This needs to run before writing to the app folder, so we can know if the root folder is new.
     this._updateAllowlist();
   }
@@ -353,9 +342,6 @@ module.exports = class extends Generator {
   }
 
   updateRegistry() {
-    this.log(
-      `updatingRegistry\n`,
-    );
     const registryFile = 'src/applications/registry.json';
     const registry = this.fs.readJSON(registryFile);
 
