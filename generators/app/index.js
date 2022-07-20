@@ -4,6 +4,7 @@ const path = require('path');
 const Generator = require('yeoman-generator');
 const chalk = require('chalk');
 const yosay = require('yosay');
+const { check } = require('prettier');
 
 const defaultContentRepoPath = '../vagov-content';
 
@@ -27,55 +28,114 @@ module.exports = class extends Generator {
 
   constructor(args, options) {
     super(args,options)
+    
     this.option('appName', {
       type: String, 
       required: false, 
-      default: 'my-app-name'
     })
     this.option('folderName', {
       type: String, 
       required: false, 
-      default: 'my-folder'
     })
     this.option('entryName', {
       type: String, 
       required: false, 
-      default: 'my-entry-name'
     })
     this.option('rootUrl', {
       type: String, 
       required: false, 
-      default: '/my-app'
     })           
     this.option('slackGroup', {
       type: String, 
       required: false, 
-      default: '@my-slack-group'
     })              
     this.option('isForm', {
-      type: Boolean, 
-      required: false,
-      default: false
+      type: String,
+      required: false
     })
     this.option('contentLoc', {
       type: String,
-      required: false,
-      default: 'docs'
+      required: false
+    })
+    // Will overwrite if necessary
+    this.option('force', {
+      type: String,
+      required: true
     })
   }
 
+  _isInvalidFolderName = folder => !folder.includes(' ') || 'Folder names should not include spaces';
+
+  _isInvalidEntryName = entryName => !entryName.includes(' ') || 'Bundle names should not include spaces';
+
+  // Remove leading and trailing forward slashes
+  _folderNameFilter= folder => {
+      if (folder.startsWith('/')) {
+        folder = folder.substring(1);
+      }
+      if (folder.endsWith('/')) {
+        folder = folder.substring(0, -1);
+      }
+      return folder;
+  }
+
+  _rootUrlFilter = url => {
+      // Add leading slash if needed
+      if (!url.startsWith('/')) {
+        url = `/${url}`;
+      }
+      // Add `index` if a page name was not included
+      if (url.endsWith('/')) {
+        url = `${url}index`;
+      }
+      return url;
+  }
+
+  _isInvalidSlackGroup = userGroup => {
+    return userGroup !== 'none' && !userGroup.includes('@') ? "Slack user groups should begin with an at sign, '@'" : true
+  }
+
   initializing() {
-    // Add validation later
+    // These don't require any validation
+
     this.props = {
       appName: this.options.appName,
-      folderName: this.options.folderName,
-      entryName: this.options.entryName,
       rootUrl: this.options.rootUrl,
-      slackGroup: this.options.slackGroup,
-      isForm: this.options.isForm,
       contentRepoLocation: this.options.contentLoc
     }
+    
+    const makeBool = boolLike => {
+        
+      switch (boolLike?.toUpperCase()) {
+        case 'N':
+        case 'FALSE':
+        case false:
+          return false;
+        default:
+          return true;
+      }
+    }
+
+    this.props.isForm = makeBool(this.options.isForm)
+
+    // Perform validations
+    if(this.options.folderName) {
+      const badFolder = this._isInvalidFolderName(this.options.folderName);
+      badFolder === true ? this.props.folderName = this.options.folderName : this.emit('error', new Error(badFolder))
+    }
+
+    if(this.options.entryName) {
+      const badEntryName = this._isInvalidEntryName(this.options.entryName);
+      badEntryName === true ? this.props.entryName = this.options.entryName : this.emit('error', new Error(badEntryName))
+    }     
+    if(this.options.slackGroup) {
+      const badSlackGroup = this._isInvalidSlackGroup(this.options.slackGroup);
+      badSlackGroup === true ? this.props.slackGroup= this.options.slackGroup : this.emit('error', new Error(badSlackGroup))
+    }       
+
   }
+
+
   prompting() {
     // Have Yeoman greet the user.
     this.log(yosay(`Welcome to the ${chalk.red('vets-website app')} generator!`));
@@ -106,23 +166,8 @@ module.exports = class extends Generator {
         name: 'folderName',
         message:
           "What folder in `src/applications/` should your app live in? This can be a subfolder. Examples: 'burials' or 'edu-benefits/0993'",
-        validate: folder => {
-          if (!folder.includes(' ')) {
-            return true;
-          }
-
-          return 'Folder names should not include spaces';
-        },
-        // Remove leading and trailing forward slashes
-        filter: val => {
-          if (val.startsWith('/')) {
-            val = val.substring(1);
-          }
-          if (val.endsWith('/')) {
-            val = val.substring(0, -1);
-          }
-          return val;
-        },
+        validate: this._isInvalidFolderName,
+        filter: this._folderNameFilter,
         default: 'new-form',
         when: !this.props.folderName
       },
@@ -131,14 +176,11 @@ module.exports = class extends Generator {
         name: 'entryName',
         message:
           "What should be the name of your app's entry bundle? Examples: '0993-edu-benefits' or 'feedback-tool'",
-        validate: name => {
-          if (!name.includes(' ')) {
-            return true;
-          }
-
-          return 'Bundle names should not include spaces';
+        validate: this._isInvalidEntryName,
+        default: answers => {
+          const folder = this.props.folderName ?? answers.folderName;
+          return folder.split('/').pop()
         },
-        default: answers => answers.folderName.split('/').pop(),
         when: !this.props.entryName
       },
       {
@@ -146,18 +188,11 @@ module.exports = class extends Generator {
         name: 'rootUrl',
         message:
           "What's the root url for this app? Examples: '/gi-bill-comparison-tool' or '/education/opt-out-information-sharing/opt-out-form-0993'",
-        filter: val => {
-          // Add leading slash if needed
-          if (!val.startsWith('/')) {
-            val = `/${val}`;
-          }
-          // Add `index` if a page name was not included
-          if (val.endsWith('/')) {
-            val = `${val}index`;
-          }
-          return val;
+        filter: this._rootUrlFilter,
+        default: answers => {
+          const folder = this.props.folderName ?? answers.folderName;
+          return `/${folder}`
         },
-        default: answers => `/${answers.folderName}`,
         when: !this.props.rootUrl
       },
       {
@@ -165,7 +200,7 @@ module.exports = class extends Generator {
         name: 'isForm',
         message: 'Is this a form app?',
         default: false,
-        when: this.props.isForm != false
+        when: this.props.isForm === undefined 
       },
       {
         type: 'input',
@@ -187,16 +222,11 @@ module.exports = class extends Generator {
         message:
           "What Slack user group should be notified for CI failures on the `main` branch? Example: '@vaos-fe-dev'",
         default: 'none',
-        validate: userGroup => {
-          if (userGroup !== 'none' && !userGroup.includes('@')) {
-            return "Slack user groups should begin with an at sign, '@'";
-          }
-
-          return true;
-        },
+        validate: this._isInvalidSlackGroup,
         when: !this.props.slackGroup
       },
     ];
+
 
     return this.prompt(prompts).then(props => {
       this.props = {...this.props, ...props};
@@ -206,9 +236,6 @@ module.exports = class extends Generator {
 
   _updateAllowlist() {
 
-    this.log(
-      JSON.stringify(this.props),
-    );
 
     const configPath = path.join('config', 'changed-apps-build.json');
     const config = this.fs.readJSON(configPath);
@@ -242,7 +269,7 @@ module.exports = class extends Generator {
 
   configuring() {
     this.log(
-      `Configuring*****}\n`,
+      `Configuring*****\n`,
     );
     // This needs to run before writing to the app folder, so we can know if the root folder is new.
     this._updateAllowlist();
@@ -267,9 +294,6 @@ module.exports = class extends Generator {
   }
 
   writingNewFiles() {
-    this.log(
-      `hello, foldername is ${this.props.folderName}\n`,
-    );
     const rootPath = `src/applications/`;
     const appPath = `${rootPath}${this.props.folderName}`;
     let contentRepoMarkdownCopied = false;
