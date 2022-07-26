@@ -47,7 +47,8 @@ module.exports = class extends Generator {
     this.option('slackGroup', {
       type: String, 
       required: false, 
-    })              
+    })       
+    // Accepts boolean-like strings, i.e. "N" and "FALSE" => false, "Y" and "TRUE" => true       
     this.option('isForm', {
       type: String,
       required: false
@@ -108,7 +109,7 @@ module.exports = class extends Generator {
       }
     }
 
-    this.props.isForm = makeBool(this.options.isForm)
+    this.props.isForm = this.options.isForm != undefined ?  makeBool(this.options.isForm) : null;
 
     // Perform validations
     if(this.options.folderName) {
@@ -192,7 +193,8 @@ module.exports = class extends Generator {
         name: 'isForm',
         message: 'Is this a form app?',
         default: false,
-        when: this.props.isForm === undefined 
+        // If this prop was set from a command line argument, it will be a boolean at this point, otherwise ask.
+        when: typeof this.props.isForm != 'boolean'
       },
       {
         type: 'input',
