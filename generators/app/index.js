@@ -344,7 +344,7 @@ module.exports = class extends Generator {
   }
 
   updateRegistry() {
-    const registryFile = 'src/applications/registry.json';
+    const registryFile = '../content-build/src/applications/registry.json';
     const registry = this.fs.readJSON(registryFile);
 
     try {
