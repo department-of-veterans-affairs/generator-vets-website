@@ -221,7 +221,6 @@ module.exports = class extends Generator {
       },
     ];
 
-
     return this.prompt(prompts).then(props => {
       this.props = {...this.props, ...props};
       this.props.productId = uuidv4();
@@ -229,8 +228,6 @@ module.exports = class extends Generator {
   }
 
   _updateAllowlist() {
-
-
     const configPath = path.join('config', 'changed-apps-build.json');
     const config = this.fs.readJSON(configPath);
     const isNewApp = !fs.existsSync(
@@ -366,5 +363,7 @@ module.exports = class extends Generator {
         ),
       );
     }
+
+
   }
 };
