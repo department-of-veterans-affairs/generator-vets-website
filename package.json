@@ -1,6 +1,6 @@
 {
   "name": "@department-of-veterans-affairs/generator-vets-website",
-  "version": "3.7.0",
+  "version": "3.8.0",
   "description": "Generate a React app for vets-website",
   "homepage": "",
   "author": {
@@ -75,7 +75,8 @@
   "resolutions": {
     "**/axios": "^0.21.1",
     "**/glob-parent": "^5.1.2",
-    "**/ansi-regex": "^5.0.1"
+    "**/ansi-regex": "^5.0.1",
+    "**/minimist": "^1.2.6"
   },
   "repository": "department-of-veterans-affairs/generator-vets-website",
   "license": "CC0-1.0"
