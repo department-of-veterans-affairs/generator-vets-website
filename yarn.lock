@@ -2360,9 +2360,9 @@ yeoman-generator@^5.6.1:
     text-table "^0.2.0"
 
 yeoman-test@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/yeoman-test/-/yeoman-test-7.0.0.tgz#3969548bb62df20a023579220e61a01174bac2f3"
-  integrity sha512-2QK5B+VBM6Rhyi7+aB9+2vatPPobuQIpIQZwnaz/E5Crwn8KasJY/PSazgzNs8hrZ3EXFr8UULs3GIg2+OQ1sw==
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/yeoman-test/-/yeoman-test-7.1.0.tgz#4e35b6d823d242ef74d6713a98f70f0a23fac55d"
+  integrity sha512-15cK2ttoDp5WeuNdTqUweTCsQ+U1PfdGz2kqOILj7U2V0RA0F7Zg6gRKub4BFkLxnmC0qp7Y6m+Y/p1mwN7DMA==
   dependencies:
     "@types/inquirer" "^8.2.5"
     "@types/mem-fs-editor" "^7.0.2"
