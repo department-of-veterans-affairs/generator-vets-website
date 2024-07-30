@@ -6,4 +6,4 @@
 # https://github.com/department-of-veterans-affairs/va.gov-team/blob/master/platform/engineering/codeowners.md
 
 # Platform
-*       @department-of-veterans-affairs/platform-release-tools
+*       @department-of-veterans-affairs/va-platform-cop-frontend
