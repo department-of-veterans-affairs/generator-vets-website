@@ -1,6 +1,6 @@
 {
   "name": "@department-of-veterans-affairs/generator-vets-website",
-  "version": "3.9.1",
+  "version": "3.9.2",
   "description": "Generate a React app for vets-website",
   "homepage": "",
   "author": {
@@ -31,7 +31,7 @@
     "node": ">= 8.0.0"
   },
   "dependencies": {
-    "chalk": "^5.1.0",
+    "chalk": "^4.1.2",
     "yeoman-generator": "^5.6.1",
     "yosay": "^2.0.2"
   },
