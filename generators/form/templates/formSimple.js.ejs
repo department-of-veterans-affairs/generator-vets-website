@@ -1,5 +1,6 @@
 <%- include('partials/formHeader', {formNumber: formNumber}); %>
 
+/** @type {FormConfig} */
 const formConfig = {
   rootUrl: manifest.rootUrl,
   urlPrefix: '/',
@@ -8,6 +9,10 @@ const formConfig = {
     Promise.resolve({ attributes: { confirmationNumber: '123123123' } }),
   trackingPrefix: '<%= trackingPrefix %>',
   introduction: IntroductionPage,
+  dev: {
+    showNavLinks: true,
+    collapsibleNavLinks: true,
+  },
   confirmation: ConfirmationPage,
   formId: '<%= formNumber %>',
   saveInProgress: {

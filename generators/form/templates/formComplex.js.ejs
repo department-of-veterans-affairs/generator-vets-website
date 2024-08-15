@@ -19,6 +19,7 @@ import serviceHistory from '../pages/serviceHistory';
 
 const { fullName, ssn, date, dateRange, usaPhone } = commonDefinitions;
 
+/** @type {FormConfig} */
 const formConfig = {
   rootUrl: manifest.rootUrl,
   urlPrefix: '/',
@@ -28,6 +29,10 @@ const formConfig = {
   trackingPrefix: '<%= trackingPrefix %>',
   introduction: IntroductionPage,
   confirmation: ConfirmationPage,
+  dev: {
+    showNavLinks: true,
+    collapsibleNavLinks: true,
+  },
   formId: '<%= formNumber %>',
   saveInProgress: {
     // messages: {
