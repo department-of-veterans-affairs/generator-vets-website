@@ -211,7 +211,7 @@ module.exports = class extends Generator {
         type: 'confirm',
         name: 'isForm',
         message: 'Is this a form app?',
-        default: false,
+        default: true,
         // If this prop was set from a command line argument, it will be a boolean at this point, otherwise ask.
         when: typeof this.props.isForm !== 'boolean',
       },
