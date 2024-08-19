@@ -27,7 +27,7 @@ module.exports = class extends Generator {
         message: "What's your form number? Examples: '22-0993' or '21P-530'",
         // 1. Replace spaces and underscores with dashes
         // 2. Convert to uppercase
-        filter: val => {
+        filter(val) {
           return val.replace(/\s|_/g, '-').toUpperCase();
         },
       },
@@ -72,12 +72,12 @@ module.exports = class extends Generator {
           `${TEMPLATE_TYPES.SIMPLE}: A single-chapter form with a single field`,
           `${TEMPLATE_TYPES.COMPLEX}: A complex, multi-chapter form with multiple fields`,
         ],
-        filter: choice => choice.split(':')[0],
+        filter: (choice) => choice.split(':')[0],
       },
     ];
 
-    return this.prompt(prompts).then(props => {
-      this.props = Object.assign({}, this.options, props);
+    return this.prompt(prompts).then((props) => {
+      this.props = { ...this.options, ...props };
     });
   }
 

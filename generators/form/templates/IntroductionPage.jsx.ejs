@@ -25,6 +25,9 @@ class IntroductionPage extends React.Component {
           messages={formConfig.savedFormMessages}
           pageList={pageList}
           startText="Start the Application"
+          devOnly={{
+            forceShowFormControls: true,
+          }}
         >
           Please complete the <%= formNumber %> form to apply for <%= benefitDescription %>.
         </SaveInProgressIntro>
@@ -78,6 +81,9 @@ class IntroductionPage extends React.Component {
           messages={formConfig.savedFormMessages}
           pageList={pageList}
           startText="Start the Application"
+          devOnly={{
+            forceShowFormControls: true,
+          }}
         />
         <p />
         <va-omb-info
