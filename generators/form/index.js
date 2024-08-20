@@ -2,8 +2,8 @@
 const Generator = require('yeoman-generator');
 
 const TEMPLATE_TYPES = {
-  SIMPLE: 'SIMPLE',
-  COMPLEX: 'COMPLEX',
+  WITH_1_PAGE: 'WITH_1_PAGE',
+  WITH_4_PAGES: 'WITH_4_PAGES',
 };
 
 /**
@@ -67,8 +67,8 @@ module.exports = class extends Generator {
         name: 'templateType',
         message: 'Which form template would you like to start with?',
         choices: [
-          `${TEMPLATE_TYPES.SIMPLE}: A form with 1 page - name and date of birth`,
-          `${TEMPLATE_TYPES.COMPLEX}: A form with 4 pages - name and date of birth, identification information, mailing address, and phone and email`,
+          `${TEMPLATE_TYPES.WITH_1_PAGE}: A form with 1 page - name and date of birth`,
+          `${TEMPLATE_TYPES.WITH_4_PAGES}: A form with 4 pages - name and date of birth, identification information, mailing address, and phone and email`,
         ],
         filter: (choice) => choice.split(':')[0],
       },
@@ -149,7 +149,7 @@ module.exports = class extends Generator {
       this.props,
     );
 
-    if (this.props.templateType === TEMPLATE_TYPES.COMPLEX) {
+    if (this.props.templateType === TEMPLATE_TYPES.WITH_4_PAGES) {
       this.fs.copyTpl(
         this.templatePath('pages/identificationInformation.js.ejs'),
         this.destinationPath(`${appPath}/pages/identificationInformation.js`),

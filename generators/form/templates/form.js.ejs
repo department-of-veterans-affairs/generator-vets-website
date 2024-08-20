@@ -1,5 +1,5 @@
 <%- include('partials/formHeader', {formNumber: formNumber}); %>
-import nameAndDateOfBirth from '../pages/nameAndDateOfBirth';<% if (templateType === 'COMPLEX') { %>
+import nameAndDateOfBirth from '../pages/nameAndDateOfBirth';<% if (templateType === 'WITH_4_PAGES') { %>
 import identificationInformation from '../pages/identificationInformation';
 import mailingAddress from '../pages/mailingAddress';
 import phoneAndEmailAddress from '../pages/phoneAndEmailAddress';
@@ -45,7 +45,7 @@ const formConfig = {
           title: 'Name and date of birth',
           uiSchema: nameAndDateOfBirth.uiSchema,
           schema: nameAndDateOfBirth.schema,
-        },<% if (templateType === 'COMPLEX') { %>
+        },<% if (templateType === 'WITH_4_PAGES') { %>
         identificationInformation: {
           path: 'identification-information',
           title: 'Identification information',
@@ -53,7 +53,7 @@ const formConfig = {
           schema: identificationInformation.schema,
         },<% } %>
       },
-    },<% if (templateType === 'COMPLEX') { %>
+    },<% if (templateType === 'WITH_4_PAGES') { %>
     mailingAddressChapter: {
       title: 'Mailing address',
       pages: {
