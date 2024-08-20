@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
+## [3.10.0] - 2024-08-20
+### Changed
+- Prompt from blank, simple, complex, to 1 page or 4 pages, using web component patterns.
+
 ## [3.4.0] - 2020-08-26
 ### Changed
 - E2E tests are now Cypress tests instead of Nightwatch tests.
@@ -26,7 +30,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 ## [3.1.0] - 2018-08-08
 ### Added
 - Links to documentation at the top of the Yeoman generator output.
-- Gives the user multiple types of form templates to start with: Blank, Simple, or Complex.
+- Gives the user multiple types of form templates to start with: blank, 1 page, or 4 pages.
 - Sample answers and default answers to guide users.
 ### Changed
 - Updated the templates to be in line with current best practices for the Vets.gov website.

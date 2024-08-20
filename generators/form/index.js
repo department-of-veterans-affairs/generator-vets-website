@@ -2,9 +2,8 @@
 const Generator = require('yeoman-generator');
 
 const TEMPLATE_TYPES = {
-  BLANK: 'BLANK',
-  SIMPLE: 'SIMPLE',
-  COMPLEX: 'COMPLEX',
+  WITH_1_PAGE: 'WITH_1_PAGE',
+  WITH_4_PAGES: 'WITH_4_PAGES',
 };
 
 /**
@@ -68,9 +67,8 @@ module.exports = class extends Generator {
         name: 'templateType',
         message: 'Which form template would you like to start with?',
         choices: [
-          `${TEMPLATE_TYPES.BLANK}: A form without any fields`,
-          `${TEMPLATE_TYPES.SIMPLE}: A single-chapter form with a single field`,
-          `${TEMPLATE_TYPES.COMPLEX}: A complex, multi-chapter form with multiple fields`,
+          `${TEMPLATE_TYPES.WITH_1_PAGE}: A form with 1 page - name and date of birth`,
+          `${TEMPLATE_TYPES.WITH_4_PAGES}: A form with 4 pages - name and date of birth, identification information, mailing address, and phone and email`,
         ],
         filter: (choice) => choice.split(':')[0],
       },
@@ -133,50 +131,42 @@ module.exports = class extends Generator {
       this.props,
     );
 
-    switch (this.props.templateType) {
-      case TEMPLATE_TYPES.BLANK:
-        this.fs.copyTpl(
-          this.templatePath('formBlank.js.ejs'),
-          this.destinationPath(`${appPath}/config/form.js`),
-          this.props,
-        );
-        break;
-      case TEMPLATE_TYPES.SIMPLE:
-        this.fs.copyTpl(
-          this.templatePath('formSimple.js.ejs'),
-          this.destinationPath(`${appPath}/config/form.js`),
-          this.props,
-        );
-        break;
-      case TEMPLATE_TYPES.COMPLEX:
-        this.fs.copyTpl(
-          this.templatePath('formComplex.js.ejs'),
-          this.destinationPath(`${appPath}/config/form.js`),
-          this.props,
-        );
-        this.fs.copyTpl(
-          this.templatePath('complex-form-schema.json.ejs'),
-          this.destinationPath(`${appPath}/${this.props.formNumber}-schema.json`),
-          this.props,
-        );
-        this.fs.copyTpl(
-          this.templatePath('toursOfDuty.js.ejs'),
-          this.destinationPath(`${appPath}/definitions/toursOfDuty.js`),
-          this.props,
-        );
-        this.fs.copyTpl(
-          this.templatePath('pageDirectDeposit.js.ejs'),
-          this.destinationPath(`${appPath}/pages/directDeposit.js`),
-          this.props,
-        );
-        this.fs.copyTpl(
-          this.templatePath('pageServiceHistory.js.ejs'),
-          this.destinationPath(`${appPath}/pages/serviceHistory.js`),
-          this.props,
-        );
-        break;
-      default:
-        break;
+    this.fs.copyTpl(
+      this.templatePath('pages/nameAndDateOfBirth.js.ejs'),
+      this.destinationPath(`${appPath}/pages/nameAndDateOfBirth.js`),
+      this.props,
+    );
+
+    this.fs.copyTpl(
+      this.templatePath('constants.js.ejs'),
+      this.destinationPath(`${appPath}/constants.js`),
+      this.props,
+    );
+
+    this.fs.copyTpl(
+      this.templatePath('form.js.ejs'),
+      this.destinationPath(`${appPath}/config/form.js`),
+      this.props,
+    );
+
+    if (this.props.templateType === TEMPLATE_TYPES.WITH_4_PAGES) {
+      this.fs.copyTpl(
+        this.templatePath('pages/identificationInformation.js.ejs'),
+        this.destinationPath(`${appPath}/pages/identificationInformation.js`),
+        this.props,
+      );
+
+      this.fs.copyTpl(
+        this.templatePath('pages/mailingAddress.js.ejs'),
+        this.destinationPath(`${appPath}/pages/mailingAddress.js`),
+        this.props,
+      );
+
+      this.fs.copyTpl(
+        this.templatePath('pages/phoneAndEmailAddress.js.ejs'),
+        this.destinationPath(`${appPath}/pages/phoneAndEmailAddress.js`),
+        this.props,
+      );
     }
   }
 };
