@@ -63,6 +63,13 @@ module.exports = class extends Generator {
         default: `benefits`,
       },
       {
+        type: 'confirm',
+        name: 'usesVetsJsonSchema',
+        message: 'Does this form use vets-json-schema?',
+        default: false,
+        when: (props) => props.formNumber,
+      },
+      {
         type: 'list',
         name: 'templateType',
         message: 'Which form template would you like to start with?',
@@ -163,6 +170,69 @@ module.exports = class extends Generator {
         this.props,
       );
     }
+
+    this.updateMissingJsonSchema();
+    this.updateConstants();
+  }
+
+  updateMissingJsonSchema() {
+    const filePath = './src/platform/forms/tests/forms.unit.spec.js';
+
+    if (this.props.formNumber && !this.props.usesVetsJsonSchema) {
+      const content = this.fs.read(filePath);
+
+      try {
+        // Use a regex to find the array declaration and add new content at the end of the array
+        const updatedContent = content.replace(
+          /(const missingFromVetsJsonSchema = \[)([\s\S]*?)(\];)/,
+          (match, start, arrayContent, end) => {
+            const newEntry = `VA_FORM_IDS.FORM_${this.props.formNumber.replace(
+              /-/g,
+              '_',
+            )},`;
+
+            if (arrayContent.includes(newEntry)) {
+              return match;
+            }
+
+            return `${start}${arrayContent.trimEnd()}\n  ${newEntry}\n${end}`;
+          },
+        );
+
+        this.fs.write(filePath, updatedContent);
+      } catch (error) {
+        this.log(chalk.red(`Could not write to ${filePath}`));
+      }
+    }
+  }
+
+  updateConstants() {
+    const filePath = './src/platform/forms/constants.js';
+
+    if (this.props.formNumber && !this.props.usesVetsJsonSchema) {
+      const content = this.fs.read(filePath);
+
+      const newFormId = `FORM_${this.props.formNumber.replace(/-/g, '_')}`;
+
+      try {
+        const updatedContent = content.replace(
+          /(export const VA_FORM_IDS = Object\.freeze\({)([\s\S]*?)(}\))/,
+          (match, start, objectContent, end) => {
+            const newEntry = `${newFormId}: '${this.props.formNumber}',`;
+
+            if (objectContent.includes(newEntry)) {
+              return match;
+            }
+
+            return `${start}${objectContent.trimEnd()}\n  ${newEntry}\n${end}`;
+          },
+        );
+
+        this.fs.write(filePath, updatedContent);
+      } catch (error) {
+        this.log(chalk.red(`Could not write to ${filePath}`));
+      }
+    }
   }
 
   end() {
@@ -189,7 +259,6 @@ module.exports = class extends Generator {
             `yarn test:unit --app-folder ${this.props.folderName} --log-level all`,
           ),
       );
-      this.log(chalk.bold(`Cypress:   `) + chalk.cyan(`yarn cy:open`));
       this.log('------------------------------------');
     });
   }
