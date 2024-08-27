@@ -65,7 +65,8 @@ module.exports = class extends Generator {
       {
         type: 'confirm',
         name: 'usesVetsJsonSchema',
-        message: 'Does this form use vets-json-schema?',
+        message:
+          'Does this form use vets-json-schema? (JSON schema defined in separate repository)',
         default: false,
         when: (props) => props.formNumber,
       },
