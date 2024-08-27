@@ -183,7 +183,6 @@ module.exports = class extends Generator {
       const content = this.fs.read(filePath);
 
       try {
-        // Use a regex to find the array declaration and add new content at the end of the array
         const updatedContent = content.replace(
           /(const missingFromVetsJsonSchema = \[)([\s\S]*?)(\];)/,
           (match, start, arrayContent, end) => {
