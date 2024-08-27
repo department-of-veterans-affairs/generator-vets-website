@@ -7,9 +7,9 @@ import { useSelector } from 'react-redux';
 import { isLOA3, isLoggedIn } from 'platform/user/selectors';
 import { TITLE, SUBTITLE } from '../constants';
 
-const OMB_RES_BURDEN = 30;
-const OMB_NUMBER = '22-22';
-const OMB_EXP_DATE = '12/31/2025';
+const OMB_RES_BURDEN = <%= respondentBurden %>;
+const OMB_NUMBER = '<%= ombNumber %>';
+const OMB_EXP_DATE = '<%= expirationDate %>';
 
 const ProcessList = () => {
   return (

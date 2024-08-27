@@ -5,11 +5,11 @@
         "sign_in": {
           "service_name": "idme"
         },
-        "email": "john.preparer@example.com",
+        "email": "john.doe@example.com",
         "loa": { "current": 3 },
         "first_name": "John",
         "middle_name": "",
-        "last_name": "Preparer",
+        "last_name": "Doe",
         "gender": "M",
         "birth_date": "1985-01-01",
         "verified": true
@@ -35,7 +35,7 @@
       "va_profile": {
         "status": "OK",
         "birth_date": "19850101",
-        "family_name": "Preparer",
+        "family_name": "Doe",
         "gender": "M",
         "given_names": ["John", ""],
         "active_status": "active",
