@@ -1,6 +1,6 @@
 'use strict';
 const Generator = require('yeoman-generator');
-
+const chalk = require('chalk');
 const TEMPLATE_TYPES = {
   WITH_1_PAGE: 'WITH_1_PAGE',
   WITH_4_PAGES: 'WITH_4_PAGES',
@@ -96,7 +96,6 @@ module.exports = class extends Generator {
 
     this.fs.copyTpl(
       this.templatePath('App.jsx.ejs'),
-      // TODO: change the name of App.jsx to something like a ClassCase version of `${this.props.entryName}App.jsx`?
       this.destinationPath(`${appPath}/containers/App.jsx`),
       this.props,
     );
@@ -107,11 +106,7 @@ module.exports = class extends Generator {
       this.props,
     );
 
-    this.fs.copyTpl(
-      this.templatePath('test-data.json.ejs'),
-      this.destinationPath(`${appPath}/tests/fixtures/data/test-data.json`),
-      this.props,
-    );
+    this.fs.copy(this.templatePath('tests'), this.destinationPath(`${appPath}/tests`));
 
     this.fs.copyTpl(
       this.templatePath('cypress.spec.js.ejs'),
@@ -168,5 +163,34 @@ module.exports = class extends Generator {
         this.props,
       );
     }
+  }
+
+  end() {
+    process.nextTick(() => {
+      this.log('------------------------------------');
+      this.log(chalk.bold('Commands:'));
+      this.log(
+        chalk.bold(`Site:      `) +
+          chalk.cyan(`http://localhost:3001${this.props.rootUrl}`),
+      );
+      this.log(
+        chalk.bold(`Watch:     `) +
+          chalk.cyan(`yarn watch --env entry=${this.props.entryName}`),
+      );
+      this.log(
+        chalk.bold(`Mock API:  `) +
+          chalk.cyan(
+            `yarn mock-api --responses src/applications/${this.props.folderName}/tests/fixtures/mocks/local-mock-responses.js`,
+          ),
+      );
+      this.log(
+        chalk.bold(`Unit test: `) +
+          chalk.cyan(
+            `yarn test:unit --app-folder ${this.props.folderName} --log-level all`,
+          ),
+      );
+      this.log(chalk.bold(`Cypress:   `) + chalk.cyan(`yarn cy:open`));
+      this.log('------------------------------------');
+    });
   }
 };

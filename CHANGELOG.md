@@ -2,6 +2,13 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
+## [3.11.0] - 2024-08-27
+### Changed
+- Update Introduction and Confirmation page
+  - class components to functional components
+  - general refactoring
+- Include fixtures and base tests.
+
 ## [3.10.0] - 2024-08-20
 ### Changed
 - Prompt from blank, simple, complex, to 1 page or 4 pages, using web component patterns.
