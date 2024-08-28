@@ -9,7 +9,7 @@ import phoneAndEmailAddress from '../pages/phoneAndEmailAddress';
 const formConfig = {
   rootUrl: manifest.rootUrl,
   urlPrefix: '/',
-  // submitUrl: '/v0/api',
+  submitUrl: '/v0/api',
   submit: () =>
     Promise.resolve({ attributes: { confirmationNumber: '123123123' } }),
   trackingPrefix: '<%= trackingPrefix %>',
@@ -34,7 +34,7 @@ const formConfig = {
     noAuth: 'Please sign in again to continue your application for <%= benefitDescription %>.',
   },
   title: TITLE,
-  subtitle: SUBTITLE,
+  subTitle: SUBTITLE,
   defaultDefinitions: {},
   chapters: {
     personalInformationChapter: {

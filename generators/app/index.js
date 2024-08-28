@@ -180,7 +180,9 @@ module.exports = class extends Generator {
           "What folder in `src/applications/` should your app live in? This can be a subfolder. Examples: 'burials' or 'edu-benefits/0993'",
         validate: this._isInvalidFolderName,
         filter: this._folderNameFilter,
-        default: 'new-form',
+        default(answers) {
+          return answers.appName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+        },
         when: !this.props.folderName,
       },
       {
@@ -294,6 +296,7 @@ module.exports = class extends Generator {
       this.composeWith(require.resolve('../form'), {
         folderName: this.props.folderName,
         appName: this.props.appName,
+        rootUrl: this.props.rootUrl,
         entryName: this.props.entryName,
         subFolder: this.props.subFolder,
       });

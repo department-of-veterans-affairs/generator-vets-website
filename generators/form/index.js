@@ -1,6 +1,6 @@
 'use strict';
 const Generator = require('yeoman-generator');
-
+const chalk = require('chalk');
 const TEMPLATE_TYPES = {
   WITH_1_PAGE: 'WITH_1_PAGE',
   WITH_4_PAGES: 'WITH_4_PAGES',
@@ -63,6 +63,14 @@ module.exports = class extends Generator {
         default: `benefits`,
       },
       {
+        type: 'confirm',
+        name: 'usesVetsJsonSchema',
+        message:
+          'Does this form use vets-json-schema? (JSON schema defined in separate repository)',
+        default: false,
+        when: (props) => props.formNumber,
+      },
+      {
         type: 'list',
         name: 'templateType',
         message: 'Which form template would you like to start with?',
@@ -96,7 +104,6 @@ module.exports = class extends Generator {
 
     this.fs.copyTpl(
       this.templatePath('App.jsx.ejs'),
-      // TODO: change the name of App.jsx to something like a ClassCase version of `${this.props.entryName}App.jsx`?
       this.destinationPath(`${appPath}/containers/App.jsx`),
       this.props,
     );
@@ -107,11 +114,7 @@ module.exports = class extends Generator {
       this.props,
     );
 
-    this.fs.copyTpl(
-      this.templatePath('test-data.json.ejs'),
-      this.destinationPath(`${appPath}/tests/fixtures/data/test-data.json`),
-      this.props,
-    );
+    this.fs.copy(this.templatePath('tests'), this.destinationPath(`${appPath}/tests`));
 
     this.fs.copyTpl(
       this.templatePath('cypress.spec.js.ejs'),
@@ -168,5 +171,95 @@ module.exports = class extends Generator {
         this.props,
       );
     }
+
+    this.updateMissingJsonSchema();
+    this.updateConstants();
+  }
+
+  updateMissingJsonSchema() {
+    const filePath = './src/platform/forms/tests/forms.unit.spec.js';
+
+    if (this.props.formNumber && !this.props.usesVetsJsonSchema) {
+      const content = this.fs.read(filePath);
+
+      try {
+        const updatedContent = content.replace(
+          /(const missingFromVetsJsonSchema = \[)([\s\S]*?)(\];)/,
+          (match, start, arrayContent, end) => {
+            const newEntry = `VA_FORM_IDS.FORM_${this.props.formNumber.replace(
+              /-/g,
+              '_',
+            )},`;
+
+            if (arrayContent.includes(newEntry)) {
+              return match;
+            }
+
+            return `${start}${arrayContent.trimEnd()}\n  ${newEntry}\n${end}`;
+          },
+        );
+
+        this.fs.write(filePath, updatedContent);
+      } catch (error) {
+        this.log(chalk.red(`Could not write to ${filePath}`));
+      }
+    }
+  }
+
+  updateConstants() {
+    const filePath = './src/platform/forms/constants.js';
+
+    if (this.props.formNumber && !this.props.usesVetsJsonSchema) {
+      const content = this.fs.read(filePath);
+
+      const newFormId = `FORM_${this.props.formNumber.replace(/-/g, '_')}`;
+
+      try {
+        const updatedContent = content.replace(
+          /(export const VA_FORM_IDS = Object\.freeze\({)([\s\S]*?)(}\))/,
+          (match, start, objectContent, end) => {
+            const newEntry = `${newFormId}: '${this.props.formNumber}',`;
+
+            if (objectContent.includes(newEntry)) {
+              return match;
+            }
+
+            return `${start}${objectContent.trimEnd()}\n  ${newEntry}\n${end}`;
+          },
+        );
+
+        this.fs.write(filePath, updatedContent);
+      } catch (error) {
+        this.log(chalk.red(`Could not write to ${filePath}`));
+      }
+    }
+  }
+
+  end() {
+    process.nextTick(() => {
+      this.log('------------------------------------');
+      this.log(chalk.bold('Commands:'));
+      this.log(
+        chalk.bold(`Site:      `) +
+          chalk.cyan(`http://localhost:3001${this.props.rootUrl}`),
+      );
+      this.log(
+        chalk.bold(`Watch:     `) +
+          chalk.cyan(`yarn watch --env entry=${this.props.entryName}`),
+      );
+      this.log(
+        chalk.bold(`Mock API:  `) +
+          chalk.cyan(
+            `yarn mock-api --responses src/applications/${this.props.folderName}/tests/fixtures/mocks/local-mock-responses.js`,
+          ),
+      );
+      this.log(
+        chalk.bold(`Unit test: `) +
+          chalk.cyan(
+            `yarn test:unit --app-folder ${this.props.folderName} --log-level all`,
+          ),
+      );
+      this.log('------------------------------------');
+    });
   }
 };
