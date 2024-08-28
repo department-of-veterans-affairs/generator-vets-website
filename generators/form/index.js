@@ -257,7 +257,7 @@ module.exports = class extends Generator {
         `  {\n` +
         `    id: VA_FORM_IDS.${this.props.formIdConst},\n` +
         `    benefit: '${this.props.benefitDescription}',\n` +
-        `    title: '${this.props.formNumber}',\n` +
+        `    title: '${this.props.appName}',\n` +
         `    description: '${this.props.benefitDescription}',\n` +
         `    trackingPrefix: '${this.props.trackingPrefix}',\n` +
         `  },`;
