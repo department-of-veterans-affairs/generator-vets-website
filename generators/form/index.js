@@ -76,7 +76,8 @@ module.exports = class extends Generator {
       {
         type: 'confirm',
         name: 'usesVetsJsonSchema',
-        message: `Does this form use vets-json-schema repository for all of its schemas? (If using web component patterns, then answer 'N')`,
+        message:
+          'Does this form use vets-json-schema? (JSON schemas defined in separate repository)',
         default: false,
         when: (props) => props.formNumber,
       },
@@ -183,33 +184,12 @@ module.exports = class extends Generator {
       );
     }
 
-    this.updateRegexes();
+    this.regexFileReplacements();
   }
 
-  // TryUpdateRegexInFile(filePath, regex, newEntry, detailMessage) {
-  //   console.log('tryUpdateRegexInFile', filePath, regex, newEntry, detailMessage);
-  //   const content = this.fs.read(filePath);
-
-  //   try {
-  //     const updatedContent = content.replace(regex, (match, start, arrayContent, end) => {
-  //       if (arrayContent.includes(newEntry)) {
-  //         return match;
-  //       }
-
-  //       return `${start}${arrayContent.trimEnd()}\n${newEntry}\n${end}`;
-  //     });
-
-  //     this.fs.write(filePath, updatedContent);
-  //   } catch {
-  //     this.log(chalk.yellow(`Could not write to ${filePath}. ${detailMessage}`));
-  //   }
-  // }
-
-  updateRegexes() {
+  regexFileReplacements() {
     const tryUpdateRegexInFile = (filePath, regex, newEntry, detailMessage) => {
-      // Console.log('tryUpdateRegexInFile', filePath, regex, newEntry, detailMessage);
       const content = this.fs.read(filePath);
-      console.log('this.props', this.props);
 
       try {
         const updatedContent = content.replace(
