@@ -29,6 +29,17 @@ module.exports = class extends Generator {
         filter(val) {
           return val.replace(/\s|_/g, '-').toUpperCase();
         },
+        validate(input) {
+          if (input.trim() === '') {
+            return 'Form number is required';
+          }
+
+          if (input.match(/['"]/)) {
+            return 'Form number cannot contain quotes';
+          }
+
+          return true;
+        },
       },
       {
         type: 'input',
@@ -65,8 +76,7 @@ module.exports = class extends Generator {
       {
         type: 'confirm',
         name: 'usesVetsJsonSchema',
-        message:
-          'Does this form use vets-json-schema? (JSON schema defined in separate repository)',
+        message: `Does this form use vets-json-schema repository for all of its schemas? (If using web component patterns, then answer 'N')`,
         default: false,
         when: (props) => props.formNumber,
       },
@@ -84,6 +94,7 @@ module.exports = class extends Generator {
 
     return this.prompt(prompts).then((props) => {
       this.props = { ...this.options, ...props };
+      this.props.formIdConst = `FORM_${this.props.formNumber.replace(/-/g, '_')}`;
     });
   }
 
@@ -172,66 +183,106 @@ module.exports = class extends Generator {
       );
     }
 
-    this.updateMissingJsonSchema();
-    this.updateConstants();
+    this.updateRegexes();
   }
 
-  updateMissingJsonSchema() {
-    const filePath = './src/platform/forms/tests/forms.unit.spec.js';
+  // TryUpdateRegexInFile(filePath, regex, newEntry, detailMessage) {
+  //   console.log('tryUpdateRegexInFile', filePath, regex, newEntry, detailMessage);
+  //   const content = this.fs.read(filePath);
 
-    if (this.props.formNumber && !this.props.usesVetsJsonSchema) {
+  //   try {
+  //     const updatedContent = content.replace(regex, (match, start, arrayContent, end) => {
+  //       if (arrayContent.includes(newEntry)) {
+  //         return match;
+  //       }
+
+  //       return `${start}${arrayContent.trimEnd()}\n${newEntry}\n${end}`;
+  //     });
+
+  //     this.fs.write(filePath, updatedContent);
+  //   } catch {
+  //     this.log(chalk.yellow(`Could not write to ${filePath}. ${detailMessage}`));
+  //   }
+  // }
+
+  updateRegexes() {
+    const tryUpdateRegexInFile = (filePath, regex, newEntry, detailMessage) => {
+      // Console.log('tryUpdateRegexInFile', filePath, regex, newEntry, detailMessage);
       const content = this.fs.read(filePath);
+      console.log('this.props', this.props);
 
       try {
         const updatedContent = content.replace(
-          /(const missingFromVetsJsonSchema = \[)([\s\S]*?)(\];)/,
+          regex,
           (match, start, arrayContent, end) => {
-            const newEntry = `VA_FORM_IDS.FORM_${this.props.formNumber.replace(
-              /-/g,
-              '_',
-            )},`;
-
             if (arrayContent.includes(newEntry)) {
               return match;
             }
 
-            return `${start}${arrayContent.trimEnd()}\n  ${newEntry}\n${end}`;
+            return `${start}${arrayContent.trimEnd()}\n${newEntry}\n${end}`;
           },
         );
 
         this.fs.write(filePath, updatedContent);
-      } catch (error) {
-        this.log(chalk.red(`Could not write to ${filePath}`));
+      } catch {
+        this.log(chalk.yellow(`Could not write to ${filePath}. ${detailMessage}`));
       }
-    }
-  }
+    };
 
-  updateConstants() {
-    const filePath = './src/platform/forms/constants.js';
-
-    if (this.props.formNumber && !this.props.usesVetsJsonSchema) {
-      const content = this.fs.read(filePath);
-
-      const newFormId = `FORM_${this.props.formNumber.replace(/-/g, '_')}`;
-
-      try {
-        const updatedContent = content.replace(
-          /(export const VA_FORM_IDS = Object\.freeze\({)([\s\S]*?)(}\))/,
-          (match, start, objectContent, end) => {
-            const newEntry = `${newFormId}: '${this.props.formNumber}',`;
-
-            if (objectContent.includes(newEntry)) {
-              return match;
-            }
-
-            return `${start}${objectContent.trimEnd()}\n  ${newEntry}\n${end}`;
-          },
+    const updateMissingJsonSchema = () => {
+      if (!this.props.usesVetsJsonSchema) {
+        const filePath = './src/platform/forms/tests/forms.unit.spec.js';
+        const regex = /(const missingFromVetsJsonSchema = \[)([\s\S]*?)(\];)/;
+        const newEntry = `  VA_FORM_IDS.${this.props.formIdConst},`;
+        tryUpdateRegexInFile(
+          filePath,
+          regex,
+          newEntry,
+          'Trying to update missingFromVetsJsonSchema.',
         );
-
-        this.fs.write(filePath, updatedContent);
-      } catch (error) {
-        this.log(chalk.red(`Could not write to ${filePath}`));
       }
+    };
+
+    updateMissingJsonSchema();
+
+    if (this.props.formNumber) {
+      const filePath = './src/platform/forms/constants.js';
+      let regex = /(export const VA_FORM_IDS = Object\.freeze\({)([\s\S]*?)(}\))/;
+      let newEntry = `  ${this.props.formIdConst}: '${this.props.formNumber}',`;
+      let detail = 'Trying to update VA_FORM_IDS.';
+      tryUpdateRegexInFile(filePath, regex, newEntry, detail);
+
+      regex = /(export const FORM_BENEFITS = {)([\s\S]*?)(};)/;
+      newEntry = `  [VA_FORM_IDS.${this.props.formIdConst}]: '${this.props.benefitDescription}',`;
+      detail = 'Trying to update FORM_BENEFITS.';
+      tryUpdateRegexInFile(filePath, regex, newEntry, detail);
+
+      regex = /(export const TRACKING_PREFIXES = {)([\s\S]*?)(};)/;
+      newEntry = `  [VA_FORM_IDS.${this.props.formIdConst}]: '${this.props.trackingPrefix}',`;
+      detail = 'Trying to update TRACKING_PREFIXES.';
+      tryUpdateRegexInFile(filePath, regex, newEntry, detail);
+
+      regex = /(export const SIP_ENABLED_FORMS = new Set\(\[)([\s\S]*?)(]\);)/;
+      newEntry = `  VA_FORM_IDS.${this.props.formIdConst},`;
+      detail = 'Trying to update SIP_ENABLED_FORMS.';
+      tryUpdateRegexInFile(filePath, regex, newEntry, detail);
+
+      regex = /(export const getAllFormLinks = [\s\S]*?return {)([\s\S]*?)( {2}};)/;
+      newEntry = `    [VA_FORM_IDS.${this.props.formIdConst}]: \`\${tryGetAppUrl('${this.props.formNumber}')}/\`,`;
+      detail = 'Trying to update getAllFormLinks.';
+      tryUpdateRegexInFile(filePath, regex, newEntry, detail);
+
+      regex = /(export const MY_VA_SIP_FORMS = \[)([\s\S]*?)(];)/;
+      newEntry =
+        `  {\n` +
+        `    id: VA_FORM_IDS.${this.props.formIdConst},\n` +
+        `    benefit: '${this.props.benefitDescription}',\n` +
+        `    title: '${this.props.formNumber}',\n` +
+        `    description: '${this.props.benefitDescription}',\n` +
+        `    trackingPrefix: '${this.props.trackingPrefix}',\n` +
+        `  },`;
+      detail = 'Trying to update MY_VA_SIP_FORMS.';
+      tryUpdateRegexInFile(filePath, regex, newEntry, detail);
     }
   }
 
