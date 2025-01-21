@@ -211,7 +211,7 @@ module.exports = class extends Generator {
 
     const updateMissingJsonSchema = () => {
       if (!this.props.usesVetsJsonSchema) {
-        const filePath = './src/platform/forms/tests/forms.unit.spec.js';
+        const filePath = './src/platform/forms/tests/forms-config-validator.unit.spec.js';
         const regex = /(const missingFromVetsJsonSchema = \[)([\s\S]*?)(\];)/;
         const newEntry = `  VA_FORM_IDS.${this.props.formIdConst},`;
         tryUpdateRegexInFile(
