@@ -155,13 +155,7 @@ module.exports = class extends Generator {
 
     this.log(
       `For a guide on using this Yeoman generator, including example answers for each prompt:\n${chalk.cyan(
-        'https://department-of-veterans-affairs.github.io/veteran-facing-services-tools/platform/tools/generator/',
-      )}\n`,
-    );
-
-    this.log(
-      `To follow a basic tutorial on creating and modifying a form application:\n${chalk.cyan(
-        'https://department-of-veterans-affairs.github.io/veteran-facing-services-tools/forms/form-tutorial-basic',
+        'https://depo-platform-documentation.scrollhelp.site/developer-docs/va-gov-application-generator',
       )}\n`,
     );
 
