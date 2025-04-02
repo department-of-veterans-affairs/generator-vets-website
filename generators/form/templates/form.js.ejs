@@ -1,4 +1,7 @@
 <%- include('partials/formHeader', {formNumber: formNumber}); %>
+<% if (usesMinimalHeader) { %>
+import { minimalHeaderFormConfigOptions } from 'platform/forms-system/src/js/patterns/minimal-header';
+<% } %>
 import nameAndDateOfBirth from '../pages/nameAndDateOfBirth';<% if (templateType === 'WITH_4_PAGES') { %>
 import identificationInformation from '../pages/identificationInformation';
 import mailingAddress from '../pages/mailingAddress';
@@ -19,6 +22,24 @@ const formConfig = {
     showNavLinks: true,
     collapsibleNavLinks: true,
   },
+  <% if (usesMinimalHeader) { %>
+  ...minimalHeaderFormConfigOptions({
+    breadcrumbList: [
+      { href: '/', label: 'VA.gov home' },
+      <%
+        const parts = rootUrl.split('/').filter(Boolean);
+        let path = '';
+        for (let i = 0; i < parts.length; i++) {
+          path += '/' + parts[i];
+      %>
+      {
+        href: '<%= path %>',
+        label: '<%= parts[i].charAt(0).toUpperCase() + parts[i].slice(1).replace(/-/g, ' ') %>',
+      }<%= i < parts.length - 1 ? ',' : '' %>
+      <% } %>
+    ],
+  }),
+  <% } %>
   formId: VA_FORM_IDS.<%= formIdConst %>,
   saveInProgress: {
     // messages: {

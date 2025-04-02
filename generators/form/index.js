@@ -82,6 +82,12 @@ module.exports = class extends Generator {
         when: (props) => props.formNumber,
       },
       {
+        type: 'confirm',
+        name: 'usesMinimalHeader',
+        message: 'Use minimal header (minimal form flow) pattern?',
+        default: false,
+      },
+      {
         type: 'list',
         name: 'templateType',
         message: 'Which form template would you like to start with?',
@@ -96,6 +102,12 @@ module.exports = class extends Generator {
     return this.prompt(prompts).then((props) => {
       this.props = { ...this.options, ...props };
       this.props.formIdConst = `FORM_${this.props.formNumber.replace(/-/g, '_')}`;
+      if (this.options.sharedProps) {
+        // Update these so that form/index.js can have access to them
+        this.options.sharedProps.usesMinimalHeader = this.props.usesMinimalHeader;
+        this.options.sharedProps.benefitDescription = this.props.benefitDescription;
+        this.options.sharedProps.formNumber = this.props.formNumber;
+      }
     });
   }
 
@@ -211,7 +223,8 @@ module.exports = class extends Generator {
 
     const updateMissingJsonSchema = () => {
       if (!this.props.usesVetsJsonSchema) {
-        const filePath = './src/platform/forms/tests/forms-config-validator.unit.spec.js';
+        const filePath =
+          './src/platform/forms/tests/forms-config-validator.unit.spec.jsx';
         const regex = /(const missingFromVetsJsonSchema = \[)([\s\S]*?)(\];)/;
         const newEntry = `  VA_FORM_IDS.${this.props.formIdConst},`;
         tryUpdateRegexInFile(

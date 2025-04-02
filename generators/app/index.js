@@ -110,6 +110,7 @@ module.exports = class extends Generator {
       rootUrl: this.options.rootUrl,
       contentRepoLocation: this.options.contentLoc,
     };
+    this.sharedProps = {};
 
     const makeBool = (boolLike) => {
       switch (boolLike?.toUpperCase()) {
@@ -298,6 +299,7 @@ module.exports = class extends Generator {
         appName: this.props.appName,
         rootUrl: this.props.rootUrl,
         entryName: this.props.entryName,
+        sharedProps: this.sharedProps,
         subFolder: this.props.subFolder,
       });
     }
@@ -373,6 +375,17 @@ module.exports = class extends Generator {
         template: {
           vagovprod: false,
           layout: 'page-react.html',
+          ...(this.sharedProps?.usesMinimalHeader
+            ? {
+                includeBreadcrumbs: false,
+                minimalExcludePaths: ['/introduction', '/confirmation'],
+                minimalFooter: true,
+                minimalHeader: {
+                  title: this.props.appName,
+                  subtitle: `${this.sharedProps?.benefitDescription} (VA Form ${this.sharedProps.formNumber})`,
+                },
+              }
+            : {}),
         },
       });
       this.fs.writeJSON(registryFile, registry);
