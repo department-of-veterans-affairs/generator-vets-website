@@ -1,45 +1,47 @@
 import React from 'react';
-import { Provider } from 'react-redux';
-import { render } from '@testing-library/react';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
 import { expect } from 'chai';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import { cleanup, render } from '@testing-library/react';
+import { createInitialState } from '@department-of-veterans-affairs/platform-forms-system/state/helpers';
 import formConfig from '../../config/form';
 import ConfirmationPage from '../../containers/ConfirmationPage';
 
-const storeBase = {
-  form: {
-    formId: formConfig.formId,
-    submission: {
-      response: {
-        confirmationNumber: '123456',
+const mockStore = state => createStore(() => state);
+
+const initConfirmationPage = ({ formData } = {}) => {
+  const store = mockStore({
+    form: {
+      ...createInitialState(formConfig),
+      submission: {
+        response: {
+          confirmationNumber: '1234567890',
+        },
+        timestamp: new Date(),
       },
-      timestamp: Date.now(),
+      ...formData,
     },
-    data: {
-      fullName: {
-        first: 'John',
-        middle: '',
-        last: 'Doe',
-      },
-    },
-  },
+  });
+
+  return render(
+    <Provider store={store}>
+      <ConfirmationPage route={{ formConfig }} />
+    </Provider>,
+  );
 };
 
-describe('Confirmation page', () => {
-  const middleware = [thunk];
-  const mockStore = configureStore(middleware);
+describe('ConfirmationPage', () => {
+  afterEach(() => {
+    cleanup();
+  });
 
-  it('it should show status success and the correct name of person', () => {
-    const { container, getByText } = render(
-      <Provider store={mockStore(storeBase)}>
-        <ConfirmationPage />
-      </Provider>,
+  it('should show success alert, h2, and confirmation number if present', () => {
+    const { container } = initConfirmationPage();
+    const alert = container.querySelector('va-alert');
+    expect(alert).to.have.attribute('status', 'success');
+    expect(alert.querySelector('h2')).to.contain.text(
+      'Form submission started',
     );
-    expect(container.querySelector('va-alert')).to.have.attr(
-      'status',
-      'success',
-    );
-    getByText(/John Doe/);
+    expect(alert).to.contain.text('Your confirmation number is 1234567890');
   });
 });
