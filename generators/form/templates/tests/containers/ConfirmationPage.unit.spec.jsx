@@ -19,7 +19,7 @@ const initConfirmationPage = ({ formData } = {}) => {
         },
         timestamp: new Date(),
       },
-      ...formData,
+      data: formData,
     },
   });
 
