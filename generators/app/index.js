@@ -110,6 +110,7 @@ module.exports = class extends Generator {
       rootUrl: this.options.rootUrl,
       contentRepoLocation: this.options.contentLoc,
     };
+    this.sharedProps = {};
 
     const makeBool = (boolLike) => {
       switch (boolLike?.toUpperCase()) {
@@ -154,13 +155,7 @@ module.exports = class extends Generator {
 
     this.log(
       `For a guide on using this Yeoman generator, including example answers for each prompt:\n${chalk.cyan(
-        'https://department-of-veterans-affairs.github.io/veteran-facing-services-tools/platform/tools/generator/',
-      )}\n`,
-    );
-
-    this.log(
-      `To follow a basic tutorial on creating and modifying a form application:\n${chalk.cyan(
-        'https://department-of-veterans-affairs.github.io/veteran-facing-services-tools/forms/form-tutorial-basic',
+        'https://depo-platform-documentation.scrollhelp.site/developer-docs/va-gov-application-generator',
       )}\n`,
     );
 
@@ -298,6 +293,7 @@ module.exports = class extends Generator {
         appName: this.props.appName,
         rootUrl: this.props.rootUrl,
         entryName: this.props.entryName,
+        sharedProps: this.sharedProps,
         subFolder: this.props.subFolder,
       });
     }
@@ -373,6 +369,17 @@ module.exports = class extends Generator {
         template: {
           vagovprod: false,
           layout: 'page-react.html',
+          ...(this.sharedProps?.usesMinimalHeader
+            ? {
+                includeBreadcrumbs: false,
+                minimalExcludePaths: ['/introduction', '/confirmation'],
+                minimalFooter: true,
+                minimalHeader: {
+                  title: this.props.appName,
+                  subtitle: `${this.sharedProps?.benefitDescription} (VA Form ${this.sharedProps.formNumber})`,
+                },
+              }
+            : {}),
         },
       });
       this.fs.writeJSON(registryFile, registry);
