@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
+## [3.13.0] - 2025-04-04
+### Changed
+- New question for using minimal header
+- Refactor to use new ConfirmationView in ConfirmationPage
+
 ## [3.11.0] - 2024-08-27
 ### Changed
 - Refactor Introduction and Confirmation page
