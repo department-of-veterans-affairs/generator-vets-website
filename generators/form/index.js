@@ -4,6 +4,7 @@ const chalk = require('chalk');
 const TEMPLATE_TYPES = {
   WITH_1_PAGE: 'WITH_1_PAGE',
   WITH_4_PAGES: 'WITH_4_PAGES',
+  FORM_ENGINE: 'FORM_ENGINE',
 };
 
 /**
@@ -94,6 +95,7 @@ module.exports = class extends Generator {
         choices: [
           `${TEMPLATE_TYPES.WITH_1_PAGE}: A form with 1 page - name and date of birth`,
           `${TEMPLATE_TYPES.WITH_4_PAGES}: A form with 4 pages - name and date of birth, identification information, mailing address, and phone and email`,
+          `${TEMPLATE_TYPES.FORM_ENGINE}: A form from Drupal using the shared Form Engine`,
         ],
         filter: (choice) => choice.split(':')[0],
       },
@@ -103,7 +105,7 @@ module.exports = class extends Generator {
       this.props = { ...this.options, ...props };
       this.props.formIdConst = `FORM_${this.props.formNumber.replace(/-/g, '_')}`;
       if (this.options.sharedProps) {
-        // Update these so that form/index.js can have access to them
+        // Update these so that app/index.js can have access to them
         this.options.sharedProps.usesMinimalHeader = this.props.usesMinimalHeader;
         this.options.sharedProps.benefitDescription = this.props.benefitDescription;
         this.options.sharedProps.formNumber = this.props.formNumber;
@@ -114,67 +116,72 @@ module.exports = class extends Generator {
   writing() {
     const appPath = `src/applications/${this.props.folderName}`;
 
-    this.fs.copyTpl(
-      this.templatePath('entry.scss.ejs'),
-      this.destinationPath(`${appPath}/sass/${this.props.entryName}.scss`),
-      this.props,
-    );
+    if (
+      this.props.templateType === TEMPLATE_TYPES.WITH_1_PAGE ||
+      this.props.templateType === TEMPLATE_TYPES.WITH_4_PAGES
+    ) {
+      this.fs.copyTpl(
+        this.templatePath('entry.scss.ejs'),
+        this.destinationPath(`${appPath}/sass/${this.props.entryName}.scss`),
+        this.props,
+      );
 
-    this.fs.copyTpl(
-      this.templatePath('reducer.js.ejs'),
-      this.destinationPath(`${appPath}/reducers/index.js`),
-      this.props,
-    );
+      this.fs.copyTpl(
+        this.templatePath('reducer.js.ejs'),
+        this.destinationPath(`${appPath}/reducers/index.js`),
+        this.props,
+      );
 
-    this.fs.copyTpl(
-      this.templatePath('App.jsx.ejs'),
-      this.destinationPath(`${appPath}/containers/App.jsx`),
-      this.props,
-    );
+      this.fs.copyTpl(
+        this.templatePath('App.jsx.ejs'),
+        this.destinationPath(`${appPath}/containers/App.jsx`),
+        this.props,
+      );
 
-    this.fs.copyTpl(
-      this.templatePath('routes.jsx.ejs'),
-      this.destinationPath(`${appPath}/routes.jsx`),
-      this.props,
-    );
+      this.fs.copyTpl(
+        this.templatePath('routes.jsx.ejs'),
+        this.destinationPath(`${appPath}/routes.jsx`),
+        this.props,
+      );
 
-    this.fs.copy(this.templatePath('tests'), this.destinationPath(`${appPath}/tests`));
+      this.fs.copy(this.templatePath('tests'), this.destinationPath(`${appPath}/tests`));
 
-    this.fs.copyTpl(
-      this.templatePath('cypress.spec.js.ejs'),
-      this.destinationPath(`${appPath}/tests/${this.props.entryName}.cypress.spec.js`),
-      this.props,
-    );
+      this.fs.copyTpl(
+        this.templatePath('cypress.spec.js.ejs'),
+        this.destinationPath(`${appPath}/tests/${this.props.entryName}.cypress.spec.js`),
+        this.props,
+      );
 
-    this.fs.copyTpl(
-      this.templatePath('IntroductionPage.jsx.ejs'),
-      this.destinationPath(`${appPath}/containers/IntroductionPage.jsx`),
-      this.props,
-    );
+      this.fs.copyTpl(
+        this.templatePath('IntroductionPage.jsx.ejs'),
+        this.destinationPath(`${appPath}/containers/IntroductionPage.jsx`),
+        this.props,
+      );
 
-    this.fs.copyTpl(
-      this.templatePath('ConfirmationPage.jsx.ejs'),
-      this.destinationPath(`${appPath}/containers/ConfirmationPage.jsx`),
-      this.props,
-    );
+      this.fs.copyTpl(
+        this.templatePath('ConfirmationPage.jsx.ejs'),
+        this.destinationPath(`${appPath}/containers/ConfirmationPage.jsx`),
+        this.props,
+      );
 
-    this.fs.copyTpl(
-      this.templatePath('pages/nameAndDateOfBirth.js.ejs'),
-      this.destinationPath(`${appPath}/pages/nameAndDateOfBirth.js`),
-      this.props,
-    );
+      this.fs.copyTpl(
+        this.templatePath('pages/nameAndDateOfBirth.js.ejs'),
+        this.destinationPath(`${appPath}/pages/nameAndDateOfBirth.js`),
+        this.props,
+      );
 
-    this.fs.copyTpl(
-      this.templatePath('constants.js.ejs'),
-      this.destinationPath(`${appPath}/constants.js`),
-      this.props,
-    );
+      this.fs.copyTpl(
+        this.templatePath('constants.js.ejs'),
+        this.destinationPath(`${appPath}/constants.js`),
+        this.props,
+      );
 
-    this.fs.copyTpl(
-      this.templatePath('form.js.ejs'),
-      this.destinationPath(`${appPath}/config/form.js`),
-      this.props,
-    );
+      this.fs.copyTpl(
+        this.templatePath('form.js.ejs'),
+        this.destinationPath(`${appPath}/config/form.js`),
+        this.props,
+      );
+    }
 
     if (this.props.templateType === TEMPLATE_TYPES.WITH_4_PAGES) {
       this.fs.copyTpl(
@@ -192,6 +199,14 @@ module.exports = class extends Generator {
       this.fs.copyTpl(
         this.templatePath('pages/phoneAndEmailAddress.js.ejs'),
         this.destinationPath(`${appPath}/pages/phoneAndEmailAddress.js`),
+        this.props,
+      );
+    }
+
+    if (this.props.templateType === TEMPLATE_TYPES.FORM_ENGINE) {
+      this.fs.copyTpl(
+        this.templatePath('formEngine.js.ejs'),
+        this.destinationPath(`${appPath}/app-entry.jsx`),
         this.props,
       );
     }
