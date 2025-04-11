@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
+## [3.14.0] - 2025-04-11
+### Changed
+- Added new TEMPLATE_TYPE for form apps to generate structure for FORM_ENGINE powered forms.
+
 ## [3.13.0] - 2025-04-04
 ### Changed
 - New question for using minimal header
