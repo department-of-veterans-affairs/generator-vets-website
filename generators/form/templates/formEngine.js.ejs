@@ -1,0 +1,22 @@
+import manifest from './manifest.json';
+import startFormEngineApp from '../shared/utils/startApp';
+
+startFormEngineApp({
+  formId: '<%= formIdConst %>',
+  rootUrl: manifest.rootUrl,
+  trackingPrefix: '<%= trackingPrefix %>',
+  breadcrumbs: [
+    { href: '/', label: 'VA.gov home' },
+<%
+  const parts = rootUrl.split('/').filter(Boolean);
+  let path = '';
+  for (let i = 0; i < parts.length; i++) {
+    path += '/' + parts[i];
+-%>
+    {
+      href: '<%= path %>',
+      label: '<%= appName %>',
+    },
+<% } -%>
+  ],
+});
