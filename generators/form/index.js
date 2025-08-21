@@ -86,7 +86,7 @@ module.exports = class extends Generator {
         type: 'confirm',
         name: 'usesMinimalHeader',
         message: 'Use minimal header (minimal form flow) pattern?',
-        default: false,
+        default: true,
       },
       {
         type: 'list',
