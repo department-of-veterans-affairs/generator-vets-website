@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-unused-expressions */
+
 /* eslint-disable eqeqeq */
-/* eslint-disable no-negated-condition */
+
 /* eslint-disable no-bitwise */
 'use strict';
 const fs = require('fs');
@@ -62,6 +62,53 @@ module.exports = class extends Generator {
       type: String,
       required: false,
     });
+
+    // Form-specific options
+    this.option('formNumber', {
+      type: String,
+      required: false,
+      description: 'Form number (e.g. "22-0993" or "21P-530")',
+    });
+    this.option('trackingPrefix', {
+      type: String,
+      required: false,
+      description: 'Google Analytics event prefix',
+    });
+    this.option('respondentBurden', {
+      type: String,
+      required: false,
+      description: 'Respondent burden in minutes',
+    });
+    this.option('ombNumber', {
+      type: String,
+      required: false,
+      description: 'OMB control number',
+    });
+    this.option('expirationDate', {
+      type: String,
+      required: false,
+      description: 'OMB expiration date (M/D/YYYY format)',
+    });
+    this.option('benefitDescription', {
+      type: String,
+      required: false,
+      description: 'Benefit description',
+    });
+    this.option('usesVetsJsonSchema', {
+      type: Boolean,
+      required: false,
+      description: 'Whether this form uses vets-json-schema',
+    });
+    this.option('usesMinimalHeader', {
+      type: Boolean,
+      required: false,
+      description: 'Whether to use minimal header pattern',
+    });
+    this.option('templateType', {
+      type: String,
+      required: false,
+      description: 'Form template type (WITH_1_PAGE or WITH_4_PAGES)',
+    });
   }
 
   // Validators
@@ -109,43 +156,54 @@ module.exports = class extends Generator {
       appName: this.options.appName,
       rootUrl: this.options.rootUrl,
       contentRepoLocation: this.options.contentLoc,
+      folderName: this.options.folderName,
+      entryName: this.options.entryName,
+      slackGroup: this.options.slackGroup,
+      ...this.options,
     };
     this.sharedProps = {};
 
     const makeBool = (boolLike) => {
-      switch (boolLike?.toUpperCase()) {
-        case 'N':
-        case 'FALSE':
-        case false:
-          return false;
-        default:
-          return true;
+      if (typeof boolLike === 'boolean') {
+        return boolLike;
       }
+
+      if (typeof boolLike === 'string') {
+        switch (boolLike.toUpperCase()) {
+          case 'N':
+          case 'FALSE':
+            return false;
+          default:
+            return true;
+        }
+      }
+
+      return true;
     };
 
     this.props.isForm =
-      this.options.isForm != undefined ? makeBool(this.options.isForm) : null;
+      this.options.isForm === undefined ? null : makeBool(this.options.isForm);
 
     // Perform validations
-    if (this.options.folderName) {
-      const badFolder = this._isInvalidFolderName(this.options.folderName);
-      badFolder === true
-        ? (this.props.folderName = this.options.folderName)
-        : this.emit('error', new Error(badFolder));
+    if (this.props.folderName) {
+      const badFolder = this._isInvalidFolderName(this.props.folderName);
+      if (badFolder !== true) {
+        this.emit('error', new Error(badFolder));
+      }
     }
 
-    if (this.options.entryName) {
-      const badEntryName = this._isInvalidEntryName(this.options.entryName);
-      badEntryName === true
-        ? (this.props.entryName = this.options.entryName)
-        : this.emit('error', new Error(badEntryName));
+    if (this.props.entryName) {
+      const badEntryName = this._isInvalidEntryName(this.props.entryName);
+      if (badEntryName !== true) {
+        this.emit('error', new Error(badEntryName));
+      }
     }
 
-    if (this.options.slackGroup) {
-      const badSlackGroup = this._isInvalidSlackGroup(this.options.slackGroup);
-      badSlackGroup === true
-        ? (this.props.slackGroup = this.options.slackGroup)
-        : this.emit('error', new Error(badSlackGroup));
+    if (this.props.slackGroup) {
+      const badSlackGroup = this._isInvalidSlackGroup(this.props.slackGroup);
+      if (badSlackGroup !== true) {
+        this.emit('error', new Error(badSlackGroup));
+      }
     }
   }
 
@@ -288,14 +346,32 @@ module.exports = class extends Generator {
     }
 
     if (this.props.isForm) {
-      this.composeWith(require.resolve('../form'), {
+      const formOptions = {
         folderName: this.props.folderName,
         appName: this.props.appName,
         rootUrl: this.props.rootUrl,
         entryName: this.props.entryName,
         sharedProps: this.sharedProps,
         subFolder: this.props.subFolder,
-      });
+      };
+
+      if (this.props.formNumber) formOptions.formNumber = this.props.formNumber;
+      if (this.props.trackingPrefix)
+        formOptions.trackingPrefix = this.props.trackingPrefix;
+      if (this.props.respondentBurden)
+        formOptions.respondentBurden = this.props.respondentBurden;
+      if (this.props.ombNumber) formOptions.ombNumber = this.props.ombNumber;
+      if (this.props.expirationDate)
+        formOptions.expirationDate = this.props.expirationDate;
+      if (this.props.benefitDescription)
+        formOptions.benefitDescription = this.props.benefitDescription;
+      if (this.props.usesVetsJsonSchema !== undefined)
+        formOptions.usesVetsJsonSchema = this.props.usesVetsJsonSchema;
+      if (this.props.usesMinimalHeader !== undefined)
+        formOptions.usesMinimalHeader = this.props.usesMinimalHeader;
+      if (this.props.templateType) formOptions.templateType = this.props.templateType;
+
+      this.composeWith(require.resolve('../form'), formOptions);
     }
   }
 
