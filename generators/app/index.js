@@ -256,15 +256,20 @@ module.exports = class extends Generator {
 
       try {
         if (isSingleApp) {
-          config.allow.singleApps.push({
-            entryName: this.props.entryName,
+          config.apps.push({
+            rootFolder: this.props.folderName,
             slackGroup: this.props.slackGroup,
           });
         } else {
-          config.allow.groupedApps.push({
-            rootFolder: appPaths[0],
-            slackGroup: this.props.slackGroup,
-          });
+          const rootFolder = appPaths[0];
+          const existingApp = config.apps.find((app) => app.rootFolder === rootFolder);
+
+          if (!existingApp) {
+            config.apps.push({
+              rootFolder: appPaths[0],
+              slackGroup: this.props.slackGroup,
+            });
+          }
         }
 
         this.fs.writeJSON(configPath, config);
