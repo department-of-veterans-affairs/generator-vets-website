@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
+## [3.14.1] - 2025-08-21
+### Changed
+- Changed default value for minimal header prompt from false to true
+
 ## [3.14.0] - 2025-04-11
 ### Changed
 - Added new TEMPLATE_TYPE for form apps to generate structure for FORM_ENGINE powered forms.
