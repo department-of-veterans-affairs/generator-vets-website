@@ -19,6 +19,92 @@ function getDate() {
 }
 
 module.exports = class extends Generator {
+  constructor(args, options) {
+    super(args, options);
+
+    // Define all form options that can be passed via command line
+    this.option('formNumber', {
+      type: String,
+      required: false,
+      description: "Form number (e.g. '22-0993' or '21P-530')",
+    });
+    this.option('trackingPrefix', {
+      type: String,
+      required: false,
+      description: 'Google Analytics event prefix',
+    });
+    this.option('respondentBurden', {
+      type: String,
+      required: false,
+      description: 'Respondent burden in minutes',
+    });
+    this.option('ombNumber', {
+      type: String,
+      required: false,
+      description: 'OMB control number',
+    });
+    this.option('expirationDate', {
+      type: String,
+      required: false,
+      description: 'OMB expiration date (M/D/YYYY format)',
+    });
+    this.option('benefitDescription', {
+      type: String,
+      required: false,
+      description: 'Benefit description',
+    });
+    this.option('usesVetsJsonSchema', {
+      type: Boolean,
+      required: false,
+      description: 'Whether this form uses vets-json-schema',
+    });
+    this.option('usesMinimalHeader', {
+      type: Boolean,
+      required: false,
+      description: 'Whether to use minimal header pattern',
+    });
+    this.option('templateType', {
+      type: String,
+      required: false,
+      description: 'Form template type (WITH_1_PAGE or WITH_4_PAGES)',
+    });
+  }
+
+  initializing() {
+    this.props = { ...this.options };
+
+    const makeBool = (boolLike) => {
+      if (typeof boolLike === 'boolean') {
+        return boolLike;
+      }
+
+      if (typeof boolLike === 'string') {
+        switch (boolLike.toUpperCase()) {
+          case 'N':
+          case 'FALSE':
+            return false;
+          default:
+            return true;
+        }
+      }
+
+      return boolLike;
+    };
+
+    if (this.props.usesVetsJsonSchema !== undefined) {
+      this.props.usesVetsJsonSchema = makeBool(this.props.usesVetsJsonSchema);
+    }
+
+    if (this.props.usesMinimalHeader !== undefined) {
+      this.props.usesMinimalHeader = makeBool(this.props.usesMinimalHeader);
+    }
+
+    if (this.props.formNumber) {
+      this.props.formNumber = this.props.formNumber.replace(/\s|_/g, '-').toUpperCase();
+      this.props.formIdConst = `FORM_${this.props.formNumber.replace(/-/g, '_')}`;
+    }
+  }
+
   prompting() {
     const prompts = [
       {
@@ -41,24 +127,28 @@ module.exports = class extends Generator {
 
           return true;
         },
+        when: !this.props.formNumber,
       },
       {
         type: 'input',
         name: 'trackingPrefix',
         message:
           "What's the Google Analytics event prefix that you want to use? Examples: 'burials-530-' or 'edu-0993-'",
-        default: `${this.options.entryName}-`,
+        default: `${this.props.entryName || 'app'}-`,
+        when: !this.props.trackingPrefix,
       },
       {
         type: 'input',
         name: 'respondentBurden',
         message: "What's the respondent burden of this form in minutes?",
         default: '30',
+        when: !this.props.respondentBurden,
       },
       {
         type: 'input',
         name: 'ombNumber',
         message: "What's the OMB control number for this form? Example: '2900-0797'",
+        when: !this.props.ombNumber,
       },
       {
         type: 'input',
@@ -66,6 +156,7 @@ module.exports = class extends Generator {
         message:
           "What's the OMB expiration date (in M/D/YYYY format) for this form? Example: '1/31/2019'",
         default: getDate,
+        when: !this.props.expirationDate,
       },
       {
         type: 'input',
@@ -73,6 +164,7 @@ module.exports = class extends Generator {
         message:
           "What's the benefit description for this form? Examples: 'education benefits' or 'disability claims increase'",
         default: `benefits`,
+        when: !this.props.benefitDescription,
       },
       {
         type: 'confirm',
@@ -80,13 +172,16 @@ module.exports = class extends Generator {
         message:
           'Does this form use vets-json-schema? (JSON schemas defined in separate repository)',
         default: false,
-        when: (props) => props.formNumber,
+        when: (props) =>
+          this.props.usesVetsJsonSchema === undefined &&
+          (this.props.formNumber || props.formNumber),
       },
       {
         type: 'confirm',
         name: 'usesMinimalHeader',
         message: 'Use minimal header (minimal form flow) pattern?',
         default: true,
+        when: this.props.usesMinimalHeader === undefined,
       },
       {
         type: 'list',
@@ -98,12 +193,15 @@ module.exports = class extends Generator {
           `${TEMPLATE_TYPES.FORM_ENGINE}: A form from Drupal using the shared Form Engine`,
         ],
         filter: (choice) => choice.split(':')[0],
+        when: !this.props.templateType,
       },
     ];
 
     return this.prompt(prompts).then((props) => {
-      this.props = { ...this.options, ...props };
+      // Store the values from prompts, preserving CLI options and config precedence
+      this.props = { ...this.props, ...props };
       this.props.formIdConst = `FORM_${this.props.formNumber.replace(/-/g, '_')}`;
+
       if (this.options.sharedProps) {
         // Update these so that app/index.js can have access to them
         this.options.sharedProps.usesMinimalHeader = this.props.usesMinimalHeader;

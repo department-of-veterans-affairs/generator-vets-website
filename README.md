@@ -10,6 +10,33 @@ From `vets-website`, run `npm run new:app`.
 
 Follow the instructions on screen.
 
+### Command Line Usage
+
+You can skip the interactive prompts by passing all options via command line:
+
+```bash
+yo @department-of-veterans-affairs/vets-website \
+  --force \
+  --appName="My App" \
+  --folderName="my-app" \
+  --entryName="my-app" \
+  --rootUrl="/my-app" \
+  --isForm=true \
+  --slackGroup="@my-group" \
+  --contentLoc="../vagov-content" \
+  --formNumber="21P-530" \
+  --trackingPrefix="burials-530-" \
+  --respondentBurden="30" \
+  --ombNumber="2900-0797" \
+  --expirationDate="12/31/2026" \
+  --benefitDescription="burial benefits" \
+  --usesVetsJsonSchema=false \
+  --usesMinimalHeader=false \
+  --templateType="WITH_1_PAGE"
+```
+
+The `--force` option will automatically overwrite existing files without prompting.
+
 For more details on answering the prompts, the following documentation might be helpful.
 
 - [Guide on using this Yeoman generator with example answers for each prompt](https://department-of-veterans-affairs.github.io/veteran-facing-services-tools/platform/tools/generator/)
@@ -32,7 +59,7 @@ For specifics on writing a generator, [refer to the official Yeoman documentatio
 1. **Make your modified generator available as a global module.**
 
     From the root of this repo (`generator-vets-website`):
-    
+
     ```sh
     # Create a symlink in your global node_modules to this module.
     npm link

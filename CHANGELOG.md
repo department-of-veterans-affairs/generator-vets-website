@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
+## [3.15.0] - 2025-08-25
+### Added
+- CLI support for all generator options
+- Ability to skip interactive prompts by passing arguments via CLI
+
 ## [3.14.1] - 2025-08-21
 ### Changed
 - Changed default value for minimal header prompt from false to true
