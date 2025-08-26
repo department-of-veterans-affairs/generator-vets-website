@@ -90,3 +90,39 @@ For specifics on writing a generator, [refer to the official Yeoman documentatio
     # From the root of generator-vets-website:
     npm unlink
     ```
+
+### Publishing to npm
+
+When you're ready to publish a new version of the generator to npm:
+
+1. **Ensure you're logged in to npm:**
+
+    ```sh
+    npm login
+    ```
+
+    You'll need to be added as a maintainer of the `@department-of-veterans-affairs/generator-vets-website` package.
+
+2. **Update the version number:**
+
+    ```sh
+    npm version patch   # for bug fixes (3.14.1 → 3.14.2)
+    npm version minor   # for new features (3.14.1 → 3.15.0)
+    npm version major   # for breaking changes (3.14.1 → 4.0.0)
+    ```
+
+    This will update `package.json` and create a git tag.
+
+3. **Run pre-publish checks:**
+
+    ```sh
+    npm run prepublishOnly
+    ```
+
+    This runs `npm run prepublishOnly` to check for security vulnerabilities.
+
+4. **Publish to npm:**
+
+    ```sh
+    npm publish
+    ```
