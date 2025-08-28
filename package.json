@@ -1,13 +1,14 @@
 {
   "name": "@department-of-veterans-affairs/generator-vets-website",
-  "version": "3.15.0",
+  "version": "3.16.0",
   "description": "Generate a React app for vets-website",
   "homepage": "",
   "author": {
     "name": "DSVA"
   },
   "files": [
-    "generators"
+    "generators",
+    "utils"
   ],
   "main": "generators/index.js",
   "keywords": [
@@ -23,12 +24,11 @@
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
-    "prettier": "^2.0.5",
-    "yeoman-assert": "^3.1.0",
-    "yeoman-test": "^7.0.0"
+    "mocha": "^10.0.0",
+    "prettier": "^2.0.5"
   },
   "engines": {
-    "node": ">= 8.0.0"
+    "node": "^14.15.0"
   },
   "dependencies": {
     "chalk": "^4.1.2",
@@ -37,7 +37,9 @@
   },
   "scripts": {
     "prepublishOnly": "npm audit --audit-level=high",
-    "pretest": "eslint .",
+    "lint": "eslint .",
+    "test": "mocha 'test/**/*.spec.js' --timeout 10000",
+    "test:full": "npm run lint && npm test",
     "precommit": "lint-staged"
   },
   "lint-staged": {

@@ -9,6 +9,12 @@ const path = require('path');
 const Generator = require('yeoman-generator');
 const chalk = require('chalk');
 const yosay = require('yosay');
+const { checkForDuplicates } = require('../../utils/duplicate-detection');
+const {
+  validateAllCliArguments,
+  isNonInteractiveMode,
+  validateRequiredCliArguments,
+} = require('../../utils/cli-validation');
 
 const defaultContentRepoPath = '../vagov-content';
 
@@ -29,8 +35,37 @@ function uuidv4() {
   });
 }
 
+/**
+ * TODO:
+ * - Remove this after upgrading to node 16+
+ * - For now Node 14.15 is required, so give a helpful error message if we are not using that.
+ */
+function checkNodeCompatibilityTemporary() {
+  const nodeVersion = process.version;
+  const majorVersion = parseInt(nodeVersion.slice(1).split('.')[0], 10);
+
+  if (majorVersion !== 14) {
+    console.error(
+      `${chalk.red('Error:')} Node.js ${nodeVersion} is not supported by this generator.`,
+    );
+    console.error(
+      `${chalk.yellow('Required version:')} Node.js 14.15.0 (use 'nvm use' to switch)`,
+    );
+    console.error(`${chalk.cyan('Please switch to Node.js 14.15.0 and try again.')}`);
+    console.error(
+      `${chalk.gray(
+        'Note: This restriction will be removed when we upgrade to yeoman-generator 5.10.0+',
+      )}`,
+    );
+    process.exit(1);
+  }
+}
+
 module.exports = class extends Generator {
   constructor(args, options) {
+    // REMOVE: this call when upgrading to yeoman-generator 5.10.0+ for Node.js 22+ support
+    checkNodeCompatibilityTemporary();
+
     super(args, options);
 
     this.option('appName', {
@@ -162,6 +197,30 @@ module.exports = class extends Generator {
       ...this.options,
     };
     this.sharedProps = {};
+
+    // Validate CLI arguments early to fail fast
+    const cliValidationErrors = validateAllCliArguments(this.options);
+    if (cliValidationErrors.length > 0) {
+      const errorMessage = `CLI validation failed:\n${cliValidationErrors
+        .map((err) => `  - ${err}`)
+        .join('\n')}`;
+      this.emit('error', new Error(errorMessage));
+      return;
+    }
+
+    // If non-interactive mode is detected, validate that all required arguments are provided
+    if (isNonInteractiveMode(this.options)) {
+      const missingFieldErrors = validateRequiredCliArguments(this.options);
+      if (missingFieldErrors.length > 0) {
+        const errorMessage = `Non-interactive mode detected, but required arguments are missing:\n${missingFieldErrors
+          .map((err) => `  - ${err}`)
+          .join(
+            '\n',
+          )}\n\nWhen running in non-interactive mode, all required fields must be provided.\nFor interactive mode with prompts, run the generator without providing all arguments upfront.`;
+        this.emit('error', new Error(errorMessage));
+        return;
+      }
+    }
 
     const makeBool = (boolLike) => {
       if (typeof boolLike === 'boolean') {
@@ -438,10 +497,48 @@ module.exports = class extends Generator {
   }
 
   updateRegistry() {
-    const registryFile = '../content-build/src/applications/registry.json';
-    const registry = this.fs.readJSON(registryFile);
+    const contentBuildPath = path.resolve(this.destinationRoot(), '../content-build');
+    const registryFile = path.join(contentBuildPath, 'src/applications/registry.json');
+
+    this.log(chalk.blue(`Updating registry file at: ${registryFile}`));
 
     try {
+      let registry;
+
+      try {
+        registry = this.fs.readJSON(registryFile);
+      } catch (readError) {
+        this.log(
+          chalk.yellow(`Warning: Could not read ${registryFile}. Creating new registry.`),
+        );
+        registry = [];
+      }
+
+      if (!Array.isArray(registry)) {
+        this.log(
+          chalk.yellow(
+            `Warning: Registry file exists but is not an array. Initializing as empty array.`,
+          ),
+        );
+        registry = [];
+      }
+
+      // Check for duplicates using the utility function
+      const newApp = {
+        appName: this.props.appName,
+        entryName: this.props.entryName,
+        rootUrl: this.props.rootUrl,
+        productId: this.props.productId,
+      };
+      const duplicates = checkForDuplicates(registry, newApp);
+
+      if (duplicates.length > 0) {
+        const errorMessage = `Cannot create application due to duplicate entries in content-build registry:
+${duplicates.join('\n')}`;
+        this.log(chalk.red(errorMessage));
+        throw new Error(errorMessage);
+      }
+
       registry.push({
         appName: this.props.appName,
         entryName: this.props.entryName,
@@ -465,7 +562,8 @@ module.exports = class extends Generator {
       });
       this.fs.writeJSON(registryFile, registry);
     } catch (error) {
-      this.log(chalk.red(`Could not write to ${registryFile}`));
+      this.log(chalk.red(`Could not write to ${registryFile}. ${error.message}`));
+      throw error; // Re-throw to stop the generator
     }
   }
 };

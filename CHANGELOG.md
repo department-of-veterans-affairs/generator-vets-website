@@ -2,6 +2,21 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
+## [3.16.0] - 2025-08-28
+### Added
+- CLI argument validation
+- Interactive/non-interactive mode detection for CLI usage
+- Node.js version compatibility check (requires 14.15.0)
+- `.nvmrc` file for easy Node.js version management
+- Pull request template for consistent development workflow
+- Test coverage for CLI validation and duplicate detection
+
+### Changed
+- Updated CI workflow to test only with Node.js 14.15.0
+- Improved error messages with helpful guidance for version switching
+- Enhanced documentation with nvm usage instructions
+- Standardized on npm package manager in workflows
+
 ## [3.15.0] - 2025-08-25
 ### Added
 - CLI support for all generator options
