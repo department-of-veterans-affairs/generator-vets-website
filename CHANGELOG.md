@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 ## [3.17.0] - 2025-09-04
 ### Added
 - Default cypress and unit tests for new forms
+- Update README
+- Fix default args
 
 ## [3.16.0] - 2025-08-28
 ### Added

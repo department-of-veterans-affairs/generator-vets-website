@@ -133,7 +133,7 @@ module.exports = class extends Generator {
       this.props.formIdConst = `FORM_${this.props.formNumber.replace(/-/g, '_')}`;
     }
 
-    // Only set defaults when running standalone (not as sub-generator) and in non-interactive mode
+    // Only set defaults in non-interactive mode
     const shouldSetDefaults =
       !this.options.sharedProps && isNonInteractiveMode(this.options);
 

@@ -1,4 +1,24 @@
-> Yeoman generator for applications on VA.gov
+# Yeoman generator for applications on VA.gov
+
+This is a Yeoman generator that creates templated forms and applications for the VA.gov website. It's used by the [vets-website](https://github.com/department-of-veterans-affairs/vets-website) project to quickly scaffold new form applications with consistent structure, including React components, form configuration, tests, and all necessary boilerplate code.
+
+The generator supports different template types (1-page forms, 4-page forms, Form Engine forms) and can be run in both interactive and non-interactive modes for flexibility in different development workflows.
+
+- [Yeoman generator for applications on VA.gov](#yeoman-generator-for-applications-on-vagov)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+  - [Local Development Setup](#local-development-setup)
+    - [1. Install dependencies and create global symlink](#1-install-dependencies-and-create-global-symlink)
+    - [2. Link the global symlink into vets-website](#2-link-the-global-symlink-into-vets-website)
+    - [3. Test your changes](#3-test-your-changes)
+    - [4. Clean up when done](#4-clean-up-when-done)
+    - [Running tests](#running-tests)
+  - [Usage](#usage)
+    - [Interactive Mode](#interactive-mode)
+    - [Non-Interactive Mode](#non-interactive-mode)
+    - [Resources](#resources)
+    - [Generator Architecture](#generator-architecture)
+  - [Publishing to npm](#publishing-to-npm)
 
 ## Requirements
 
