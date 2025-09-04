@@ -24,7 +24,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
-    "mocha": "^10.0.0",
+    "mocha": "^10.2.0",
     "prettier": "^2.0.5"
   },
   "engines": {
@@ -38,8 +38,7 @@
   "scripts": {
     "prepublishOnly": "npm audit --audit-level=high",
     "lint": "eslint .",
-    "test": "mocha 'test/**/*.spec.js' --timeout 10000",
-    "test:full": "npm run lint && npm test",
+    "test": "mocha 'tests/**/*.test.js'",
     "precommit": "lint-staged"
   },
   "lint-staged": {
@@ -60,6 +59,17 @@
     "env": {
       "node": true
     },
+    "overrides": [
+      {
+        "files": [
+          "test/**/*.js",
+          "tests/**/*.js"
+        ],
+        "env": {
+          "mocha": true
+        }
+      }
+    ],
     "rules": {
       "prettier/prettier": [
         "error",

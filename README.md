@@ -4,6 +4,58 @@
 
 - Node.js 14.15.0
 
+## Node.js Version Migration Notes
+
+### Current State (Node 14.15.0)
+
+This generator currently requires Node.js 14.15.0 to maintain compatibility with consumer environments that may not have upgraded to newer Node.js versions yet. The generator uses:
+
+- `yeoman-generator@^5.6.1` (CommonJS, Node 12+ compatible)
+- All dependencies are compatible with Node 14.15.0
+
+### Migration to Node 22+ - Blockers and Considerations
+
+**Why we can't migrate to Node 22 immediately:**
+
+1. **Consumer Compatibility**: When users run `yo @department-of-veterans-affairs/vets-website`, they execute our generator directly in their Node.js environment. If we upgrade to Node 22, all consumers must also upgrade.
+
+2. **Yeoman Generator Dependencies**:
+   - `yeoman-generator@7.x+` requires Node 18.17+ and is ESM-only
+   - `yeoman-environment@4.x+` also requires Node 18+ and is ESM-only
+   - These versions are incompatible with our current CommonJS structure
+
+3. **Breaking Changes**: The migration would require:
+   - Converting all generator code from CommonJS to ESM (`require()` → `import`)
+   - Updating all consumers to Node 18.17+ minimum
+   - Potentially breaking existing CI/CD pipelines that rely on Node 14
+
+### Migration Path (Future)
+
+When ready to migrate to Node 22, the steps would be:
+
+1. **Phase 1: Preparation**
+   - Survey consumer environments for Node.js version adoption
+   - Update documentation to recommend Node 18+ for new setups
+   - Create migration timeline and communicate to stakeholders
+
+2. **Phase 2: Technical Migration**
+   - Convert generator from CommonJS to ESM
+   - Upgrade to `yeoman-generator@^7.5.1` and `yeoman-environment@^4.4.1`
+   - Update all import/export statements
+   - Update package.json to `"type": "module"`
+
+3. **Phase 3: Validation**
+   - Test generator in Node 18, 20, and 22 environments
+   - Update CI/CD pipelines
+   - Publish breaking version (v4.0.0) with clear migration notes
+
+4. **Phase 4: Deprecation**
+   - Deprecate Node 14 support
+   - Provide 6-month support window for legacy version
+   - Monitor adoption and provide migration assistance
+
+**Current Recommendation**: Stay on Node 14.15.0 until consumer environment survey shows majority adoption of Node 18+.
+
 ## Installation
 
 The generator is already installed as a `devDependency` of [`vets-website`](https://github.com/department-of-veterans-affairs/vets-website).
@@ -51,28 +103,18 @@ npm unlink --no-save @department-of-veterans-affairs/generator-vets-website
 npm unlink
 ```
 
-### Running tests
-
-To run the automated test suite:
-
-```sh
-npm test
-```
-
-This will run the test suite. To run linting separately:
-
-```sh
-npm run lint
-```
-
-Or run both linting and tests together:
-
-```sh
-npm run test:full
-```
-
 ## Usage
 
+The generator supports two modes of operation:
+
+### Interactive Mode
+
+```bash
+# From vets-website directory
+yarn run new:app
+```
+
+The generator will guide you through all required information with helpful prompts and validation.
 The generator supports two modes of operation:
 
 ### Interactive Mode
@@ -87,8 +129,12 @@ The generator will guide you through all required information with helpful promp
 ### Non-Interactive Mode
 
 Provide all arguments upfront to skip prompts entirely:
+### Non-Interactive Mode
+
+Provide all arguments upfront to skip prompts entirely:
 
 ```bash
+# From vets-website directory
 # From vets-website directory
 yo @department-of-veterans-affairs/vets-website \
   --force \
@@ -111,7 +157,9 @@ yo @department-of-veterans-affairs/vets-website \
 ```
 
 Use `--force` option to automatically overwrite existing files without prompting.
+Use `--force` option to automatically overwrite existing files without prompting.
 
+### Resources
 ### Resources
 
 - [Guide on using this Yeoman generator with example answers for each prompt](https://department-of-veterans-affairs.github.io/veteran-facing-services-tools/platform/tools/generator/)
@@ -121,12 +169,15 @@ These resources are also provided by the generator at startup.
 
 ### Generator Architecture
 
-There are two generators: one for general (non-form) apps and one for form apps.
-- The latter runs on top of the former if certain prompts are answered to generate a form app.
-- Each generator has its own set of templates from which it generates files in the app structure.
+The generator uses a unified architecture with a strategy pattern to handle both general (non-form) apps and form apps.
+- A single entry point (`generators/app/index.js`) determines the app type based on the `isForm` flag
+- Strategy classes (AppStrategy, FormStrategy) handle the specific generation logic for each type
+- Templates are organized under `generators/app/templates/` with shared, app-specific, and form-specific folders
+- This provides a clean separation of concerns while maintaining a single, consistent interface
 
 For specifics on writing a generator, [refer to the official Yeoman documentation](https://yeoman.github.io/generator/).
 
+## Publishing to npm
 ## Publishing to npm
 
 When you're ready to publish a new version of the generator to npm:

@@ -2,3 +2,7 @@ node_modules
 coverage
 .vscode/
 .idea/
+
+# Test artifacts
+test-output/
+content-build/
