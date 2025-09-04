@@ -102,9 +102,6 @@ module.exports = class extends Generator {
   initializing() {
     this.props = { ...this.options };
 
-    // Note: CLI validation is handled by the parent app generator when called via composeWith()
-    // This form generator runs as a sub-generator, so we only handle form-specific logic here
-
     const makeBool = (boolLike) => {
       if (typeof boolLike === 'boolean') {
         return boolLike;
@@ -136,12 +133,10 @@ module.exports = class extends Generator {
       this.props.formIdConst = `FORM_${this.props.formNumber.replace(/-/g, '_')}`;
     }
 
-    // When running as a sub-generator (sharedProps exists), ignore isNonInteractiveMode
-    // because the parent generator may have passed options that trigger it incorrectly
+    // Only set defaults when running standalone (not as sub-generator) and in non-interactive mode
     const shouldSetDefaults =
       !this.options.sharedProps && isNonInteractiveMode(this.options);
 
-    // Only set defaults if running standalone (not sub-generator) AND in non-interactive mode
     if (shouldSetDefaults) {
       if (!this.props.trackingPrefix) {
         this.props.trackingPrefix = this._getDefaultTrackingPrefix();
@@ -171,30 +166,9 @@ module.exports = class extends Generator {
         this.props.templateType = this._getDefaultTemplateType();
       }
     }
-    // When running as a sub-generator (from app generator), always allow prompting for undefined values
   }
 
   prompting() {
-    // Debug logging to see what's happening with the properties
-    console.log('=== FORM GENERATOR DEBUG ===');
-    console.log(
-      'Running as sub-generator (has sharedProps):',
-      Boolean(this.options.sharedProps),
-    );
-    console.log('isNonInteractiveMode:', isNonInteractiveMode(this.options));
-    console.log(
-      'shouldSetDefaults:',
-      !this.options.sharedProps && isNonInteractiveMode(this.options),
-    );
-    console.log('this.props.benefitDescription:', this.props.benefitDescription);
-    console.log('this.props.usesVetsJsonSchema:', this.props.usesVetsJsonSchema);
-    console.log('this.props.usesMinimalHeader:', this.props.usesMinimalHeader);
-    console.log('this.props.templateType:', this.props.templateType);
-    console.log('this.props.formNumber:', this.props.formNumber);
-    console.log('this.props.ombNumber:', this.props.ombNumber);
-    console.log('this.props.expirationDate:', this.props.expirationDate);
-    console.log('============================');
-
     const prompts = [
       {
         type: 'input',
@@ -237,17 +211,7 @@ module.exports = class extends Generator {
         type: 'input',
         name: 'ombNumber',
         message: "What's the OMB control number for this form? Example: '2900-0797'",
-        when: () => {
-          const shouldAsk = !this.props.ombNumber;
-          console.log(
-            'ombNumber when condition:',
-            shouldAsk,
-            '(this.props.ombNumber:',
-            this.props.ombNumber,
-            ')',
-          );
-          return shouldAsk;
-        },
+        when: !this.props.ombNumber,
       },
       {
         type: 'input',
@@ -255,17 +219,7 @@ module.exports = class extends Generator {
         message:
           "What's the OMB expiration date (in M/D/YYYY format) for this form? Example: '1/31/2019'",
         default: () => this._getDefaultExpirationDate(),
-        when: () => {
-          const shouldAsk = !this.props.expirationDate;
-          console.log(
-            'expirationDate when condition:',
-            shouldAsk,
-            '(this.props.expirationDate:',
-            this.props.expirationDate,
-            ')',
-          );
-          return shouldAsk;
-        },
+        when: !this.props.expirationDate,
       },
       {
         type: 'input',
@@ -273,17 +227,7 @@ module.exports = class extends Generator {
         message:
           "What's the benefit description for this form? Examples: 'education benefits' or 'disability claims increase'",
         default: () => this._getDefaultBenefitDescription(),
-        when: () => {
-          const shouldAsk = !this.props.benefitDescription;
-          console.log(
-            'benefitDescription when condition:',
-            shouldAsk,
-            '(this.props.benefitDescription:',
-            this.props.benefitDescription,
-            ')',
-          );
-          return shouldAsk;
-        },
+        when: !this.props.benefitDescription,
       },
       {
         type: 'confirm',
@@ -291,38 +235,16 @@ module.exports = class extends Generator {
         message:
           'Does this form use vets-json-schema? (JSON schemas defined in separate repository)',
         default: () => this._getDefaultUsesVetsJsonSchema(),
-        when: (props) => {
-          const shouldAsk =
-            this.props.usesVetsJsonSchema === undefined &&
-            (this.props.formNumber || props.formNumber);
-          console.log(
-            'usesVetsJsonSchema when condition:',
-            shouldAsk,
-            '(this.props.usesVetsJsonSchema === undefined:',
-            this.props.usesVetsJsonSchema === undefined,
-            ', formNumber available:',
-            Boolean(this.props.formNumber || props.formNumber),
-            ')',
-          );
-          return shouldAsk;
-        },
+        when: (props) =>
+          this.props.usesVetsJsonSchema === undefined &&
+          (this.props.formNumber || props.formNumber),
       },
       {
         type: 'confirm',
         name: 'usesMinimalHeader',
         message: 'Use minimal header (minimal form flow) pattern?',
         default: () => this._getDefaultUsesMinimalHeader(),
-        when: () => {
-          const shouldAsk = this.props.usesMinimalHeader === undefined;
-          console.log(
-            'usesMinimalHeader when condition:',
-            shouldAsk,
-            '(this.props.usesMinimalHeader === undefined:',
-            this.props.usesMinimalHeader === undefined,
-            ')',
-          );
-          return shouldAsk;
-        },
+        when: () => this.props.usesMinimalHeader === undefined,
       },
       {
         type: 'list',
@@ -335,17 +257,7 @@ module.exports = class extends Generator {
         ],
         filter: (choice) => choice.split(':')[0],
         default: () => this._getDefaultTemplateType(),
-        when: () => {
-          const shouldAsk = !this.props.templateType;
-          console.log(
-            'templateType when condition:',
-            shouldAsk,
-            '(this.props.templateType:',
-            this.props.templateType,
-            ')',
-          );
-          return shouldAsk;
-        },
+        when: !this.props.templateType,
       },
     ];
 
