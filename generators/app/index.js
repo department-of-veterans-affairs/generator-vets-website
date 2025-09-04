@@ -147,6 +147,19 @@ module.exports = class extends Generator {
   }
 
   // Validators
+  _getDefaultContentRepoLocation() {
+    const location = path.join(this.destinationRoot(), defaultContentRepoPath);
+    return hasAccessTo(location) ? path.resolve(location) : null;
+  }
+
+  _getDefaultSlackGroup() {
+    return 'none';
+  }
+
+  _getDefaultIsForm() {
+    return true;
+  }
+
   _isInvalidFolderName = (folder) =>
     !folder.includes(' ') || 'Folder names should not include spaces';
 
@@ -219,6 +232,19 @@ module.exports = class extends Generator {
           )}\n\nWhen running in non-interactive mode, all required fields must be provided.\nFor interactive mode with prompts, run the generator without providing all arguments upfront.`;
         this.emit('error', new Error(errorMessage));
         return;
+      }
+
+      // Set defaults for optional fields in non-interactive mode
+      if (typeof this.props.isForm !== 'boolean') {
+        this.props.isForm = this._getDefaultIsForm();
+      }
+
+      if (!this.props.contentRepoLocation) {
+        this.props.contentRepoLocation = this._getDefaultContentRepoLocation();
+      }
+
+      if (!this.props.slackGroup) {
+        this.props.slackGroup = this._getDefaultSlackGroup();
       }
     }
 
@@ -325,7 +351,7 @@ module.exports = class extends Generator {
         type: 'confirm',
         name: 'isForm',
         message: 'Is this a form app?',
-        default: true,
+        default: () => this._getDefaultIsForm(),
         // If this prop was set from a command line argument, it will be a boolean at this point, otherwise ask.
         when: typeof this.props.isForm !== 'boolean',
       },
@@ -334,10 +360,7 @@ module.exports = class extends Generator {
         name: 'contentRepoLocation',
         message:
           'Where can I find the vagov-content repo? This path can be absolute or relative to vets-website.',
-        default: () => {
-          const location = path.join(this.destinationRoot(), defaultContentRepoPath);
-          return hasAccessTo(location) ? path.resolve(location) : null;
-        },
+        default: () => this._getDefaultContentRepoLocation(),
         validate: (repoPath) =>
           hasAccessTo(repoPath) ||
           `Could not find the directory ${path.normalize(repoPath)}`,
@@ -348,7 +371,7 @@ module.exports = class extends Generator {
         name: 'slackGroup',
         message:
           "What Slack user group should be notified for CI failures on the `main` branch? Example: '@vaos-fe-dev'",
-        default: 'none',
+        default: () => this._getDefaultSlackGroup(),
         validate: this._isInvalidSlackGroup,
         when: !this.props.slackGroup,
       },

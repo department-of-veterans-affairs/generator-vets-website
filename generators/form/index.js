@@ -1,6 +1,7 @@
 'use strict';
 const Generator = require('yeoman-generator');
 const chalk = require('chalk');
+const { isNonInteractiveMode } = require('../../utils/cli-validation');
 const TEMPLATE_TYPES = {
   WITH_1_PAGE: 'WITH_1_PAGE',
   WITH_4_PAGES: 'WITH_4_PAGES',
@@ -70,8 +71,39 @@ module.exports = class extends Generator {
     });
   }
 
+  _getDefaultTrackingPrefix() {
+    return `${this.props.entryName || 'app'}-`;
+  }
+
+  _getDefaultRespondentBurden() {
+    return '30';
+  }
+
+  _getDefaultExpirationDate() {
+    return getDate();
+  }
+
+  _getDefaultBenefitDescription() {
+    return 'benefits';
+  }
+
+  _getDefaultUsesVetsJsonSchema() {
+    return false;
+  }
+
+  _getDefaultUsesMinimalHeader() {
+    return true;
+  }
+
+  _getDefaultTemplateType() {
+    return TEMPLATE_TYPES.WITH_4_PAGES;
+  }
+
   initializing() {
     this.props = { ...this.options };
+
+    // Note: CLI validation is handled by the parent app generator when called via composeWith()
+    // This form generator runs as a sub-generator, so we only handle form-specific logic here
 
     const makeBool = (boolLike) => {
       if (typeof boolLike === 'boolean') {
@@ -103,9 +135,66 @@ module.exports = class extends Generator {
       this.props.formNumber = this.props.formNumber.replace(/\s|_/g, '-').toUpperCase();
       this.props.formIdConst = `FORM_${this.props.formNumber.replace(/-/g, '_')}`;
     }
+
+    // When running as a sub-generator (sharedProps exists), ignore isNonInteractiveMode
+    // because the parent generator may have passed options that trigger it incorrectly
+    const shouldSetDefaults =
+      !this.options.sharedProps && isNonInteractiveMode(this.options);
+
+    // Only set defaults if running standalone (not sub-generator) AND in non-interactive mode
+    if (shouldSetDefaults) {
+      if (!this.props.trackingPrefix) {
+        this.props.trackingPrefix = this._getDefaultTrackingPrefix();
+      }
+
+      if (!this.props.respondentBurden) {
+        this.props.respondentBurden = this._getDefaultRespondentBurden();
+      }
+
+      if (!this.props.expirationDate) {
+        this.props.expirationDate = this._getDefaultExpirationDate();
+      }
+
+      if (!this.props.benefitDescription) {
+        this.props.benefitDescription = this._getDefaultBenefitDescription();
+      }
+
+      if (this.props.usesVetsJsonSchema === undefined) {
+        this.props.usesVetsJsonSchema = this._getDefaultUsesVetsJsonSchema();
+      }
+
+      if (this.props.usesMinimalHeader === undefined) {
+        this.props.usesMinimalHeader = this._getDefaultUsesMinimalHeader();
+      }
+
+      if (!this.props.templateType) {
+        this.props.templateType = this._getDefaultTemplateType();
+      }
+    }
+    // When running as a sub-generator (from app generator), always allow prompting for undefined values
   }
 
   prompting() {
+    // Debug logging to see what's happening with the properties
+    console.log('=== FORM GENERATOR DEBUG ===');
+    console.log(
+      'Running as sub-generator (has sharedProps):',
+      Boolean(this.options.sharedProps),
+    );
+    console.log('isNonInteractiveMode:', isNonInteractiveMode(this.options));
+    console.log(
+      'shouldSetDefaults:',
+      !this.options.sharedProps && isNonInteractiveMode(this.options),
+    );
+    console.log('this.props.benefitDescription:', this.props.benefitDescription);
+    console.log('this.props.usesVetsJsonSchema:', this.props.usesVetsJsonSchema);
+    console.log('this.props.usesMinimalHeader:', this.props.usesMinimalHeader);
+    console.log('this.props.templateType:', this.props.templateType);
+    console.log('this.props.formNumber:', this.props.formNumber);
+    console.log('this.props.ombNumber:', this.props.ombNumber);
+    console.log('this.props.expirationDate:', this.props.expirationDate);
+    console.log('============================');
+
     const prompts = [
       {
         type: 'input',
@@ -134,54 +223,106 @@ module.exports = class extends Generator {
         name: 'trackingPrefix',
         message:
           "What's the Google Analytics event prefix that you want to use? Examples: 'burials-530-' or 'edu-0993-'",
-        default: `${this.props.entryName || 'app'}-`,
+        default: () => this._getDefaultTrackingPrefix(),
         when: !this.props.trackingPrefix,
       },
       {
         type: 'input',
         name: 'respondentBurden',
         message: "What's the respondent burden of this form in minutes?",
-        default: '30',
+        default: () => this._getDefaultRespondentBurden(),
         when: !this.props.respondentBurden,
       },
       {
         type: 'input',
         name: 'ombNumber',
         message: "What's the OMB control number for this form? Example: '2900-0797'",
-        when: !this.props.ombNumber,
+        when: () => {
+          const shouldAsk = !this.props.ombNumber;
+          console.log(
+            'ombNumber when condition:',
+            shouldAsk,
+            '(this.props.ombNumber:',
+            this.props.ombNumber,
+            ')',
+          );
+          return shouldAsk;
+        },
       },
       {
         type: 'input',
         name: 'expirationDate',
         message:
           "What's the OMB expiration date (in M/D/YYYY format) for this form? Example: '1/31/2019'",
-        default: getDate,
-        when: !this.props.expirationDate,
+        default: () => this._getDefaultExpirationDate(),
+        when: () => {
+          const shouldAsk = !this.props.expirationDate;
+          console.log(
+            'expirationDate when condition:',
+            shouldAsk,
+            '(this.props.expirationDate:',
+            this.props.expirationDate,
+            ')',
+          );
+          return shouldAsk;
+        },
       },
       {
         type: 'input',
         name: 'benefitDescription',
         message:
           "What's the benefit description for this form? Examples: 'education benefits' or 'disability claims increase'",
-        default: `benefits`,
-        when: !this.props.benefitDescription,
+        default: () => this._getDefaultBenefitDescription(),
+        when: () => {
+          const shouldAsk = !this.props.benefitDescription;
+          console.log(
+            'benefitDescription when condition:',
+            shouldAsk,
+            '(this.props.benefitDescription:',
+            this.props.benefitDescription,
+            ')',
+          );
+          return shouldAsk;
+        },
       },
       {
         type: 'confirm',
         name: 'usesVetsJsonSchema',
         message:
           'Does this form use vets-json-schema? (JSON schemas defined in separate repository)',
-        default: false,
-        when: (props) =>
-          this.props.usesVetsJsonSchema === undefined &&
-          (this.props.formNumber || props.formNumber),
+        default: () => this._getDefaultUsesVetsJsonSchema(),
+        when: (props) => {
+          const shouldAsk =
+            this.props.usesVetsJsonSchema === undefined &&
+            (this.props.formNumber || props.formNumber);
+          console.log(
+            'usesVetsJsonSchema when condition:',
+            shouldAsk,
+            '(this.props.usesVetsJsonSchema === undefined:',
+            this.props.usesVetsJsonSchema === undefined,
+            ', formNumber available:',
+            Boolean(this.props.formNumber || props.formNumber),
+            ')',
+          );
+          return shouldAsk;
+        },
       },
       {
         type: 'confirm',
         name: 'usesMinimalHeader',
         message: 'Use minimal header (minimal form flow) pattern?',
-        default: true,
-        when: this.props.usesMinimalHeader === undefined,
+        default: () => this._getDefaultUsesMinimalHeader(),
+        when: () => {
+          const shouldAsk = this.props.usesMinimalHeader === undefined;
+          console.log(
+            'usesMinimalHeader when condition:',
+            shouldAsk,
+            '(this.props.usesMinimalHeader === undefined:',
+            this.props.usesMinimalHeader === undefined,
+            ')',
+          );
+          return shouldAsk;
+        },
       },
       {
         type: 'list',
@@ -193,7 +334,18 @@ module.exports = class extends Generator {
           `${TEMPLATE_TYPES.FORM_ENGINE}: A form from Drupal using the shared Form Engine`,
         ],
         filter: (choice) => choice.split(':')[0],
-        when: !this.props.templateType,
+        default: () => this._getDefaultTemplateType(),
+        when: () => {
+          const shouldAsk = !this.props.templateType;
+          console.log(
+            'templateType when condition:',
+            shouldAsk,
+            '(this.props.templateType:',
+            this.props.templateType,
+            ')',
+          );
+          return shouldAsk;
+        },
       },
     ];
 
@@ -242,12 +394,60 @@ module.exports = class extends Generator {
         this.props,
       );
 
-      this.fs.copy(this.templatePath('tests'), this.destinationPath(`${appPath}/tests`));
+      // Copy static test files (containers, fixtures that don't need templating)
+      this.fs.copy(
+        this.templatePath('tests/containers'),
+        this.destinationPath(`${appPath}/tests/containers`),
+      );
+
+      this.fs.copy(
+        this.templatePath('tests/fixtures/mocks/application-submit.json'),
+        this.destinationPath(`${appPath}/tests/fixtures/mocks/application-submit.json`),
+      );
+
+      this.fs.copy(
+        this.templatePath('tests/fixtures/mocks/local-mock-responses.js'),
+        this.destinationPath(`${appPath}/tests/fixtures/mocks/local-mock-responses.js`),
+      );
+
+      this.fs.copy(
+        this.templatePath('tests/fixtures/mocks/user.json'),
+        this.destinationPath(`${appPath}/tests/fixtures/mocks/user.json`),
+      );
+
+      // Copy E2E test
+      this.fs.copyTpl(
+        this.templatePath('tests/e2e/<%= formNumber %>.cypress.spec.js.ejs'),
+        this.destinationPath(
+          `${appPath}/tests/e2e/${this.props.entryName}.cypress.spec.js`,
+        ),
+        this.props,
+      );
+
+      // Copy feature toggles mock
+      this.fs.copyTpl(
+        this.templatePath('tests/fixtures/mocks/feature-toggles.json.ejs'),
+        this.destinationPath(`${appPath}/tests/fixtures/mocks/feature-toggles.json`),
+        this.props,
+      );
+
+      // Copy test data files
+      this.fs.copyTpl(
+        this.templatePath('tests/fixtures/data/minimal-test.json.ejs'),
+        this.destinationPath(`${appPath}/tests/fixtures/data/minimal-test.json`),
+        this.props,
+      );
 
       this.fs.copyTpl(
-        this.templatePath('cypress.spec.js.ejs'),
-        this.destinationPath(`${appPath}/tests/${this.props.entryName}.cypress.spec.js`),
+        this.templatePath('tests/fixtures/data/maximal-test.json.ejs'),
+        this.destinationPath(`${appPath}/tests/fixtures/data/maximal-test.json`),
         this.props,
+      );
+
+      // Copy page tests - always include nameAndDateOfBirth since it exists in all templates
+      this.fs.copy(
+        this.templatePath('tests/pages/nameAndDateOfBirth.unit.spec.jsx'),
+        this.destinationPath(`${appPath}/tests/pages/nameAndDateOfBirth.unit.spec.jsx`),
       );
 
       this.fs.copyTpl(
@@ -298,6 +498,24 @@ module.exports = class extends Generator {
         this.templatePath('pages/phoneAndEmailAddress.js.ejs'),
         this.destinationPath(`${appPath}/pages/phoneAndEmailAddress.js`),
         this.props,
+      );
+
+      // Copy additional page tests for 4-page template
+      this.fs.copy(
+        this.templatePath('tests/pages/identificationInformation.unit.spec.jsx'),
+        this.destinationPath(
+          `${appPath}/tests/pages/identificationInformation.unit.spec.jsx`,
+        ),
+      );
+
+      this.fs.copy(
+        this.templatePath('tests/pages/mailingAddress.unit.spec.jsx'),
+        this.destinationPath(`${appPath}/tests/pages/mailingAddress.unit.spec.jsx`),
+      );
+
+      this.fs.copy(
+        this.templatePath('tests/pages/phoneAndEmailAddress.unit.spec.jsx'),
+        this.destinationPath(`${appPath}/tests/pages/phoneAndEmailAddress.unit.spec.jsx`),
       );
     }
 
@@ -414,6 +632,12 @@ module.exports = class extends Generator {
         chalk.bold(`Unit test: `) +
           chalk.cyan(
             `yarn test:unit --app-folder ${this.props.folderName} --log-level all`,
+          ),
+      );
+      this.log(
+        chalk.bold(`Cypress:   `) +
+          chalk.cyan(
+            `yarn cy:run --spec "src/applications/${this.props.folderName}/tests/e2e/${this.props.entryName}.cypress.spec.js"`,
           ),
       );
       this.log('------------------------------------');
