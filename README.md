@@ -1,20 +1,95 @@
 > Yeoman generator for applications on VA.gov
 
+## Requirements
+
+- Node.js 14.15.0
+
 ## Installation
 
 The generator is already installed as a `devDependency` of [`vets-website`](https://github.com/department-of-veterans-affairs/vets-website).
 
+## Local Development Setup
+
+If you're working on this generator itself, you'll need to link it locally to test your changes.
+
+### 1. Install dependencies and create global symlink
+
+From the root of this repo (`generator-vets-website`):
+
+```sh
+nvm use # from .nvmrc
+npm install
+npm link  # Creates a global symlink to this local package
+```
+
+### 2. Link the global symlink into vets-website
+
+From the root of `vets-website`:
+
+```sh
+npm link @department-of-veterans-affairs/generator-vets-website
+```
+
+This tells vets-website to use your local development version instead of the published npm version.
+
+### 3. Test your changes
+
+```sh
+# From vets-website root:
+yarn new:app
+```
+
+Any changes to the generator will be automatically included due to the npm link.
+
+### 4. Clean up when done
+
+```sh
+# From vets-website root:
+npm unlink --no-save @department-of-veterans-affairs/generator-vets-website
+
+# From generator-vets-website root:
+npm unlink
+```
+
+### Running tests
+
+To run the automated test suite:
+
+```sh
+npm test
+```
+
+This will run the test suite. To run linting separately:
+
+```sh
+npm run lint
+```
+
+Or run both linting and tests together:
+
+```sh
+npm run test:full
+```
+
 ## Usage
 
-From `vets-website`, run `npm run new:app`.
+The generator supports two modes of operation:
 
-Follow the instructions on screen.
-
-### Command Line Usage
-
-You can skip the interactive prompts by passing all options via command line:
+### Interactive Mode
 
 ```bash
+# From vets-website directory
+yarn run new:app
+```
+
+The generator will guide you through all required information with helpful prompts and validation.
+
+### Non-Interactive Mode
+
+Provide all arguments upfront to skip prompts entirely:
+
+```bash
+# From vets-website directory
 yo @department-of-veterans-affairs/vets-website \
   --force \
   --appName="My App" \
@@ -35,18 +110,16 @@ yo @department-of-veterans-affairs/vets-website \
   --templateType="WITH_1_PAGE"
 ```
 
-The `--force` option will automatically overwrite existing files without prompting.
+Use `--force` option to automatically overwrite existing files without prompting.
 
-For more details on answering the prompts, the following documentation might be helpful.
+### Resources
 
 - [Guide on using this Yeoman generator with example answers for each prompt](https://department-of-veterans-affairs.github.io/veteran-facing-services-tools/platform/tools/generator/)
 - [Basic tutorial for creating and modifying a form application](https://department-of-veterans-affairs.github.io/veteran-facing-services-tools/forms/form-tutorial-basic)
 
 These resources are also provided by the generator at startup.
 
-## Contributing
-
-### Making changes
+### Generator Architecture
 
 There are two generators: one for general (non-form) apps and one for form apps.
 - The latter runs on top of the former if certain prompts are answered to generate a form app.
@@ -54,44 +127,7 @@ There are two generators: one for general (non-form) apps and one for form apps.
 
 For specifics on writing a generator, [refer to the official Yeoman documentation](https://yeoman.github.io/generator/).
 
-### Testing changes
-
-1. **Make your modified generator available as a global module.**
-
-    From the root of this repo (`generator-vets-website`):
-
-    ```sh
-    # Create a symlink in your global node_modules to this module.
-    npm link
-    ```
-
-2. **Run your modified generator in your local `vets-website`.**
-
-    From the root of `vets-website`:
-
-    ```sh
-    # Point vets-website's local generator to your newly linked global module.
-    npm link @department-of-veterans-affairs/generator-vets-website
-
-    # Start up Yeoman.
-    npx yo
-
-    # Choose to run generator-vets-website in the Yeoman prompt.
-    ```
-
-    Due to the link, any further changes to the generator will automatically be included when you run it within your local `vets-website` repo.
-
-3. **When you're done testing your changes, clean up the links:**
-
-    ```sh
-    # From the root of vets-website:
-    npm unlink --no-save @department-of-veterans-affairs/generator-vets-website
-
-    # From the root of generator-vets-website:
-    npm unlink
-    ```
-
-### Publishing to npm
+## Publishing to npm
 
 When you're ready to publish a new version of the generator to npm:
 
