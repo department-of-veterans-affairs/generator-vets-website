@@ -8,11 +8,11 @@ import formConfig from '../../config/form';
 const {
   schema,
   uiSchema,
-} = formConfig.chapters.personalInformationChapter.pages.mailingAddress;
+} = formConfig.chapters.mailingAddressChapter.pages.mailingAddress;
 
 const pageTitle = 'Mailing address';
 
-testNumberOfWebComponentFields(formConfig, schema, uiSchema, 6, pageTitle);
+testNumberOfWebComponentFields(formConfig, schema, uiSchema, 7, pageTitle);
 
 testNumberOfErrorsOnSubmitForWebComponents(
   formConfig,

@@ -18,6 +18,6 @@ testNumberOfErrorsOnSubmitForWebComponents(
   formConfig,
   schema,
   uiSchema,
-  0,
+  1,
   pageTitle,
 );
