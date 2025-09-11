@@ -557,7 +557,10 @@ module.exports = class extends Generator {
 
       if (duplicates.length > 0) {
         const errorMessage = `Cannot create application due to duplicate entries in content-build registry:
-${duplicates.join('\n')}`;
+${duplicates.join('\n')}
+
+Choose different values for the conflicting fields, or if you need to modify/replace an existing entry,
+update the registry file at: ${registryFile}`;
         this.log(chalk.red(errorMessage));
         throw new Error(errorMessage);
       }

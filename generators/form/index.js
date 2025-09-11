@@ -526,35 +526,20 @@ module.exports = class extends Generator {
     process.nextTick(() => {
       this.log('------------------------------------');
       this.log(chalk.bold('Next Steps for Deployment:'));
-      this.log('');
+      this.log('Create and merge PRs in the following order:');
       if (this.props.usesVetsJsonSchema) {
-        this.log(chalk.bold('1. Schema Updates:'));
-        this.log(
-          '   Create and merge PR in ' + chalk.cyan('../vets-json-schema') + ' first',
-        );
-        this.log('');
-        this.log(chalk.bold('2. Application Code:'));
-        this.log('   Create and merge PR in ' + chalk.cyan('vets-website') + ' next');
-        this.log('');
-        this.log(chalk.bold('3. Content Build:'));
-        this.log('   Create and merge PR in ' + chalk.cyan('../content-build') + ' last');
+        this.log(chalk.bold('1.') + ' ' + chalk.cyan('../vets-json-schema'));
+        this.log(chalk.bold('2.') + ' ' + chalk.cyan('vets-website'));
+        this.log(chalk.bold('3.') + ' ' + chalk.cyan('../content-build'));
       } else {
-        this.log(chalk.bold('1. Application Code:'));
-        this.log('   Create and merge PR in ' + chalk.cyan('vets-website') + ' first');
-        this.log('');
-        this.log(chalk.bold('2. Content Build:'));
-        this.log(
-          '   Create and merge PR in ' + chalk.cyan('../content-build') + ' second',
-        );
+        this.log(chalk.bold('1.') + ' ' + chalk.cyan('vets-website'));
+        this.log(chalk.bold('2.') + ' ' + chalk.cyan('../content-build'));
       }
 
-      this.log('');
       this.log(
-        '   ' +
-          chalk.yellow('Note:') +
-          ' Form will not load in CI/staging and Cypress tests will fail',
+        chalk.yellow('Note:') +
+          ' Cypress tests disabled in CI. Re-enable after content-build is deployed',
       );
-      this.log('   until content-build is deployed');
 
       this.log('');
       this.log('------------------------------------');
