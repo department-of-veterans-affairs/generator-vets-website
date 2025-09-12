@@ -276,7 +276,10 @@ module.exports = class extends Generator {
   }
 
   writing() {
-    const appPath = `src/applications/${this.props.folderName}`;
+    const appPath =
+      this.props.templateType === TEMPLATE_TYPES.FORM_ENGINE
+        ? `src/applications/simple-forms-form-engine/${this.props.folderName}`
+        : `src/applications/${this.props.folderName}`;
 
     if (
       this.props.templateType === TEMPLATE_TYPES.WITH_1_PAGE ||
@@ -432,6 +435,29 @@ module.exports = class extends Generator {
     }
 
     if (this.props.templateType === TEMPLATE_TYPES.FORM_ENGINE) {
+      // Move files to simple-forms-form-engine location
+      const standardAppPath = `src/applications/${this.props.folderName}`;
+      try {
+        if (this.fs.exists(this.destinationPath(`${standardAppPath}/manifest.json`))) {
+          this.fs.move(
+            this.destinationPath(`${standardAppPath}/manifest.json`),
+            this.destinationPath(`${appPath}/manifest.json`),
+          );
+        }
+
+        if (this.fs.exists(this.destinationPath(`${standardAppPath}/app-entry.jsx`))) {
+          this.fs.move(
+            this.destinationPath(`${standardAppPath}/app-entry.jsx`),
+            this.destinationPath(`${appPath}/app-entry.jsx`),
+          );
+        }
+
+        this.fs.delete(this.destinationPath(standardAppPath));
+      } catch (_) {
+        // Ignore errors if files don't exist
+      }
+
+      // Override the moved app-entry.jsx with form-engine specific content
       this.fs.copyTpl(
         this.templatePath('formEngine.js.ejs'),
         this.destinationPath(`${appPath}/app-entry.jsx`),
@@ -524,6 +550,16 @@ module.exports = class extends Generator {
 
   end() {
     process.nextTick(() => {
+      if (this.props.templateType === TEMPLATE_TYPES.FORM_ENGINE) {
+        this.log('------------------------------------');
+        this.log(chalk.bold.yellow('⚠️  FORM ENGINE (EXPERIMENTAL)'));
+        this.log('');
+        this.log(chalk.yellow('This form uses the experimental Form Engine flow.'));
+        this.log(chalk.yellow('To edit this form, you must use Drupal CMS.'));
+        this.log('------------------------------------');
+        return;
+      }
+
       this.log('------------------------------------');
       this.log(chalk.bold('Next Steps for Deployment:'));
       this.log('Create and merge PRs in the following order:');
