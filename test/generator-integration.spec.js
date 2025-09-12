@@ -11,8 +11,8 @@ describe('generator-vets-website:integration', function () {
   function runGeneratorWithArgs(args, options = {}) {
     return new Promise((resolve, reject) => {
       const yo = spawn(
-        'npx',
-        ['yo', '@department-of-veterans-affairs/vets-website', ...args],
+        'yo',
+        ['@department-of-veterans-affairs/vets-website', ...args],
         {
           cwd: testOutputDir,
           stdio: ['pipe', 'pipe', 'pipe'],
