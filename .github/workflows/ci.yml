@@ -30,6 +30,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Yeoman CLI for integration tests
+        run: npm install -g yo
+
+      - name: Install generator globally for testing
+        run: npm install -g .
+
       - name: Run linting
         run: npm run lint
 
