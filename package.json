@@ -24,8 +24,10 @@
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
+    "mem-fs": "^2.3.0",
     "mocha": "^10.0.0",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "yeoman-environment": "^3.19.3"
   },
   "engines": {
     "node": "^14.15.0"
@@ -38,7 +40,10 @@
   "scripts": {
     "prepublishOnly": "npm audit --audit-level=high",
     "lint": "eslint .",
-    "test": "mocha 'test/**/*.spec.js' --timeout 10000",
+    "test": "mocha 'test/**/*.spec.js' --timeout 10000 --ignore 'test/generator-integration.spec.js'",
+    "test:integration": "mocha 'test/generator-integration.spec.js' --timeout 30000",
+    "test:unit": "mocha 'test/**/*.spec.js' --timeout 10000 --ignore 'test/generator-integration.spec.js'",
+    "test:all": "npm run lint && npm run test:unit && npm run test:integration",
     "test:full": "npm run lint && npm test",
     "precommit": "lint-staged"
   },
