@@ -14,7 +14,7 @@ function folderNameFilter(folder) {
   }
 
   if (folder.endsWith('/')) {
-    folder = folder.substring(0, -1);
+    folder = folder.slice(0, -1);
   }
 
   return folder;
@@ -28,7 +28,7 @@ function folderNameFilter(folder) {
 function rootUrlFilter(rootUrl) {
   // Remove trailing slash if present
   if (rootUrl.endsWith('/')) {
-    rootUrl = rootUrl.substring(0, -1);
+    rootUrl = rootUrl.slice(0, -1);
   }
 
   // Ensure it starts with a slash
