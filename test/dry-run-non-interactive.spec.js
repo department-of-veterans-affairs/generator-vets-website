@@ -258,5 +258,51 @@ describe('Non-Interactive Dry Run Mode', () => {
       assertOutputDoesNotMatch(result.output, /DRY RUN - File analysis/);
       assertOutputDoesNotMatch(result.output, /Files to be created:/);
     });
+
+    it('should display configuration with correct source labels for CLI args', async () => {
+      const result = await testDryRun({
+        dryRunNonInteractive: true,
+        appName: 'Test Configuration App',
+        folderName: 'custom-test-folder',
+        entryName: 'custom-entry',
+        rootUrl: '/custom-root',
+        isForm: 'true',
+        formNumber: '22-5678',
+        benefitDescription: 'education benefits',
+        ombNumber: '2900-5678',
+        expirationDate: '12/31/2026',
+        templateType: 'WITH_1_PAGE',
+        slackGroup: 'education-team',
+        respondentBurden: '45',
+        usesVetsJsonSchema: 'true',
+        usesMinimalHeader: 'false',
+        trackingPrefix: 'custom-prefix-',
+      });
+
+      assertSuccess(result);
+
+      // CLI args - values we provided via command line
+      assertOutputMatches(result.output, /appName: Test Configuration App \(CLI arg\)/);
+      assertOutputMatches(result.output, /formNumber: 22-5678 \(CLI arg\)/);
+      assertOutputMatches(result.output, /folderName: custom-test-folder \(CLI arg\)/);
+      assertOutputMatches(result.output, /entryName: custom-entry \(CLI arg\)/);
+      assertOutputMatches(result.output, /rootUrl: \/custom-root \(CLI arg\)/);
+      assertOutputMatches(result.output, /isForm: true \(CLI arg\)/);
+      assertOutputMatches(
+        result.output,
+        /benefitDescription: education benefits \(CLI arg\)/,
+      );
+      assertOutputMatches(result.output, /ombNumber: 2900-5678 \(CLI arg\)/);
+      assertOutputMatches(result.output, /templateType: WITH_1_PAGE \(CLI arg\)/);
+      assertOutputMatches(result.output, /slackGroup: education-team \(CLI arg\)/);
+      assertOutputMatches(result.output, /respondentBurden: 45 \(CLI arg\)/);
+      assertOutputMatches(result.output, /usesVetsJsonSchema: true \(CLI arg\)/);
+      assertOutputMatches(result.output, /usesMinimalHeader: true \(CLI arg\)/);
+      assertOutputMatches(result.output, /trackingPrefix: custom-prefix- \(CLI arg\)/);
+
+      // Computed values - system calculated
+      assertOutputMatches(result.output, /contentRepoLocation: .+ \(computed\)/);
+      assertOutputMatches(result.output, /ombExpiration: \d+\/\d+\/\d+ \(CLI arg\)/);
+    });
   });
 });
