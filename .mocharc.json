@@ -1,5 +1,5 @@
 {
   "timeout": 5000,
   "recursive": true,
-  "spec": "tests/**/*.test.js"
+  "spec": "test/**/*.spec.js"
 }

@@ -32,6 +32,7 @@ const {
   handleDryRunPrompting,
   showTrackedFiles,
 } = require('../../lib/dry-run-helpers');
+const { store } = require('../../lib/store');
 
 // Import strategies
 const AppStrategy = require('./strategies/app-strategy');
@@ -54,8 +55,6 @@ module.exports = class extends Generator {
   }
 
   initializing() {
-    const { store } = require('../../lib/store');
-
     const tempThis = {
       props: {},
       options: this.options,
@@ -105,8 +104,6 @@ module.exports = class extends Generator {
   }
 
   prompting() {
-    const { store } = require('../../lib/store');
-
     const dryRunResult = handleDryRunPrompting(this, this.allFields);
     if (dryRunResult !== null) {
       return dryRunResult;
@@ -166,12 +163,11 @@ module.exports = class extends Generator {
     }
 
     if (this.strategy) {
-      this.strategy.configure(this, require('../../lib/store'));
+      this.strategy.configure(this, store);
     }
   }
 
   writingNewFiles() {
-    const { store } = require('../../lib/store');
     this._generateSharedFiles(store);
 
     if (this.strategy) {
@@ -180,11 +176,10 @@ module.exports = class extends Generator {
   }
 
   updateRegistry() {
-    const { store } = require('../../lib/store');
+    const contentBuildPath = path.resolve(this.destinationRoot(), '../content-build');
+    const registryFile = path.join(contentBuildPath, 'src/applications/registry.json');
 
     if (isDryRunMode(this.options)) {
-      const contentBuildPath = path.resolve(this.destinationRoot(), '../content-build');
-      const registryFile = path.join(contentBuildPath, 'src/applications/registry.json');
       store.trackFile(registryFile);
 
       if (this.strategy) {
@@ -193,9 +188,6 @@ module.exports = class extends Generator {
 
       return;
     }
-
-    const contentBuildPath = path.resolve(this.destinationRoot(), '../content-build');
-    const registryFile = path.join(contentBuildPath, 'src/applications/registry.json');
 
     if (!isDryRunMode(this.options)) {
       this.log(chalk.blue(`Updating registry file at: ${registryFile}`));
@@ -281,8 +273,6 @@ ${duplicates.join('\n')}`;
   }
 
   end() {
-    const { store } = require('../../lib/store');
-
     if (isDryRunMode(this.options)) {
       showTrackedFiles(this, this.allFields);
     } else if (this.strategy) {
@@ -325,7 +315,6 @@ ${duplicates.join('\n')}`;
    * @private
    */
   _updateAllowlist() {
-    const { store } = require('../../lib/store');
     const configPath = path.join('config', 'changed-apps-build.json');
 
     try {

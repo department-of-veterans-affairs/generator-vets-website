@@ -38,7 +38,7 @@
   "scripts": {
     "prepublishOnly": "npm audit --audit-level=high",
     "lint": "eslint .",
-    "test": "mocha 'tests/**/*.test.js'",
+    "test": "mocha 'test/**/*.spec.js'",
     "precommit": "lint-staged"
   },
   "lint-staged": {
