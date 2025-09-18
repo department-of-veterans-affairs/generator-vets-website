@@ -93,20 +93,20 @@ function assertSuccess(result) {
     `Expected generator to succeed (no exit). Exit status: ${result.exitCalled}`,
   );
   assertOutputMatches(result.output, /✅ Generator would complete successfully/);
-  assertOutputMatches(result.output, /Files to be created:/);
+  assertOutputMatches(result.output, /Files to be created\/modified:/);
   assertOutputDoesNotMatch(result.output, /❌/);
 }
 
 /**
  * Assert that the generator would create a specific number of files
  * @param {Object} result - The test result object from testDryRun
- * @param {number} expectedCount - The expected number of files to be created
+ * @param {number} expectedCount - The expected number of files to be created/modified
  */
 function assertFilesCreated(result, expectedCount) {
   assertOutputMatches(
     result.output,
-    new RegExp(`Files that would be created: ${expectedCount}`),
-    `Expected exactly ${expectedCount} files to be created`,
+    new RegExp(`Files that would be created/modified: ${expectedCount}`),
+    `Expected exactly ${expectedCount} files to be created/modified`,
   );
 }
 

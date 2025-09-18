@@ -64,10 +64,6 @@ class FormStrategy extends BaseStrategy {
   }
 
   updateExternalFiles(generator, store) {
-    if (isDryRunMode(generator.options)) {
-      return;
-    }
-
     this._updateMissingJsonSchema(generator, store);
     this._updatePlatformConstants(generator, store);
   }
@@ -276,6 +272,12 @@ class FormStrategy extends BaseStrategy {
   }
 
   _tryUpdateRegexInFile(generator, filePath, regex, newEntry) {
+    // In dry run mode, just track the file without trying to read/write
+    if (isDryRunMode(generator.options)) {
+      generator.fs.write(filePath, ''); // This will be mocked and only track the file
+      return;
+    }
+
     try {
       const content = generator.fs.read(filePath);
 

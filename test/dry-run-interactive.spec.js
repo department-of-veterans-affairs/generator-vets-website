@@ -78,7 +78,7 @@ describe('Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-      assertFilesCreated(result, 18);
+      assertFilesCreated(result, 20);
     });
 
     it('should succeed when isForm=n and no form-number provided', async () => {

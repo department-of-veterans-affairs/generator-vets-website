@@ -76,7 +76,7 @@ describe('Non-Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-      assertFilesCreated(result, 18); // 1-page form template
+      assertFilesCreated(result, 20);
     });
 
     it('should succeed for 4-page form app with all required fields', async () => {
@@ -95,7 +95,87 @@ describe('Non-Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-      assertFilesCreated(result, 21); // 4-page form template (18 + 3 additional pages = 21)
+      assertFilesCreated(result, 23);
+    });
+
+    it('should succeed for 1-page form with vets json schema enabled', async () => {
+      const result = await testDryRun({
+        dryRunNonInteractive: true,
+        appName: 'Test 1-Page Form with Schema',
+        folderName: 'test-1-page-schema',
+        entryName: 'test-1-page-schema',
+        rootUrl: '/test-1-page-schema',
+        isForm: 'true',
+        formNumber: '22-1111',
+        benefitDescription: 'disability benefits with schema',
+        ombNumber: '2900-1111',
+        expirationDate: '12/31/2026',
+        templateType: 'WITH_1_PAGE',
+        usesVetsJsonSchema: 'true',
+      });
+
+      assertSuccess(result);
+      assertFilesCreated(result, 19);
+    });
+
+    it('should succeed for 4-page form with vets json schema enabled', async () => {
+      const result = await testDryRun({
+        dryRunNonInteractive: true,
+        appName: 'Test 4-Page Form with Schema',
+        folderName: 'test-4-page-schema',
+        entryName: 'test-4-page-schema',
+        rootUrl: '/test-4-page-schema',
+        isForm: 'true',
+        formNumber: '22-2222',
+        benefitDescription: 'education benefits with schema',
+        ombNumber: '2900-2222',
+        expirationDate: '12/31/2026',
+        templateType: 'WITH_4_PAGES',
+        usesVetsJsonSchema: 'true',
+      });
+
+      assertSuccess(result);
+      assertFilesCreated(result, 22);
+    });
+
+    it('should succeed for 1-page form with vets json schema disabled', async () => {
+      const result = await testDryRun({
+        dryRunNonInteractive: true,
+        appName: 'Test 1-Page Form without Schema',
+        folderName: 'test-1-page-no-schema',
+        entryName: 'test-1-page-no-schema',
+        rootUrl: '/test-1-page-no-schema',
+        isForm: 'true',
+        formNumber: '22-3333',
+        benefitDescription: 'disability benefits without schema',
+        ombNumber: '2900-3333',
+        expirationDate: '12/31/2026',
+        templateType: 'WITH_1_PAGE',
+        usesVetsJsonSchema: 'false',
+      });
+
+      assertSuccess(result);
+      assertFilesCreated(result, 20);
+    });
+
+    it('should succeed for 4-page form with vets json schema disabled', async () => {
+      const result = await testDryRun({
+        dryRunNonInteractive: true,
+        appName: 'Test 4-Page Form without Schema',
+        folderName: 'test-4-page-no-schema',
+        entryName: 'test-4-page-no-schema',
+        rootUrl: '/test-4-page-no-schema',
+        isForm: 'true',
+        formNumber: '22-4444',
+        benefitDescription: 'education benefits without schema',
+        ombNumber: '2900-4444',
+        expirationDate: '12/31/2026',
+        templateType: 'WITH_4_PAGES',
+        usesVetsJsonSchema: 'false',
+      });
+
+      assertSuccess(result);
+      assertFilesCreated(result, 23);
     });
 
     it('should require form-specific fields only when isForm=true', async () => {
@@ -151,7 +231,7 @@ describe('Non-Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-      assertFilesCreated(result, 18); // Should generate form files like isForm=true
+      assertFilesCreated(result, 20);
     });
 
     it('should treat isForm "n" as false', async () => {
@@ -165,7 +245,7 @@ describe('Non-Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-      assertFilesCreated(result, 8); // Should generate app files like isForm=false
+      assertFilesCreated(result, 8);
     });
 
     it('should require isForm field in non-interactive mode', async () => {
@@ -198,7 +278,7 @@ describe('Non-Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-      assertFilesCreated(result, 3); // Form engine template should generate minimal files
+      assertFilesCreated(result, 5);
     });
   });
 
@@ -213,7 +293,7 @@ describe('Non-Interactive Dry Run Mode', () => {
       assertFailure(result);
       assertOutputMatches(result.output, /❌ Validation errors:/);
       assertOutputDoesNotMatch(result.output, /DRY RUN - File analysis/);
-      assertOutputDoesNotMatch(result.output, /Files to be created:/);
+      assertOutputDoesNotMatch(result.output, /Files to be created\/modified:/);
     });
 
     it('should show clean error format in CLI style', async () => {
@@ -256,7 +336,7 @@ describe('Non-Interactive Dry Run Mode', () => {
 
       // Should NOT show file analysis
       assertOutputDoesNotMatch(result.output, /DRY RUN - File analysis/);
-      assertOutputDoesNotMatch(result.output, /Files to be created:/);
+      assertOutputDoesNotMatch(result.output, /Files to be created\/modified:/);
     });
 
     it('should display configuration with correct source labels for CLI args', async () => {
@@ -295,7 +375,7 @@ describe('Non-Interactive Dry Run Mode', () => {
       assertOutputMatches(result.output, /slackGroup: education-team \(CLI arg\)/);
       assertOutputMatches(result.output, /respondentBurden: 45 \(CLI arg\)/);
       assertOutputMatches(result.output, /usesVetsJsonSchema: true \(CLI arg\)/);
-      assertOutputMatches(result.output, /usesMinimalHeader: true \(CLI arg\)/);
+      assertOutputMatches(result.output, /usesMinimalHeader: false \(CLI arg\)/);
       assertOutputMatches(result.output, /trackingPrefix: custom-prefix- \(CLI arg\)/);
       assertOutputMatches(result.output, /contentRepoLocation: .+ \(computed\)/);
       assertOutputMatches(result.output, /expirationDate: \d+\/\d+\/\d+ \(CLI arg\)/);
