@@ -2,6 +2,17 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
+## [3.17.0] - 2025-09-18
+### Added
+- Dry run modes (`--dry-run-interactive` and `--dry-run-non-interactive`) for testing generator output without creating files
+- Comprehensive test suite with 30+ permutation coverage
+- Strategy pattern architecture for better code organization
+
+### Changed
+- Complete internal architecture overhaul while maintaining backward compatibility
+- Unified app and form generators into single generator with strategies
+- Enhanced validation and error messaging
+
 ## [3.16.0] - 2025-08-28
 ### Added
 - CLI argument validation
