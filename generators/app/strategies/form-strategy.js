@@ -151,26 +151,31 @@ class FormStrategy extends BaseStrategy {
       generator,
       'form/tests/containers/ConfirmationPage.unit.spec.jsx',
       `${appPath}/tests/containers/ConfirmationPage.unit.spec.jsx`,
+      props,
     );
     this.copyTemplate(
       generator,
       'form/tests/containers/IntroductionPage.unit.spec.jsx',
       `${appPath}/tests/containers/IntroductionPage.unit.spec.jsx`,
+      props,
     );
     this.copyTemplate(
       generator,
       'form/tests/fixtures/data/minimal-test.json',
       `${appPath}/tests/fixtures/data/minimal-test.json`,
+      props,
     );
     this.copyTemplate(
       generator,
       'form/tests/fixtures/mocks/local-mock-responses.js',
       `${appPath}/tests/fixtures/mocks/local-mock-responses.js`,
+      props,
     );
     this.copyTemplate(
       generator,
       'form/tests/fixtures/mocks/user.json',
       `${appPath}/tests/fixtures/mocks/user.json`,
+      props,
     );
 
     // Cypress test

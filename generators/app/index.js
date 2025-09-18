@@ -13,6 +13,7 @@ const {
   initializePropsFromOptions,
 } = require('../../lib/generator-config');
 const { generatePrompts } = require('../../lib/prompts');
+const { calculateSubFolder } = require('../../utils/generator-helpers');
 const {
   isInvalidFolderName,
   isInvalidEntryName,
@@ -49,8 +50,8 @@ module.exports = class extends Generator {
     this.allFields = getFieldDefinitions('all');
     this.strategy = null;
 
-    initializeFileTracking(this);
     initializeDryRunMode(this.options);
+    initializeFileTracking(this);
     generateOptions(this, this.allFields);
   }
 
@@ -63,6 +64,10 @@ module.exports = class extends Generator {
 
     store.setOptions(this.options);
     store.setProps(tempThis.props);
+
+    // Auto-calculate subFolder based on folderName to ensure it's always available in templates
+    const folderName = store.getValue('folderName');
+    store.setProp('subFolder', folderName ? calculateSubFolder(folderName) : '');
 
     if (!store.getValue('productId')) {
       store.setProp('productId', uuidv4());
@@ -297,16 +302,20 @@ ${duplicates.join('\n')}`;
   _generateSharedFiles(store) {
     const appPath = `src/applications/${store.getValue('folderName')}`;
 
+    const allProps = store.getAllProps();
+
+    this.props = { ...this.props, ...allProps };
+
     this.fs.copyTpl(
       this.templatePath('manifest.json.ejs'),
       this.destinationPath(`${appPath}/manifest.json`),
-      store.getAllProps(),
+      allProps,
     );
 
     this.fs.copyTpl(
       this.templatePath('app-entry.jsx.ejs'),
       this.destinationPath(`${appPath}/app-entry.jsx`),
-      store.getAllProps(),
+      allProps,
     );
   }
 

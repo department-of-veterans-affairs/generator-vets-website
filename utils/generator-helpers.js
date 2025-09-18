@@ -63,8 +63,35 @@ function makeBool(boolLike) {
   return true;
 }
 
+/**
+ * Calculate the subFolder path based on folder depth
+ * This is used in SCSS imports to create correct relative paths to platform files
+ *
+ * Examples:
+ * - "my-app" → "" (no subfolders)
+ * - "edu-benefits/0993" → "../" (one subfolder)
+ * - "a/b/c" → "../../" (two subfolders)
+ *
+ * @param {string} folderName - The folder name (e.g., "edu-benefits/0993")
+ * @returns {string} The subfolder path (e.g., "../")
+ */
+function calculateSubFolder(folderName) {
+  if (!folderName) {
+    return '';
+  }
+
+  const subfolders = Array.from(folderName).filter((c) => c === '/').length;
+
+  if (subfolders > 0) {
+    return `${new Array(subfolders).fill('..').join('/')}/`;
+  }
+
+  return '';
+}
+
 module.exports = {
   uuidv4,
   checkNodeCompatibility,
   makeBool,
+  calculateSubFolder,
 };

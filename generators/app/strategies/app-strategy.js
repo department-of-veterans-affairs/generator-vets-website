@@ -37,13 +37,14 @@ class AppStrategy extends BaseStrategy {
       generator,
       'entry.scss',
       `${appPath}/sass/${store.getValue('entryName')}.scss`,
+      props,
     );
 
-    this.copyTemplate(generator, 'reducer.js', `${appPath}/reducers/index.js`);
+    this.copyTemplate(generator, 'reducer.js', `${appPath}/reducers/index.js`, props);
 
-    this.copyTemplate(generator, 'App.jsx', `${appPath}/containers/App.jsx`);
+    this.copyTemplate(generator, 'App.jsx', `${appPath}/containers/App.jsx`, props);
 
-    this.copyTemplate(generator, 'routes.jsx', `${appPath}/routes.jsx`);
+    this.copyTemplate(generator, 'routes.jsx', `${appPath}/routes.jsx`, props);
 
     // Generate cypress test
     this.copyTemplate(

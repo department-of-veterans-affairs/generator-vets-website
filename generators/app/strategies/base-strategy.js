@@ -100,7 +100,7 @@ class BaseStrategy {
    * @param {Object} templateData - Data for template interpolation
    */
   copyTemplate(generator, templatePath, destinationPath, templateData = {}) {
-    if (templatePath.endsWith('.ejs')) {
+    if (Object.keys(templateData).length > 0) {
       generator.fs.copyTpl(
         generator.templatePath(templatePath),
         generator.destinationPath(destinationPath),
