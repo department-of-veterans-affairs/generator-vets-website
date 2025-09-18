@@ -8,6 +8,7 @@ const {
   computeFormProperties,
   updateSharedProps,
 } = require('../../../lib/form-helpers');
+const { isDryRunMode } = require('../../../lib/dry-run-helpers');
 
 /**
  * Strategy for generating form-based applications
@@ -63,7 +64,7 @@ class FormStrategy extends BaseStrategy {
   }
 
   updateExternalFiles(generator, store) {
-    if (generator.options.dryRunInteractive || generator.options.dryRunNonInteractive) {
+    if (isDryRunMode(generator.options)) {
       return;
     }
 
@@ -219,15 +220,78 @@ class FormStrategy extends BaseStrategy {
 
   _updateMissingJsonSchema(generator, store) {
     if (!store.getValue('usesVetsJsonSchema')) {
-      // Implementation would go here
-      generator.log(chalk.blue('Updating missing JSON schema configuration...'));
+      const filePath = './src/platform/forms/tests/forms-config-validator.unit.spec.jsx';
+      const regex = /(const missingFromVetsJsonSchema = \[)([\s\S]*?)(\];)/;
+      const newEntry = `  VA_FORM_IDS.${store.getValue('formIdConst')},`;
+      this._tryUpdateRegexInFile(generator, filePath, regex, newEntry);
     }
   }
 
   _updatePlatformConstants(generator, store) {
     if (store.getValue('formNumber')) {
-      // Implementation would go here
-      generator.log(chalk.blue('Updating platform constants...'));
+      const filePath = './src/platform/forms/constants.js';
+      const formIdConst = store.getValue('formIdConst');
+      const formNumber = store.getValue('formNumber');
+      const benefitDescription = store.getValue('benefitDescription');
+      const trackingPrefix = store.getValue('trackingPrefix');
+      const appName = store.getValue('appName');
+
+      // Update VA_FORM_IDS
+      let regex = /(export const VA_FORM_IDS = Object\.freeze\({)([\s\S]*?)(}\))/;
+      let newEntry = `  ${formIdConst}: '${formNumber}',`;
+      this._tryUpdateRegexInFile(generator, filePath, regex, newEntry);
+
+      // Update FORM_BENEFITS
+      regex = /(export const FORM_BENEFITS = {)([\s\S]*?)(};)/;
+      newEntry = `  [VA_FORM_IDS.${formIdConst}]: '${benefitDescription}',`;
+      this._tryUpdateRegexInFile(generator, filePath, regex, newEntry);
+
+      // Update TRACKING_PREFIXES
+      regex = /(export const TRACKING_PREFIXES = {)([\s\S]*?)(};)/;
+      newEntry = `  [VA_FORM_IDS.${formIdConst}]: '${trackingPrefix}',`;
+      this._tryUpdateRegexInFile(generator, filePath, regex, newEntry);
+
+      // Update SIP_ENABLED_FORMS
+      regex = /(export const SIP_ENABLED_FORMS = new Set\(\[)([\s\S]*?)(]\);)/;
+      newEntry = `  VA_FORM_IDS.${formIdConst},`;
+      this._tryUpdateRegexInFile(generator, filePath, regex, newEntry);
+
+      // Update getAllFormLinks
+      regex = /(export const getAllFormLinks = [\s\S]*?return {)([\s\S]*?)( {2}};)/;
+      newEntry = `    [VA_FORM_IDS.${formIdConst}]: \`\${tryGetAppUrl('${formNumber}')}/\`,`;
+      this._tryUpdateRegexInFile(generator, filePath, regex, newEntry);
+
+      // Update MY_VA_SIP_FORMS
+      regex = /(export const MY_VA_SIP_FORMS = \[)([\s\S]*?)(];)/;
+      newEntry =
+        `  {\n` +
+        `    id: VA_FORM_IDS.${formIdConst},\n` +
+        `    benefit: '${benefitDescription}',\n` +
+        `    title: '${appName}',\n` +
+        `    description: '${benefitDescription}',\n` +
+        `    trackingPrefix: '${trackingPrefix}',\n` +
+        `  },`;
+      this._tryUpdateRegexInFile(generator, filePath, regex, newEntry);
+    }
+  }
+
+  _tryUpdateRegexInFile(generator, filePath, regex, newEntry) {
+    try {
+      const content = generator.fs.read(filePath);
+      
+      const updatedContent = content.replace(regex, (match, start, arrayContent, end) => {
+        if (arrayContent.includes(newEntry)) {
+          return match;
+        }
+
+        return `${start}${arrayContent.trimEnd()}\n${newEntry}\n${end}`;
+      });
+
+      generator.fs.write(filePath, updatedContent);
+    } catch (error) {
+      generator.log(
+        chalk.yellow(`Could not write to ${filePath}. Error: ${error.message}`),
+      );
     }
   }
 }
