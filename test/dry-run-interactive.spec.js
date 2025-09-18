@@ -6,6 +6,7 @@ const {
   assertOutputDoesNotMatch,
   assertFilesCreated,
 } = require('./helpers');
+const { FILE_COUNT_EXPECTATIONS } = require('./constants');
 
 describe('Interactive Dry Run Mode', () => {
   describe('Validation Errors', () => {
@@ -67,7 +68,7 @@ describe('Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-      assertFilesCreated(result, 8);
+      assertFilesCreated(result, FILE_COUNT_EXPECTATIONS.NON_FORM_APP);
     });
 
     it('should succeed when minimal form criteria provided', async () => {
@@ -78,7 +79,7 @@ describe('Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-      assertFilesCreated(result, 20);
+      assertFilesCreated(result, FILE_COUNT_EXPECTATIONS.FORM_1_PAGE);
     });
 
     it('should succeed when isForm=n and no form-number provided', async () => {
@@ -89,7 +90,7 @@ describe('Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-      assertFilesCreated(result, 8); // Should generate app files, not form files
+      assertFilesCreated(result, FILE_COUNT_EXPECTATIONS.NON_FORM_APP); // Should generate app files, not form files
     });
 
     it('should compute folder-name, entry-name, and root-url from app-name', async () => {

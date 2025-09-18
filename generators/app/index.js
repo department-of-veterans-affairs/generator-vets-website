@@ -317,6 +317,12 @@ ${duplicates.join('\n')}`;
       this.destinationPath(`${appPath}/app-entry.jsx`),
       allProps,
     );
+
+    this.fs.copyTpl(
+      this.templatePath('shared/README.md.ejs'),
+      this.destinationPath(`${appPath}/README.md`),
+      allProps,
+    );
   }
 
   /**

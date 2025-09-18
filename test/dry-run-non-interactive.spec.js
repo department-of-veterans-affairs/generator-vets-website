@@ -8,6 +8,7 @@ const {
   assertFilesCreated,
   stripAnsi,
 } = require('./helpers');
+const { FILE_COUNT_EXPECTATIONS } = require('./constants');
 
 describe('Non-Interactive Dry Run Mode', () => {
   describe('Validation Errors', () => {
@@ -57,7 +58,7 @@ describe('Non-Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-      assertFilesCreated(result, 8);
+      assertFilesCreated(result, FILE_COUNT_EXPECTATIONS.NON_FORM_APP);
     });
 
     it('should succeed for form app with all required fields', async () => {
@@ -76,7 +77,7 @@ describe('Non-Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-      assertFilesCreated(result, 20);
+      assertFilesCreated(result, FILE_COUNT_EXPECTATIONS.FORM_1_PAGE);
     });
 
     it('should succeed for 4-page form app with all required fields', async () => {
@@ -95,7 +96,7 @@ describe('Non-Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-      assertFilesCreated(result, 23);
+      assertFilesCreated(result, FILE_COUNT_EXPECTATIONS.FORM_4_PAGES);
     });
 
     it('should succeed for 1-page form with vets json schema enabled', async () => {
@@ -115,7 +116,10 @@ describe('Non-Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-      assertFilesCreated(result, 19);
+      assertFilesCreated(
+        result,
+        FILE_COUNT_EXPECTATIONS.FORM_1_PAGE_WITH_VETS_JSON_SCHEMA,
+      );
     });
 
     it('should succeed for 4-page form with vets json schema enabled', async () => {
@@ -135,7 +139,10 @@ describe('Non-Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-      assertFilesCreated(result, 22);
+      assertFilesCreated(
+        result,
+        FILE_COUNT_EXPECTATIONS.FORM_4_PAGES_WITH_VETS_JSON_SCHEMA,
+      );
     });
 
     it('should succeed for 1-page form with vets json schema disabled', async () => {
@@ -155,7 +162,7 @@ describe('Non-Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-      assertFilesCreated(result, 20);
+      assertFilesCreated(result, FILE_COUNT_EXPECTATIONS.FORM_1_PAGE);
     });
 
     it('should succeed for 4-page form with vets json schema disabled', async () => {
@@ -175,7 +182,7 @@ describe('Non-Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-      assertFilesCreated(result, 23);
+      assertFilesCreated(result, FILE_COUNT_EXPECTATIONS.FORM_4_PAGES);
     });
 
     it('should require form-specific fields only when isForm=true', async () => {
@@ -231,7 +238,7 @@ describe('Non-Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-      assertFilesCreated(result, 20);
+      assertFilesCreated(result, FILE_COUNT_EXPECTATIONS.FORM_1_PAGE);
     });
 
     it('should treat isForm "n" as false', async () => {
@@ -245,7 +252,7 @@ describe('Non-Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-      assertFilesCreated(result, 8);
+      assertFilesCreated(result, FILE_COUNT_EXPECTATIONS.NON_FORM_APP);
     });
 
     it('should require isForm field in non-interactive mode', async () => {
@@ -278,7 +285,7 @@ describe('Non-Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-      assertFilesCreated(result, 5);
+      assertFilesCreated(result, FILE_COUNT_EXPECTATIONS.FORM_ENGINE);
     });
   });
 
