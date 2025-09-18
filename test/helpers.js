@@ -75,6 +75,18 @@ function assertFailure(result) {
  */
 function assertSuccess(result) {
   const assert = require('assert');
+
+  if (
+    result.exitCalled ||
+    !result.output.includes('✅ Generator would complete successfully')
+  ) {
+    // Helps give info if we have a test failure
+    console.log('\n=== GENERATOR OUTPUT ===');
+    console.log(result.output);
+    console.log('=== END OUTPUT ===\n');
+    console.log('Exit called:', result.exitCalled);
+  }
+
   assert.strictEqual(
     result.exitCalled,
     false,

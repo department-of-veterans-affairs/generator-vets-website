@@ -280,8 +280,6 @@ describe('Non-Interactive Dry Run Mode', () => {
       });
 
       assertSuccess(result);
-
-      // CLI args - values we provided via command line
       assertOutputMatches(result.output, /appName: Test Configuration App \(CLI arg\)/);
       assertOutputMatches(result.output, /formNumber: 22-5678 \(CLI arg\)/);
       assertOutputMatches(result.output, /folderName: custom-test-folder \(CLI arg\)/);
@@ -299,10 +297,44 @@ describe('Non-Interactive Dry Run Mode', () => {
       assertOutputMatches(result.output, /usesVetsJsonSchema: true \(CLI arg\)/);
       assertOutputMatches(result.output, /usesMinimalHeader: true \(CLI arg\)/);
       assertOutputMatches(result.output, /trackingPrefix: custom-prefix- \(CLI arg\)/);
-
-      // Computed values - system calculated
       assertOutputMatches(result.output, /contentRepoLocation: .+ \(computed\)/);
       assertOutputMatches(result.output, /expirationDate: \d+\/\d+\/\d+ \(CLI arg\)/);
+    });
+
+    it('should validate all source types with minimal CLI arguments', async () => {
+      const result = await testDryRun({
+        dryRunNonInteractive: true,
+        appName: 'Minimal Test App',
+        folderName: 'minimal-test',
+        entryName: 'minimal-test',
+        rootUrl: '/minimal-test',
+        isForm: 'true',
+        formNumber: '21-5555',
+        benefitDescription: 'test benefits',
+        ombNumber: '2900-1234',
+        expirationDate: '12/31/2026',
+      });
+
+      assertSuccess(result);
+      assertOutputMatches(result.output, /appName: Minimal Test App \(CLI arg\)/);
+      assertOutputMatches(result.output, /folderName: minimal-test \(CLI arg\)/);
+      assertOutputMatches(result.output, /entryName: minimal-test \(CLI arg\)/);
+      assertOutputMatches(result.output, /rootUrl: \/minimal-test \(CLI arg\)/);
+      assertOutputMatches(result.output, /isForm: true \(CLI arg\)/);
+      assertOutputMatches(result.output, /formNumber: 21-5555 \(CLI arg\)/);
+      assertOutputMatches(result.output, /benefitDescription: test benefits \(CLI arg\)/);
+      assertOutputMatches(result.output, /ombNumber: 2900-1234 \(CLI arg\)/);
+      assertOutputMatches(result.output, /expirationDate: 12\/31\/2026 \(CLI arg\)/);
+      assertOutputMatches(result.output, /contentRepoLocation: .+ \(computed\)/);
+      assertOutputMatches(result.output, /slackGroup: none \(default\)/);
+      assertOutputMatches(result.output, /respondentBurden: 30 \(default\)/);
+      assertOutputMatches(result.output, /usesVetsJsonSchema: false \(default\)/);
+      assertOutputMatches(result.output, /usesMinimalHeader: true \(default\)/);
+      assertOutputMatches(result.output, /templateType: WITH_1_PAGE \(default\)/);
+      assertOutputMatches(
+        result.output,
+        /trackingPrefix: minimal-test- \(computed default\)/,
+      );
     });
   });
 });
