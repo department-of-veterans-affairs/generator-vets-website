@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.15]
+        node-version: [14.15.0]
 
     steps:
       - name: Checkout code
@@ -31,5 +31,5 @@ jobs:
       - name: Run linting
         run: npm run lint
 
-      - name: Run dry-run tests
+      - name: Run tests
         run: npm test

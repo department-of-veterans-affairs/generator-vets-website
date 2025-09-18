@@ -151,12 +151,6 @@ These resources are also provided by the generator at startup.
 
 ### Generator Architecture
 
-The generator uses a unified architecture with a strategy pattern to handle both general (non-form) apps and form apps.
-- A single entry point (`generators/app/index.js`) determines the app type based on the `isForm` flag
-- Strategy classes (AppStrategy, FormStrategy) handle the specific generation logic for each type
-- Templates are organized under `generators/app/templates/` with shared, app-specific, and form-specific folders
-- This provides a clean separation of concerns while maintaining a single, consistent interface
-
 For specifics on writing a generator, [refer to the official Yeoman documentation](https://yeoman.github.io/generator/).
 
 ## Publishing to npm
