@@ -307,13 +307,13 @@ ${duplicates.join('\n')}`;
     this.props = { ...this.props, ...allProps };
 
     this.fs.copyTpl(
-      this.templatePath('manifest.json.ejs'),
+      this.templatePath('shared/manifest.json.ejs'),
       this.destinationPath(`${appPath}/manifest.json`),
       allProps,
     );
 
     this.fs.copyTpl(
-      this.templatePath('app-entry.jsx.ejs'),
+      this.templatePath('shared/app-entry.jsx.ejs'),
       this.destinationPath(`${appPath}/app-entry.jsx`),
       allProps,
     );

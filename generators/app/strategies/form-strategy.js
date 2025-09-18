@@ -182,7 +182,7 @@ class FormStrategy extends BaseStrategy {
     // Cypress test
     this.copyTemplate(
       generator,
-      'cypress.spec.js.ejs',
+      'form/cypress.spec.js.ejs',
       `${appPath}/tests/${props.entryName}.cypress.spec.js`,
       props,
     );
@@ -278,7 +278,7 @@ class FormStrategy extends BaseStrategy {
   _tryUpdateRegexInFile(generator, filePath, regex, newEntry) {
     try {
       const content = generator.fs.read(filePath);
-      
+
       const updatedContent = content.replace(regex, (match, start, arrayContent, end) => {
         if (arrayContent.includes(newEntry)) {
           return match;
