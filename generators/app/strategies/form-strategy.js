@@ -22,7 +22,7 @@ class FormStrategy extends BaseStrategy {
       'formNumber',
       'benefitDescription',
       'ombNumber',
-      'ombExpiration',
+      'expirationDate',
       'templateType',
     ];
   }

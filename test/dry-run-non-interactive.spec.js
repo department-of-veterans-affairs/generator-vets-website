@@ -302,7 +302,7 @@ describe('Non-Interactive Dry Run Mode', () => {
 
       // Computed values - system calculated
       assertOutputMatches(result.output, /contentRepoLocation: .+ \(computed\)/);
-      assertOutputMatches(result.output, /ombExpiration: \d+\/\d+\/\d+ \(CLI arg\)/);
+      assertOutputMatches(result.output, /expirationDate: \d+\/\d+\/\d+ \(CLI arg\)/);
     });
   });
 });

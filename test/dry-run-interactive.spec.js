@@ -154,7 +154,7 @@ describe('Interactive Dry Run Mode', () => {
       );
       assertOutputMatches(
         result.output,
-        /ombExpiration: \d+\/\d+\/\d+ \(computed default\)/,
+        /expirationDate: \d+\/\d+\/\d+ \(computed default\)/,
       );
 
       // Computed values - system calculated
