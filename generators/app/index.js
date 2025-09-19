@@ -74,7 +74,6 @@ module.exports = class extends Generator {
     }
 
     store.setProp('contentRepoLocation', store.getValue('contentLoc'));
-    this.sharedProps = {};
 
     normalizeDryRunOptions(this.options);
 
@@ -251,14 +250,16 @@ ${duplicates.join('\n')}`;
         template: {
           vagovprod: false,
           layout: 'page-react.html',
-          ...(this.sharedProps?.usesMinimalHeader
+          ...(store.getValue('usesMinimalHeader')
             ? {
                 includeBreadcrumbs: false,
                 minimalExcludePaths: ['/introduction', '/confirmation'],
                 minimalFooter: true,
                 minimalHeader: {
                   title: store.getValue('appName'),
-                  subtitle: `${this.sharedProps?.benefitDescription} (VA Form ${this.sharedProps.formNumber})`,
+                  subtitle: `${store.getValue(
+                    'benefitDescription',
+                  )} (VA Form ${store.getValue('formNumber')})`,
                 },
               }
             : {}),

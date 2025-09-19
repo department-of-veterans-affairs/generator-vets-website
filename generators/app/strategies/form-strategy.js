@@ -6,7 +6,6 @@ const { TEMPLATE_TYPES } = require('../../../utils/constants');
 const {
   handleExpirationDateAlias,
   computeFormProperties,
-  updateSharedProps,
 } = require('../../../lib/form-helpers');
 const { isDryRunMode } = require('../../../lib/dry-run-helpers');
 
@@ -39,7 +38,6 @@ class FormStrategy extends BaseStrategy {
   processPromptResults(_generator, _store) {
     handleExpirationDateAlias();
     computeFormProperties();
-    updateSharedProps(_generator.options.sharedProps);
   }
 
   generateFiles(generator, store) {
