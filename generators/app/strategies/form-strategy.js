@@ -190,8 +190,14 @@ class FormStrategy extends BaseStrategy {
     );
     this.copyTemplate(
       generator,
-      'form/tests/fixtures/data/minimal-test.json',
+      'form/tests/fixtures/data/minimal-test.json.ejs',
       `${appPath}/tests/fixtures/data/minimal-test.json`,
+      props,
+    );
+    this.copyTemplate(
+      generator,
+      'form/tests/fixtures/data/maximal-test.json.ejs',
+      `${appPath}/tests/fixtures/data/maximal-test.json`,
       props,
     );
     this.copyTemplate(
@@ -204,6 +210,18 @@ class FormStrategy extends BaseStrategy {
       generator,
       'form/tests/fixtures/mocks/user.json',
       `${appPath}/tests/fixtures/mocks/user.json`,
+      props,
+    );
+    this.copyTemplate(
+      generator,
+      'form/tests/fixtures/mocks/application-submit.json',
+      `${appPath}/tests/fixtures/mocks/application-submit.json`,
+      props,
+    );
+    this.copyTemplate(
+      generator,
+      'form/tests/fixtures/mocks/feature-toggles.json.ejs',
+      `${appPath}/tests/fixtures/mocks/feature-toggles.json`,
       props,
     );
 
