@@ -69,22 +69,54 @@ class FormStrategy extends BaseStrategy {
   }
 
   getCompletionMessage(store) {
+    const folderName = store.getValue('folderName');
+    const entryName = store.getValue('entryName');
+    const rootUrl = store.getValue('rootUrl');
+    const templateType = store.getValue('templateType');
+    const usesVetsJsonSchema = store.getValue('usesVetsJsonSchema');
+
+    if (templateType === 'FORM_ENGINE') {
+      return [
+        '------------------------------------',
+        chalk.bold.yellow('⚠️  FORM ENGINE (EXPERIMENTAL)'),
+        '',
+        chalk.yellow('This form uses the experimental Form Engine flow.'),
+        chalk.yellow('To edit this form, you must use Drupal CMS.'),
+        '------------------------------------',
+      ].join('\n');
+    }
+
     return [
       '------------------------------------',
-      chalk.bold('Commands:'),
-      chalk.bold('Site:      ') +
-        chalk.cyan(`http://localhost:3001${store.getValue('rootUrl')}`),
-      chalk.bold('Watch:     ') +
-        chalk.cyan(`yarn watch --env entry=${store.getValue('entryName')}`),
+      chalk.bold('Next Steps for Deployment:'),
+      'Create and merge PRs in the following order:',
+      usesVetsJsonSchema
+        ? [
+            chalk.bold('1.') + ' ' + chalk.cyan('../vets-json-schema'),
+            chalk.bold('2.') + ' ' + chalk.cyan('vets-website'),
+            chalk.bold('3.') + ' ' + chalk.cyan('../content-build'),
+          ].join('\n')
+        : [
+            chalk.bold('1.') + ' ' + chalk.cyan('vets-website'),
+            chalk.bold('2.') + ' ' + chalk.cyan('../content-build'),
+          ].join('\n'),
+      '',
+      chalk.yellow('Note:') +
+        ' Cypress tests disabled in CI. Re-enable after content-build is deployed',
+      '',
+      '------------------------------------',
+      chalk.bold('Development Commands:'),
+      chalk.bold('Site:      ') + chalk.cyan(`http://localhost:3001${rootUrl}`),
+      chalk.bold('Watch:     ') + chalk.cyan(`yarn watch --env entry=${entryName}`),
       chalk.bold('Mock API:  ') +
         chalk.cyan(
-          `yarn mock-api --responses src/applications/${store.getValue(
-            'folderName',
-          )}/tests/fixtures/mocks/local-mock-responses.js`,
+          `yarn mock-api --responses src/applications/${folderName}/tests/fixtures/mocks/local-mock-responses.js`,
         ),
       chalk.bold('Unit test: ') +
+        chalk.cyan(`yarn test:unit --app-folder ${folderName} --log-level all`),
+      chalk.bold('Cypress:   ') +
         chalk.cyan(
-          `yarn test:unit --app-folder ${store.getValue('folderName')} --log-level all`,
+          `yarn cy:run --spec "src/applications/${folderName}/tests/e2e/${entryName}.cypress.spec.js"`,
         ),
       '------------------------------------',
     ].join('\n');
@@ -179,7 +211,7 @@ class FormStrategy extends BaseStrategy {
     this.copyTemplate(
       generator,
       'form/cypress.spec.js.ejs',
-      `${appPath}/tests/${props.entryName}.cypress.spec.js`,
+      `${appPath}/tests/e2e/${props.entryName}.cypress.spec.js`,
       props,
     );
   }
