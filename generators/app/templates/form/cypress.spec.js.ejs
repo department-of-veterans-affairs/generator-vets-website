@@ -11,7 +11,7 @@ const testConfig = createTestConfig(
   {
     dataPrefix: 'data',
     dataSets: ['minimal-test', 'maximal-test'],
-    dataDir: path.join(__dirname, 'fixtures', 'data'),
+    dataDir: path.join(__dirname, '..', 'fixtures', 'data'),
     pageHooks: {
       introduction: ({ afterHook }) => {
         afterHook(() => {

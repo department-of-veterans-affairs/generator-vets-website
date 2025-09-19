@@ -19,5 +19,5 @@ yarn test:unit --app-folder <%= folderName %> --log-level all
 
 # E2E tests
 yarn cy:open
-yarn cy:run --spec "src/applications/<%= folderName %>/tests/<%= entryName %>.cypress.spec.js"
+yarn cy:run --spec "src/applications/<%= folderName %>/tests/e2e/<%= entryName %>.cypress.spec.js"
 ```
