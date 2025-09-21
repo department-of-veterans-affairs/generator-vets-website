@@ -77,6 +77,47 @@ describe('Non-Interactive Dry Run Mode', () => {
       assertSuccess(result);
       assertOutputMatches(result.output, /✅ Generator would complete successfully/);
     });
+
+    it('should support backward compatibility for contentLoc -> contentRepoLocation', async () => {
+      const result = await testDryRun({
+        dryRunNonInteractive: true,
+        appName: 'Test App',
+        folderName: 'test-app',
+        entryName: 'test-app',
+        rootUrl: '/test-app',
+        isForm: 'false',
+        contentLoc: '/legacy/path/to/vagov-content', // Legacy option name
+      });
+
+      assertSuccess(result);
+      assertOutputMatches(
+        result.output,
+        /contentRepoLocation: \/legacy\/path\/to\/vagov-content \(computed\)/,
+      );
+    });
+
+    it('should prefer contentRepoLocation over contentLoc when both provided', async () => {
+      const result = await testDryRun({
+        dryRunNonInteractive: true,
+        appName: 'Test App',
+        folderName: 'test-app',
+        entryName: 'test-app',
+        rootUrl: '/test-app',
+        isForm: 'false',
+        contentLoc: '/legacy/path/to/vagov-content', // Legacy option
+        contentRepoLocation: '/new/path/to/vagov-content', // New option
+      });
+
+      assertSuccess(result);
+      assertOutputMatches(
+        result.output,
+        /contentRepoLocation: \/new\/path\/to\/vagov-content \(computed\)/,
+      );
+      assertOutputDoesNotMatch(
+        result.output,
+        /contentRepoLocation: \/legacy\/path\/to\/vagov-content/,
+      );
+    });
   });
 
   describe('Successful Validation', () => {

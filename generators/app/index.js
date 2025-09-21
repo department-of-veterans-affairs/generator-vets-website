@@ -90,7 +90,13 @@ module.exports = class extends Generator {
       store.setProp('productId', uuidv4());
     }
 
-    store.setProp('contentRepoLocation', store.getValue('contentLoc'));
+    // Handle backward compatibility: contentLoc -> contentRepoLocation
+    // Priority: contentRepoLocation (new) > contentLoc (legacy)
+    const contentRepoLocation =
+      store.getValue('contentRepoLocation') || store.getValue('contentLoc');
+    if (contentRepoLocation) {
+      store.setProp('contentRepoLocation', contentRepoLocation);
+    }
 
     normalizeDryRunOptions(this.options);
 

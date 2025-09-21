@@ -80,6 +80,13 @@ class FormStrategy extends BaseStrategy {
         '',
         chalk.yellow('This form uses the experimental Form Engine flow.'),
         chalk.yellow('To edit this form, you must use Drupal CMS.'),
+        '',
+        chalk.cyan('To login to the form builder in Drupal:'),
+        chalk.cyan('1. Ensure you have a Drupal account'),
+        chalk.cyan('2. Connect to the VA VPN network'),
+        chalk.cyan('3. Navigate to prod.cms.va.gov'),
+        chalk.cyan('4. Login with your PIV card'),
+        chalk.cyan('5. Go to prod.cms.va.gov/form-builder'),
         '------------------------------------',
       ].join('\n');
     }
