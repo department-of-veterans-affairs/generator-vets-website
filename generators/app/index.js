@@ -288,29 +288,39 @@ ${duplicates.join('\n')}`;
         throw new Error(errorMessage);
       }
 
-      registry.push({
+      const templateType = store.getValue('templateType');
+      const registryEntry = {
         appName: store.getValue('appName'),
         entryName: store.getValue('entryName'),
         rootUrl: store.getValue('rootUrl'),
         productId: store.getValue('productId'),
-        template: {
-          vagovprod: false,
-          layout: 'page-react.html',
-          ...(store.getValue('usesMinimalHeader')
+        template:
+          templateType === 'FORM_ENGINE'
             ? {
-                includeBreadcrumbs: false,
-                minimalExcludePaths: ['/introduction', '/confirmation'],
-                minimalFooter: true,
-                minimalHeader: {
-                  title: store.getValue('appName'),
-                  subtitle: `${store.getValue(
-                    'benefitDescription',
-                  )} (VA Form ${store.getValue('formNumber')})`,
-                },
+                vagovprod: false,
+                title: store.getValue('appName'),
+                layout: 'page-react.html',
               }
-            : {}),
-        },
-      });
+            : {
+                vagovprod: false,
+                layout: 'page-react.html',
+                ...(store.getValue('usesMinimalHeader')
+                  ? {
+                      includeBreadcrumbs: false,
+                      minimalExcludePaths: ['/introduction', '/confirmation'],
+                      minimalFooter: true,
+                      minimalHeader: {
+                        title: store.getValue('appName'),
+                        subtitle: `${store.getValue(
+                          'benefitDescription',
+                        )} (VA Form ${store.getValue('formNumber')})`,
+                      },
+                    }
+                  : {}),
+              },
+      };
+
+      registry.push(registryEntry);
 
       this.fs.writeJSON(registryFile, registry);
 
@@ -347,7 +357,12 @@ ${duplicates.join('\n')}`;
    * @private
    */
   _generateSharedFiles(store) {
-    const appPath = `src/applications/${store.getValue('folderName')}`;
+    // For Form Engine, use special path structure
+    const templateType = store.getValue('templateType');
+    const appPath =
+      templateType === 'FORM_ENGINE'
+        ? `src/applications/simple-forms-form-engine/${store.getValue('folderName')}`
+        : `src/applications/${store.getValue('folderName')}`;
 
     const allProps = store.getAllProps();
 
@@ -365,8 +380,13 @@ ${duplicates.join('\n')}`;
       allProps,
     );
 
+    // Use different README template for Form Engine
+    const readmeTemplate =
+      templateType === 'FORM_ENGINE'
+        ? 'shared/README-form-engine.md.ejs'
+        : 'shared/README.md.ejs';
     this.fs.copyTpl(
-      this.templatePath('shared/README.md.ejs'),
+      this.templatePath(readmeTemplate),
       this.destinationPath(`${appPath}/README.md`),
       allProps,
     );

@@ -41,9 +41,14 @@ class FormStrategy extends BaseStrategy {
   }
 
   generateFiles(generator, store) {
-    const appPath = this.getAppPath(store);
     const props = store.getAllProps();
     const templateType = store.getValue('templateType');
+
+    // For Form Engine, use special path structure
+    const appPath =
+      templateType === TEMPLATE_TYPES.FORM_ENGINE
+        ? `src/applications/simple-forms-form-engine/${store.getValue('folderName')}`
+        : this.getAppPath(store);
 
     if (
       templateType === TEMPLATE_TYPES.WITH_1_PAGE ||
@@ -87,6 +92,16 @@ class FormStrategy extends BaseStrategy {
         chalk.cyan('3. Navigate to prod.cms.va.gov'),
         chalk.cyan('4. Login with your PIV card'),
         chalk.cyan('5. Go to prod.cms.va.gov/form-builder'),
+        '',
+        chalk.bold('Next Steps for Deployment:'),
+        'Create and merge PRs in the following order:',
+        [
+          chalk.bold('1.') + ' ' + chalk.cyan('vets-website'),
+          chalk.bold('2.') + ' ' + chalk.cyan('../content-build'),
+        ].join('\n'),
+        '',
+        chalk.bold('README: ') +
+          chalk.cyan(`src/applications/simple-forms-form-engine/${folderName}/README.md`),
         '------------------------------------',
       ].join('\n');
     }
