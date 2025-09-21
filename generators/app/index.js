@@ -5,7 +5,10 @@ const path = require('path');
 const Generator = require('yeoman-generator');
 const chalk = require('chalk');
 const yosay = require('yosay');
-const { validateAllCliArguments } = require('../../lib/cli-validation');
+const {
+  validateAllCliArguments,
+  isNonInteractiveMode,
+} = require('../../lib/cli-validation');
 const { initializeFileTracking } = require('../../lib/fs-tracker');
 const { getFieldDefinitions } = require('../../lib/prompts');
 const {
@@ -55,6 +58,20 @@ module.exports = class extends Generator {
     generateOptions(this, this.allFields);
   }
 
+  /**
+   * Display validation errors and exit
+   * @private
+   */
+  _handleValidationErrors(errors) {
+    console.log(chalk.red('\n❌ Validation errors:'));
+    errors.forEach((error) => {
+      console.log(chalk.red(`  • ${error}`));
+    });
+    console.log(chalk.red('\nSUMMARY:'));
+    console.log(chalk.red('❌ Generator failed due to validation errors'));
+    process.exit(1);
+  }
+
   initializing() {
     const tempThis = {
       props: {},
@@ -88,11 +105,7 @@ module.exports = class extends Generator {
 
     const cliValidationErrors = validateAllCliArguments(this.options);
     if (cliValidationErrors.length > 0) {
-      const errorMessage = `CLI validation failed:\n${cliValidationErrors
-        .map((err) => `  - ${err}`)
-        .join('\n')}`;
-      this.emit('error', new Error(errorMessage));
-      return;
+      this._handleValidationErrors(cliValidationErrors);
     }
 
     store.setProp(
@@ -111,6 +124,33 @@ module.exports = class extends Generator {
     const dryRunResult = handleDryRunPrompting(this, this.allFields);
     if (dryRunResult !== null) {
       return dryRunResult;
+    }
+
+    // If non-interactive mode, skip all prompts and validate required fields
+    if (isNonInteractiveMode(this.options)) {
+      // Validate that all required fields are provided
+      const { validateRequiredCliArguments } = require('../../lib/cli-validation');
+      const missingFieldErrors = validateRequiredCliArguments(this.options);
+      const formatValidationErrors = validateAllCliArguments(this.options);
+      const allErrors = [...missingFieldErrors, ...formatValidationErrors];
+
+      if (allErrors.length > 0) {
+        this._handleValidationErrors(allErrors);
+      }
+
+      // All required fields provided, continue without prompting
+      if (!store.getValue('productId')) {
+        store.setProp('productId', uuidv4());
+      }
+
+      this.strategy = this._createStrategy(store.getValue('isForm'));
+
+      // Process the CLI options to compute derived properties (like formIdConst)
+      if (this.strategy && this.strategy.processPromptResults) {
+        this.strategy.processPromptResults(this, store);
+      }
+
+      return Promise.resolve();
     }
 
     this.log(yosay(`Welcome to the ${chalk.red('vets-website app')} generator!`));

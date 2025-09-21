@@ -117,8 +117,7 @@ class FormStrategy extends BaseStrategy {
           `yarn cy:run --spec "src/applications/${folderName}/tests/e2e/${entryName}.cypress.spec.js"`,
         ),
       '',
-      chalk.gray('Commands also available in ') +
-        chalk.cyan(`src/applications/${folderName}/README.md`),
+      chalk.bold('README: ') + chalk.cyan(`src/applications/${folderName}/README.md`),
       '------------------------------------',
     ].join('\n');
   }

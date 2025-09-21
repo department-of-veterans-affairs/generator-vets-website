@@ -20,10 +20,10 @@ describe('Non-Interactive Dry Run Mode', () => {
 
       assertFailure(result);
       assertOutputMatches(result.output, /❌ Validation errors:/);
-      assertOutputMatches(result.output, /--folder-name: Required/);
-      assertOutputMatches(result.output, /--entry-name: Required/);
-      assertOutputMatches(result.output, /--root-url: Required/);
-      assertOutputMatches(result.output, /--is-form: Required/);
+      assertOutputMatches(result.output, /--folderName: Required/);
+      assertOutputMatches(result.output, /--entryName: Required/);
+      assertOutputMatches(result.output, /--rootUrl: Required/);
+      assertOutputMatches(result.output, /--isForm: Required/);
     });
 
     it('should validate form number format', async () => {
@@ -43,6 +43,39 @@ describe('Non-Interactive Dry Run Mode', () => {
         result.output,
         /formNumber.*Form number should follow VA format/,
       );
+    });
+  });
+
+  describe('CLI Argument Format Support', () => {
+    it('should accept camelCase CLI arguments', async () => {
+      const result = await testDryRun({
+        dryRunNonInteractive: true,
+        appName: 'Test App',
+        folderName: 'test-app',
+        entryName: 'test-app',
+        rootUrl: '/test-app',
+        isForm: 'false',
+      });
+
+      assertSuccess(result);
+      assertOutputMatches(result.output, /✅ Generator would complete successfully/);
+    });
+
+    it('should accept kebab-case CLI arguments via dual registration', async () => {
+      // Note: This test uses the test helper's option object format,
+      // But verifies that our dual option registration system would work
+      // For actual CLI usage with kebab-case like --is-form, --folder-name, etc.
+      const result = await testDryRun({
+        dryRunNonInteractive: true,
+        appName: 'Test App',
+        'folder-name': 'test-app', // Kebab-case option name
+        'entry-name': 'test-app', // Kebab-case option name
+        'root-url': '/test-app', // Kebab-case option name
+        'is-form': 'false', // Kebab-case option name
+      });
+
+      assertSuccess(result);
+      assertOutputMatches(result.output, /✅ Generator would complete successfully/);
     });
   });
 
@@ -198,7 +231,7 @@ describe('Non-Interactive Dry Run Mode', () => {
       assertFailure(formResult);
       assertOutputMatches(
         formResult.output,
-        /--form-number: Required|--benefit-description: Required|--omb-number: Required/,
+        /--formNumber: Required|--benefitDescription: Required|--ombNumber: Required/,
       );
 
       // Test that form fields are NOT required when isForm=false
@@ -266,7 +299,7 @@ describe('Non-Interactive Dry Run Mode', () => {
       });
 
       assertFailure(result);
-      assertOutputMatches(result.output, /--is-form: Required/);
+      assertOutputMatches(result.output, /--isForm: Required/);
     });
 
     it('should succeed for form engine template with minimal files', async () => {
@@ -322,8 +355,8 @@ describe('Non-Interactive Dry Run Mode', () => {
           `Error should use CLI format with --. Line: ${cleanLine}`,
         );
         assert(
-          /--[a-z-]+:/.test(cleanLine),
-          `Should use kebab-case CLI format. Line: ${cleanLine}`,
+          /--[a-zA-Z]+:/.test(cleanLine),
+          `Should use camelCase CLI format. Line: ${cleanLine}`,
         );
       });
     });
@@ -335,11 +368,11 @@ describe('Non-Interactive Dry Run Mode', () => {
 
       // Should show validation errors for all required fields
       assertOutputMatches(result.output, /Required when using non-interactive mode/);
-      assertOutputMatches(result.output, /--app-name:/);
-      assertOutputMatches(result.output, /--folder-name:/);
-      assertOutputMatches(result.output, /--entry-name:/);
-      assertOutputMatches(result.output, /--root-url:/);
-      assertOutputMatches(result.output, /--is-form:/);
+      assertOutputMatches(result.output, /--appName:/);
+      assertOutputMatches(result.output, /--folderName:/);
+      assertOutputMatches(result.output, /--entryName:/);
+      assertOutputMatches(result.output, /--rootUrl:/);
+      assertOutputMatches(result.output, /--isForm:/);
 
       // Should NOT show file analysis
       assertOutputDoesNotMatch(result.output, /DRY RUN - File analysis/);
