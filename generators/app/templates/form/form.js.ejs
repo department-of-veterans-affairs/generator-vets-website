@@ -1,0 +1,106 @@
+// @ts-check
+<%- include('partials/formHeader', {formNumber: formNumber}); -%>
+
+import nameAndDateOfBirth from '../pages/nameAndDateOfBirth';
+<% if (templateType === 'WITH_4_PAGES') { -%>
+import identificationInformation from '../pages/identificationInformation';
+import mailingAddress from '../pages/mailingAddress';
+import phoneAndEmailAddress from '../pages/phoneAndEmailAddress';
+<% } -%>
+
+/** @type {FormConfig} */
+const formConfig = {
+  rootUrl: manifest.rootUrl,
+  urlPrefix: '/',
+  submitUrl: '/v0/api',
+  submit: () =>
+    Promise.resolve({ attributes: { confirmationNumber: '123123123' } }),
+  trackingPrefix: '<%= trackingPrefix %>',
+  introduction: IntroductionPage,
+  confirmation: ConfirmationPage,
+  dev: {
+    showNavLinks: true,
+    collapsibleNavLinks: true,
+    disableWindowUnloadInCI: true,
+  },
+<% if (usesMinimalHeader) { -%>
+  ...minimalHeaderFormConfigOptions({
+    breadcrumbList: [
+      { href: '/', label: 'VA.gov home' },
+<%
+  const parts = rootUrl.split('/').filter(Boolean);
+  let path = '';
+  for (let i = 0; i < parts.length; i++) {
+    path += '/' + parts[i];
+-%>
+      {
+        href: '<%= path %>',
+        label: '<%= parts[i].charAt(0).toUpperCase() + parts[i].slice(1).replace(/-/g, ' ') %>',
+      },
+<% } -%>
+    ],
+  }),
+<% } -%>
+  formId: VA_FORM_IDS.<%= formIdConst %>,
+  saveInProgress: {
+    // messages: {
+    //   inProgress: 'Your <%= benefitDescription %> application (<%= formNumber %>) is in progress.',
+    //   expired: 'Your saved <%= benefitDescription %> application (<%= formNumber %>) has expired. If you want to apply for <%= benefitDescription %>, please start a new application.',
+    //   saved: 'Your <%= benefitDescription %> application has been saved.',
+    // },
+  },
+  version: 0,
+  prefillEnabled: true,
+  savedFormMessages: {
+    notFound: 'Please start over to apply for <%= benefitDescription %>.',
+    noAuth: 'Please sign in again to continue your application for <%= benefitDescription %>.',
+  },
+  title: TITLE,
+  subTitle: SUBTITLE,
+  defaultDefinitions: {},
+  chapters: {
+    personalInformationChapter: {
+      title: 'Your personal information',
+      pages: {
+        nameAndDateOfBirth: {
+          path: 'name-and-date-of-birth',
+          title: 'Name and date of birth',
+          uiSchema: nameAndDateOfBirth.uiSchema,
+          schema: nameAndDateOfBirth.schema,
+        },<% if (templateType === 'WITH_4_PAGES') { %>
+        identificationInformation: {
+          path: 'identification-information',
+          title: 'Identification information',
+          uiSchema: identificationInformation.uiSchema,
+          schema: identificationInformation.schema,
+        },<% } %>
+      },
+    },<% if (templateType === 'WITH_4_PAGES') { %>
+    mailingAddressChapter: {
+      title: 'Mailing address',
+      pages: {
+        mailingAddress: {
+          path: 'mailing-address',
+          title: 'Mailing address',
+          uiSchema: mailingAddress.uiSchema,
+          schema: mailingAddress.schema,
+        },
+      },
+    },
+    contactInformationChapter: {
+      title: 'Contact information',
+      pages: {
+        phoneAndEmailAddress: {
+          path: 'phone-and-email-address',
+          title: 'Phone and email address',
+          uiSchema: phoneAndEmailAddress.uiSchema,
+          schema: phoneAndEmailAddress.schema,
+        },
+      },
+    },<% } %>
+  },
+  // getHelp,
+  footerContent,
+};
+
+export default formConfig;
