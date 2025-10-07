@@ -1,6 +1,6 @@
 {
   "name": "@department-of-veterans-affairs/generator-vets-website",
-  "version": "3.17.0",
+  "version": "3.17.1",
   "description": "Generate a React app for vets-website",
   "homepage": "",
   "author": {
@@ -8,9 +8,10 @@
   },
   "files": [
     "generators",
-    "utils"
+    "utils",
+    "lib"
   ],
-  "main": "generators/index.js",
+  "main": "generators/app/index.js",
   "keywords": [
     "VA",
     "vets.gov",
