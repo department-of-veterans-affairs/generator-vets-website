@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
+## [3.17.1] - 2025-10-07
+### Fixed
+- Added missing `lib` directory to npm package files to fix "Cannot find module" errors
+- Corrected `main` entry point from non-existent `generators/index.js` to `generators/app/index.js`
+
 ## [3.17.0] - 2025-09-18
 ### Added
 - Dry run modes (`--dry-run-interactive` and `--dry-run-non-interactive`) for testing generator output without creating files
