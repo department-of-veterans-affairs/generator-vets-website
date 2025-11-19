@@ -12,10 +12,10 @@ const { isDryRunMode } = require('../../../lib/dry-run-helpers');
 /**
  * Helper function to capitalize first letter of a string
  * @param {string} str - String to capitalize
- * @returns {string} String with first letter capitalized
+ * @returns {string} String with first letter capitalized, or original value if not a valid string
  */
 function capitalizeFirstLetter(str) {
-  if (!str) return str;
+  if (!str || typeof str !== 'string') return str;
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
