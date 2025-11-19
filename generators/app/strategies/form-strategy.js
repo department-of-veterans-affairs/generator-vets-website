@@ -10,6 +10,16 @@ const {
 const { isDryRunMode } = require('../../../lib/dry-run-helpers');
 
 /**
+ * Helper function to capitalize first letter of a string
+ * @param {string} str - String to capitalize
+ * @returns {string} String with first letter capitalized
+ */
+function capitalizeFirstLetter(str) {
+  if (!str) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
  * Strategy for generating form-based applications
  */
 class FormStrategy extends BaseStrategy {
@@ -306,12 +316,6 @@ class FormStrategy extends BaseStrategy {
       const appName = store.getValue('appName');
       const addToMyVaSip = store.getValue('addToMyVaSip');
 
-      // Helper function to capitalize first letter
-      const capitalizeFirstLetter = (str) => {
-        if (!str) return str;
-        return str.charAt(0).toUpperCase() + str.slice(1);
-      };
-
       // Update VA_FORM_IDS
       let regex = /(export const VA_FORM_IDS = Object\.freeze\({)([\s\S]*?)(}\))/;
       let newEntry = `  ${formIdConst}: '${formNumber}',`;
@@ -337,8 +341,8 @@ class FormStrategy extends BaseStrategy {
       newEntry = `    [VA_FORM_IDS.${formIdConst}]: \`\${tryGetAppUrl('${entryName}')}/\`,`;
       this._tryUpdateRegexInFile(generator, filePath, regex, newEntry);
 
-      // Update MY_VA_SIP_FORMS only if addToMyVaSip is true
-      if (addToMyVaSip !== false) {
+      // Update MY_VA_SIP_FORMS only if addToMyVaSip is true (defaults to true)
+      if (addToMyVaSip === true || addToMyVaSip === undefined) {
         regex = /(export const MY_VA_SIP_FORMS = \[)([\s\S]*?)(];)/;
         newEntry =
           `  {\n` +
