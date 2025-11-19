@@ -300,9 +300,17 @@ class FormStrategy extends BaseStrategy {
       const filePath = './src/platform/forms/constants.js';
       const formIdConst = store.getValue('formIdConst');
       const formNumber = store.getValue('formNumber');
+      const entryName = store.getValue('entryName');
       const benefitDescription = store.getValue('benefitDescription');
       const trackingPrefix = store.getValue('trackingPrefix');
       const appName = store.getValue('appName');
+      const addToMyVaSip = store.getValue('addToMyVaSip');
+
+      // Helper function to capitalize first letter
+      const capitalizeFirstLetter = (str) => {
+        if (!str) return str;
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      };
 
       // Update VA_FORM_IDS
       let regex = /(export const VA_FORM_IDS = Object\.freeze\({)([\s\S]*?)(}\))/;
@@ -324,22 +332,24 @@ class FormStrategy extends BaseStrategy {
       newEntry = `  VA_FORM_IDS.${formIdConst},`;
       this._tryUpdateRegexInFile(generator, filePath, regex, newEntry);
 
-      // Update getAllFormLinks
+      // Update getAllFormLinks - use entryName instead of formNumber
       regex = /(export const getAllFormLinks = [\s\S]*?return {)([\s\S]*?)( {2}};)/;
-      newEntry = `    [VA_FORM_IDS.${formIdConst}]: \`\${tryGetAppUrl('${formNumber}')}/\`,`;
+      newEntry = `    [VA_FORM_IDS.${formIdConst}]: \`\${tryGetAppUrl('${entryName}')}/\`,`;
       this._tryUpdateRegexInFile(generator, filePath, regex, newEntry);
 
-      // Update MY_VA_SIP_FORMS
-      regex = /(export const MY_VA_SIP_FORMS = \[)([\s\S]*?)(];)/;
-      newEntry =
-        `  {\n` +
-        `    id: VA_FORM_IDS.${formIdConst},\n` +
-        `    benefit: '${benefitDescription}',\n` +
-        `    title: '${appName}',\n` +
-        `    description: '${benefitDescription}',\n` +
-        `    trackingPrefix: '${trackingPrefix}',\n` +
-        `  },`;
-      this._tryUpdateRegexInFile(generator, filePath, regex, newEntry);
+      // Update MY_VA_SIP_FORMS only if addToMyVaSip is true
+      if (addToMyVaSip !== false) {
+        regex = /(export const MY_VA_SIP_FORMS = \[)([\s\S]*?)(];)/;
+        newEntry =
+          `  {\n` +
+          `    id: VA_FORM_IDS.${formIdConst},\n` +
+          `    benefit: '${capitalizeFirstLetter(benefitDescription)}',\n` +
+          `    title: '${capitalizeFirstLetter(appName)}',\n` +
+          `    description: '${capitalizeFirstLetter(benefitDescription)}',\n` +
+          `    trackingPrefix: '${trackingPrefix}',\n` +
+          `  },`;
+        this._tryUpdateRegexInFile(generator, filePath, regex, newEntry);
+      }
     }
   }
 
