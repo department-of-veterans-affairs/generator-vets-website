@@ -54,7 +54,8 @@ function fieldNameToCliArg(fieldName) {
  * @returns {string} The form ID constant (e.g., "FORM_21_526EZ")
  */
 function generateFormIdConst(formNumber) {
-  return `FORM_${formNumber.replace(/-/g, '_')}`;
+  const normalized = formNumber.replace(/-/g, '_');
+  return normalized.startsWith('FORM_') ? normalized : `FORM_${normalized}`;
 }
 
 /**

@@ -9,6 +9,7 @@ const {
 } = require('../../../lib/form-helpers');
 const { isDryRunMode } = require('../../../lib/dry-run-helpers');
 const { calculateSubFolder } = require('../../../utils/generator-helpers');
+const { generateFormIdConst } = require('../../../utils/filters');
 
 function capitalizeFirstLetter(str) {
   if (!str || typeof str !== 'string') return str;
@@ -53,6 +54,12 @@ class FormStrategy extends BaseStrategy {
     // Calculate subFolder based on folderName for SCSS imports
     const folderName = store.getValue('folderName');
     props.subFolder = folderName ? calculateSubFolder(folderName) : '';
+
+    // Ensure formIdConst is available in props
+    const formNumber = store.getValue('formNumber');
+    if (formNumber && !props.formIdConst) {
+      props.formIdConst = generateFormIdConst(formNumber);
+    }
 
     // For Form Engine, use special path structure
     const appPath =

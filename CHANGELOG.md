@@ -2,6 +2,14 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
+## [3.18.0] - 2025-11-21
+### Added
+- New prompt for My VA integration
+
+### Fixed
+- Fixed SCSS file path when using a sub-nested folder
+- Fixed populating to `missingFromVetsJsonSchema` when `usesVetsJsonSchema` is false
+
 ## [3.17.1] - 2025-10-07
 ### Fixed
 - Added missing `lib` directory to npm package files to fix "Cannot find module" errors

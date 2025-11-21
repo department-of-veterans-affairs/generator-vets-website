@@ -41,7 +41,16 @@ yarn new:app
 
 Any changes to the generator will be automatically included due to the npm link.
 
-### 4. Clean up when done
+### 4. Run tests
+
+```sh
+# From generator-vets-website root:
+npm test
+```
+
+This runs the automated test suite to verify your changes don't break existing functionality. Note that these tests only cover non-interactive mode - you should also manually test interactive mode by running the generator in vets-website.
+
+### 5. Clean up when done
 
 ```sh
 # From vets-website root:
@@ -105,7 +114,8 @@ yo @department-of-veterans-affairs/vets-website \
   --expirationDate="12/31/2026" \
   --benefitDescription="burial benefits" \
   --usesVetsJsonSchema=false \
-  --usesMinimalHeader=false \
+  --usesMinimalHeader=true \
+  --addToMyVaSip=true \
   --templateType="WITH_1_PAGE"
 ```
 
@@ -132,7 +142,8 @@ yo @department-of-veterans-affairs/vets-website \
   --expirationDate="12/31/2026" \
   --benefitDescription="burial benefits" \
   --usesVetsJsonSchema=false \
-  --usesMinimalHeader=false \
+  --usesMinimalHeader=true \
+  --addToMyVaSip=true \
   --templateType="WITH_1_PAGE"
 ```
 
@@ -167,7 +178,7 @@ When you're ready to publish a new version of the generator to npm:
 
 2. **Update the version number:**
 
-    ```sh
+    ```shg
     npm version patch   # for bug fixes (3.14.1 → 3.14.2)
     npm version minor   # for new features (3.14.1 → 3.15.0)
     npm version major   # for breaking changes (3.14.1 → 4.0.0)

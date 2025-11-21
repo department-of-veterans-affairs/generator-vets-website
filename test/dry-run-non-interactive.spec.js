@@ -437,6 +437,7 @@ describe('Non-Interactive Dry Run Mode', () => {
         respondentBurden: '45',
         usesVetsJsonSchema: 'true',
         usesMinimalHeader: 'false',
+        addToMyVaSip: 'false',
         trackingPrefix: 'custom-prefix-',
       });
 
@@ -457,6 +458,7 @@ describe('Non-Interactive Dry Run Mode', () => {
       assertOutputMatches(result.output, /respondentBurden: 45 \(CLI arg\)/);
       assertOutputMatches(result.output, /usesVetsJsonSchema: true \(CLI arg\)/);
       assertOutputMatches(result.output, /usesMinimalHeader: false \(CLI arg\)/);
+      assertOutputMatches(result.output, /addToMyVaSip: false \(CLI arg\)/);
       assertOutputMatches(result.output, /trackingPrefix: custom-prefix- \(CLI arg\)/);
       assertOutputMatches(result.output, /contentRepoLocation: .+ \(computed\)/);
       assertOutputMatches(result.output, /expirationDate: \d+\/\d+\/\d+ \(CLI arg\)/);
@@ -491,6 +493,7 @@ describe('Non-Interactive Dry Run Mode', () => {
       assertOutputMatches(result.output, /respondentBurden: 30 \(default\)/);
       assertOutputMatches(result.output, /usesVetsJsonSchema: false \(default\)/);
       assertOutputMatches(result.output, /usesMinimalHeader: true \(default\)/);
+      assertOutputMatches(result.output, /addToMyVaSip: true \(default\)/);
       assertOutputMatches(result.output, /templateType: WITH_1_PAGE \(default\)/);
       assertOutputMatches(
         result.output,
