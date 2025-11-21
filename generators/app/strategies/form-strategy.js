@@ -51,11 +51,9 @@ class FormStrategy extends BaseStrategy {
     const props = store.getAllProps();
     const templateType = store.getValue('templateType');
 
-    // Calculate subFolder based on folderName for SCSS imports
     const folderName = store.getValue('folderName');
     props.subFolder = folderName ? calculateSubFolder(folderName) : '';
 
-    // Ensure formIdConst is available in props
     const formNumber = store.getValue('formNumber');
     if (formNumber && !props.formIdConst) {
       props.formIdConst = generateFormIdConst(formNumber);
