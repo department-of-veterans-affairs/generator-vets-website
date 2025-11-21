@@ -4,7 +4,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [3.18.0] - 2025-11-21
 ### Added
-- New prompt for My VA integration
+- New prompt for 'Should this form appear on the My VA dashboard for users with in-progress applications?'
 
 ### Fixed
 - Fixed SCSS file path when using a sub-nested folder

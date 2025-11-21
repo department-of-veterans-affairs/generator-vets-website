@@ -48,7 +48,8 @@ Any changes to the generator will be automatically included due to the npm link.
 npm test
 ```
 
-This runs the automated test suite to verify your changes don't break existing functionality. Note that these tests only cover non-interactive mode - you should also manually test interactive mode by running the generator in vets-website.
+Note that these tests only cover non-interactive mode
+You should also manually test `yarn new:app` in vets-website.
 
 ### 5. Clean up when done
 
@@ -178,7 +179,7 @@ When you're ready to publish a new version of the generator to npm:
 
 2. **Update the version number:**
 
-    ```shg
+    ```sh
     npm version patch   # for bug fixes (3.14.1 → 3.14.2)
     npm version minor   # for new features (3.14.1 → 3.15.0)
     npm version major   # for breaking changes (3.14.1 → 4.0.0)

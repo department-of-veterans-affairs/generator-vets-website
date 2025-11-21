@@ -80,9 +80,7 @@ function calculateSubFolder(folderName) {
     return '';
   }
 
-  // Normalize by trimming leading/trailing slashes to avoid miscounting
   const normalized = folderName.replace(/^\/+|\/+$/g, '');
-
   const subfolders = Array.from(normalized).filter((c) => c === '/').length;
 
   if (subfolders > 0) {
