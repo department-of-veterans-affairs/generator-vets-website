@@ -16,7 +16,6 @@ const {
   initializePropsFromOptions,
 } = require('../../lib/generator-config');
 const { generatePrompts } = require('../../lib/prompts');
-const { calculateSubFolder } = require('../../utils/generator-helpers');
 const {
   isInvalidFolderName,
   isInvalidEntryName,
