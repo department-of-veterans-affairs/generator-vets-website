@@ -82,10 +82,6 @@ module.exports = class extends Generator {
     store.setOptions(this.options);
     store.setProps(tempThis.props);
 
-    // Auto-calculate subFolder based on folderName to ensure it's always available in templates
-    const folderName = store.getValue('folderName');
-    store.setProp('subFolder', folderName ? calculateSubFolder(folderName) : '');
-
     if (!store.getValue('productId')) {
       store.setProp('productId', uuidv4());
     }

@@ -8,6 +8,12 @@ const {
   computeFormProperties,
 } = require('../../../lib/form-helpers');
 const { isDryRunMode } = require('../../../lib/dry-run-helpers');
+const { calculateSubFolder } = require('../../../utils/generator-helpers');
+
+function capitalizeFirstLetter(str) {
+  if (!str || typeof str !== 'string') return str;
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
 /**
  * Strategy for generating form-based applications
@@ -43,6 +49,10 @@ class FormStrategy extends BaseStrategy {
   generateFiles(generator, store) {
     const props = store.getAllProps();
     const templateType = store.getValue('templateType');
+
+    // Calculate subFolder based on folderName for SCSS imports
+    const folderName = store.getValue('folderName');
+    props.subFolder = folderName ? calculateSubFolder(folderName) : '';
 
     // For Form Engine, use special path structure
     const appPath =
@@ -300,9 +310,11 @@ class FormStrategy extends BaseStrategy {
       const filePath = './src/platform/forms/constants.js';
       const formIdConst = store.getValue('formIdConst');
       const formNumber = store.getValue('formNumber');
+      const entryName = store.getValue('entryName');
       const benefitDescription = store.getValue('benefitDescription');
       const trackingPrefix = store.getValue('trackingPrefix');
       const appName = store.getValue('appName');
+      const addToMyVaSip = store.getValue('addToMyVaSip');
 
       // Update VA_FORM_IDS
       let regex = /(export const VA_FORM_IDS = Object\.freeze\({)([\s\S]*?)(}\))/;
@@ -326,20 +338,22 @@ class FormStrategy extends BaseStrategy {
 
       // Update getAllFormLinks
       regex = /(export const getAllFormLinks = [\s\S]*?return {)([\s\S]*?)( {2}};)/;
-      newEntry = `    [VA_FORM_IDS.${formIdConst}]: \`\${tryGetAppUrl('${formNumber}')}/\`,`;
+      newEntry = `    [VA_FORM_IDS.${formIdConst}]: \`\${tryGetAppUrl('${entryName}')}/\`,`;
       this._tryUpdateRegexInFile(generator, filePath, regex, newEntry);
 
       // Update MY_VA_SIP_FORMS
-      regex = /(export const MY_VA_SIP_FORMS = \[)([\s\S]*?)(];)/;
-      newEntry =
-        `  {\n` +
-        `    id: VA_FORM_IDS.${formIdConst},\n` +
-        `    benefit: '${benefitDescription}',\n` +
-        `    title: '${appName}',\n` +
-        `    description: '${benefitDescription}',\n` +
-        `    trackingPrefix: '${trackingPrefix}',\n` +
-        `  },`;
-      this._tryUpdateRegexInFile(generator, filePath, regex, newEntry);
+      if (addToMyVaSip === true || addToMyVaSip === undefined) {
+        regex = /(export const MY_VA_SIP_FORMS = \[)([\s\S]*?)(];)/;
+        newEntry =
+          `  {\n` +
+          `    id: VA_FORM_IDS.${formIdConst},\n` +
+          `    benefit: '${capitalizeFirstLetter(benefitDescription)}',\n` +
+          `    title: '${capitalizeFirstLetter(appName)}',\n` +
+          `    description: '${capitalizeFirstLetter(benefitDescription)}',\n` +
+          `    trackingPrefix: '${trackingPrefix}',\n` +
+          `  },`;
+        this._tryUpdateRegexInFile(generator, filePath, regex, newEntry);
+      }
     }
   }
 
