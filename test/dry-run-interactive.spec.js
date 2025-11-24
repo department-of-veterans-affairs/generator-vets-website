@@ -169,6 +169,7 @@ describe('Interactive Dry Run Mode', () => {
       assertOutputMatches(result.output, /ombNumber: 1234-5678 \(default\)/);
       assertOutputMatches(result.output, /usesVetsJsonSchema: false \(default\)/);
       assertOutputMatches(result.output, /usesMinimalHeader: true \(default\)/);
+      assertOutputMatches(result.output, /addToMyVaSip: true \(default\)/);
       assertOutputMatches(result.output, /templateType: WITH_1_PAGE \(default\)/);
     });
   });

@@ -41,7 +41,17 @@ yarn new:app
 
 Any changes to the generator will be automatically included due to the npm link.
 
-### 4. Clean up when done
+### 4. Run tests
+
+```sh
+# From generator-vets-website root:
+npm test
+```
+
+Note that these tests only cover non-interactive mode
+You should also manually test `yarn new:app` in vets-website.
+
+### 5. Clean up when done
 
 ```sh
 # From vets-website root:
@@ -105,7 +115,8 @@ yo @department-of-veterans-affairs/vets-website \
   --expirationDate="12/31/2026" \
   --benefitDescription="burial benefits" \
   --usesVetsJsonSchema=false \
-  --usesMinimalHeader=false \
+  --usesMinimalHeader=true \
+  --addToMyVaSip=true \
   --templateType="WITH_1_PAGE"
 ```
 
@@ -132,7 +143,8 @@ yo @department-of-veterans-affairs/vets-website \
   --expirationDate="12/31/2026" \
   --benefitDescription="burial benefits" \
   --usesVetsJsonSchema=false \
-  --usesMinimalHeader=false \
+  --usesMinimalHeader=true \
+  --addToMyVaSip=true \
   --templateType="WITH_1_PAGE"
 ```
 
