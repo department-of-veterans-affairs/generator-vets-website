@@ -15,7 +15,6 @@ describe('Interactive Dry Run Mode', () => {
         dryRunInteractive: true,
         // Missing required appName field
       });
-
       assertFailure(result);
       assertOutputMatches(result.output, /❌ Validation errors:/);
       assertOutputMatches(result.output, /--app-name: Required/);
