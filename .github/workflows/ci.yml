@@ -24,16 +24,22 @@ jobs:
       - name: Block unauthorized dependency changes
         if: github.event_name == 'pull_request'
         run: |
-          # Check if package.json or package-lock.json were modified
+          # Check if package-lock.json was modified (always indicates dependency change)
           CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }})
 
-          if echo "$CHANGED_FILES" | grep -E '(package\.json|package-lock\.json)'; then
-            # Check if only version field was changed in package.json (allowed for releases)
-            PACKAGE_JSON_CHANGES=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.sha }} package.json 2>/dev/null | grep '^[+-]' | grep -v '^[+-]\{3\}' | grep -v '^\(+++\|---\)' || true)
+          if echo "$CHANGED_FILES" | grep -q 'package-lock\.json'; then
+            echo "❌ Dependency changes detected in package-lock.json"
+            echo "This is temporarily blocked as a security measure."
+            echo "Please coordinate with platform support if dependency updates are absolutely necessary."
+            exit 1
+          fi
 
-            # If there are changes beyond just the version field, block
-            if [ -n "$PACKAGE_JSON_CHANGES" ] && echo "$PACKAGE_JSON_CHANGES" | grep -vE '^\+.*"version":|^-.*"version":' | grep -q '^[+-]'; then
-              echo "❌ Dependency changes detected in package.json or package-lock.json"
+          # Check if dependencies/devDependencies sections in package.json were modified
+          if echo "$CHANGED_FILES" | grep -q 'package\.json'; then
+            DEPENDENCY_CHANGES=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.sha }} package.json | grep -E '^\+.*"(dependencies|devDependencies|peerDependencies|optionalDependencies)":|^\+.*"[^"]+": ".*",' | grep -A1 -E '"(dependencies|devDependencies|peerDependencies|optionalDependencies)":' || true)
+
+            if [ -n "$DEPENDENCY_CHANGES" ]; then
+              echo "❌ Dependency changes detected in package.json"
               echo "This is temporarily blocked as a security measure."
               echo "Please coordinate with platform support if dependency updates are absolutely necessary."
               exit 1
