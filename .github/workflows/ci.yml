@@ -25,17 +25,17 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           # Check if package.json or package-lock.json were modified
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }} HEAD)
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }})
 
           if echo "$CHANGED_FILES" | grep -E '(package\.json|package-lock\.json)'; then
             # Check if only version field was changed in package.json (allowed for releases)
-            PACKAGE_JSON_CHANGES=$(git diff origin/${{ github.base_ref }} HEAD package.json 2>/dev/null | grep '^[+-]' | grep -v '^[+-]\{3\}' | grep -v '^\(+++\|---\)' || true)
+            PACKAGE_JSON_CHANGES=$(git diff ${{ github.event.pull_request.base.sha }} ${{ github.sha }} package.json 2>/dev/null | grep '^[+-]' | grep -v '^[+-]\{3\}' | grep -v '^\(+++\|---\)' || true)
 
             # If there are changes beyond just the version field, block
             if [ -n "$PACKAGE_JSON_CHANGES" ] && echo "$PACKAGE_JSON_CHANGES" | grep -vE '^\+.*"version":|^-.*"version":' | grep -q '^[+-]'; then
               echo "❌ Dependency changes detected in package.json or package-lock.json"
               echo "This is temporarily blocked as a security measure."
-              echo "Please coordinate with the team before making dependency changes."
+              echo "Please coordinate with platform support if dependency updates are absolutely necessary."
               exit 1
             fi
           fi
