@@ -12,5 +12,6 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "America/New_York"
-    # Allow up to 1 open pull request for npm dependencies with 7-day cooldown
     open-pull-requests-limit: 1
+    cooldown:
+      default-days: 7
