@@ -20,11 +20,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 - Upgraded `husky` from 8.x to 9.1.7
 - Upgraded `lint-staged` from 13.x to 16.0.0
 - Updated CI workflow to use Node.js 22.17.0
+- Updated `README.md` to describe changes and new commands
+- Updated `package.json` with new script commands for better dx
 
 ### Added
 - `eslint.config.js` for ESLint 9 flat configuration
 - `yo` as dev dependency for E2E testing
 - E2E test scripts (`scripts/e2e-dry-run.sh`, `scripts/e2e-real-generation.sh`, `scripts/e2e-all.sh`)
+- Out of sync repos generate command (`scripts/run-generator`)
 - `uuid` package for productId generation
 - `globals` package for ESLint configuration
 - `mem-fs` and `mem-fs-editor` dev dependencies for test mocking
