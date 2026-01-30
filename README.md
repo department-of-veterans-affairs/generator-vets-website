@@ -26,11 +26,17 @@ This creates a symlink so vets-website uses your local development version.
 ### Test Your Changes
 
 ```sh
-# From vets-website root:
-yarn new:app
+# From generator-vets-website root:
+npm run generate
 ```
 
-Any changes to the generator will be automatically reflected due to the npm link.
+This runs the generator in vets-website using a compatible `yo` CLI version. Any changes to the generator will be automatically reflected due to the npm link.
+
+> **Why `npm run generate` instead of `yarn new:app`?**
+>
+> Generator v4.0.0 uses `yeoman-generator@7.x` which requires a compatible version of the `yo` CLI. If vets-website has not yet been updated, its older `yo` version will cause errors like "Cannot add property resolved, object is not extensible". The `npm run generate` command uses the compatible `yo` from this repo's node_modules.
+>
+> Once vets-website updates its dependencies, you can use `yarn new:app` directly from vets-website.
 
 ### Clean Up
 
@@ -72,6 +78,7 @@ If you prefer to set up the links manually:
 | `npm run e2e:real` | Run E2E tests with real file generation |
 | `npm run link:vets-website` | Link generator to vets-website for local development |
 | `npm run unlink:vets-website` | Remove link from vets-website |
+| `npm run generate` | Run generator in vets-website (uses compatible yo version) |
 
 ### E2E Testing
 

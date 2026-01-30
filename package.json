@@ -50,7 +50,8 @@
     "e2e:dry-run": "./scripts/e2e-dry-run.sh",
     "e2e:real": "./scripts/e2e-real-generation.sh",
     "link:vets-website": "./scripts/link.sh",
-    "unlink:vets-website": "./scripts/unlink.sh"
+    "unlink:vets-website": "./scripts/unlink.sh",
+    "generate": "./scripts/run-generator.sh"
   },
   "lint-staged": {
     "*.js": [
