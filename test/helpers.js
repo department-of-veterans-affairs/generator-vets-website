@@ -3,15 +3,16 @@
  * Provides utilities to test the vets-website generator
  */
 
-const { EventEmitter } = require('events');
+import assert from 'node:assert';
+import { create as createMemFs } from 'mem-fs';
+import { create as createMemFsEditor } from 'mem-fs-editor';
 
 /**
  * Helper function to strip ANSI color codes for cleaner test output
  * @param {string} str - String that may contain ANSI codes
  * @returns {string} - Clean string without ANSI codes
  */
-function stripAnsi(str) {
-  // eslint-disable-next-line no-control-regex
+export function stripAnsi(str) {
   return str.replace(/\x1B\[[0-9;]*m/g, '');
 }
 
@@ -21,7 +22,7 @@ function stripAnsi(str) {
  * @param {RegExp} pattern - The pattern to match
  * @param {string} message - Optional context message
  */
-function assertOutputMatches(output, pattern, message) {
+export function assertOutputMatches(output, pattern, message) {
   const cleanOutput = stripAnsi(output);
   if (!pattern.test(cleanOutput)) {
     const error = new Error(
@@ -41,7 +42,7 @@ function assertOutputMatches(output, pattern, message) {
  * @param {RegExp} pattern - The pattern that should NOT match
  * @param {string} message - Optional context message
  */
-function assertOutputDoesNotMatch(output, pattern, message) {
+export function assertOutputDoesNotMatch(output, pattern, message) {
   const cleanOutput = stripAnsi(output);
   if (pattern.test(cleanOutput)) {
     const error = new Error(
@@ -59,8 +60,7 @@ function assertOutputDoesNotMatch(output, pattern, message) {
  * Assert that the generator failed (exited) as expected
  * @param {Object} result - The test result object from testDryRun
  */
-function assertFailure(result) {
-  const assert = require('assert');
+export function assertFailure(result) {
   assert.strictEqual(
     result.exitCalled,
     true,
@@ -73,9 +73,7 @@ function assertFailure(result) {
  * Assert that the generator succeeded (completed without exiting)
  * @param {Object} result - The test result object from testDryRun
  */
-function assertSuccess(result) {
-  const assert = require('assert');
-
+export function assertSuccess(result) {
   if (
     result.exitCalled ||
     !result.output.includes('✅ Generator would complete successfully')
@@ -102,7 +100,7 @@ function assertSuccess(result) {
  * @param {Object} result - The test result object from testDryRun
  * @param {number} expectedCount - The expected number of files to be created/modified
  */
-function assertFilesCreated(result, expectedCount) {
+export function assertFilesCreated(result, expectedCount) {
   assertOutputMatches(
     result.output,
     new RegExp(`Files that would be created/modified: ${expectedCount}`),
@@ -114,38 +112,15 @@ function assertFilesCreated(result, expectedCount) {
  * Creates a mock Yeoman environment for testing
  * @returns {Object} Mock environment object
  */
-function createMockYeomanEnvironment() {
-  // Create enhanced fs mock with methods yeoman-generator expects
-  const mockFs = {
-    readJSON(path, defaults = {}) {
-      // Return defaults for any JSON file read
-      return defaults;
-    },
-    read() {
-      return '';
-    },
-    write() {},
-    writeJSON() {},
-    copy() {},
-    copyTpl() {},
-    move() {},
-    delete() {},
-    exists() {
-      return false;
-    },
-    // Standard fs methods
-    readFile() {},
-    writeFile() {},
-    mkdir() {},
-    stat() {},
-    // Store needs to be an event emitter for yeoman's Storage class
-    store: new EventEmitter(),
-  };
+export function createMockYeomanEnvironment() {
+  // Create a real mem-fs store and editor for yeoman-generator 7.x compatibility
+  const store = createMemFs();
+  const fs = createMemFsEditor(store);
 
   return {
     cwd: process.cwd(),
-    fs: mockFs,
-    sharedFs: mockFs,
+    fs: fs,
+    sharedFs: store,
     adapter: {
       log() {},
       prompt() {
@@ -162,7 +137,7 @@ function createMockYeomanEnvironment() {
       return 'test:app';
     },
     getVersion() {
-      return '5.0.0';
+      return '7.0.0';
     },
     runGenerator() {
       return Promise.resolve();
@@ -176,7 +151,7 @@ function createMockYeomanEnvironment() {
  * @param {Function} testFunction - Function to run while capturing output
  * @returns {Promise<Object>} - Object containing output and exit info
  */
-async function captureOutput(testFunction) {
+export async function captureOutput(testFunction) {
   const output = [];
   const originalConsoleLog = console.log;
   const originalProcessExit = process.exit;
@@ -212,12 +187,14 @@ async function captureOutput(testFunction) {
  * @param {Object} options - Generator options (like CLI args)
  * @returns {Promise<Object>} - Object with output, exitCalled, and exitCode
  */
-async function testGenerator(options = {}) {
-  const Generator = require('../generators/app');
+export async function testGenerator(options = {}) {
+  const { default: Generator } = await import('../generators/app/index.js');
 
   return captureOutput(async () => {
     const generator = new Generator([], {
       env: createMockYeomanEnvironment(),
+      namespace: 'test:app',
+      resolved: import.meta.url,
       ...options,
     });
 
@@ -233,7 +210,7 @@ async function testGenerator(options = {}) {
       await generator.writingNewFiles();
       await generator.updateRegistry();
       await generator.end();
-    } catch (_) {
+    } catch {
       // Some errors are expected (like validation failures)
       // The output capture will have recorded any console.log calls
     }
@@ -245,9 +222,9 @@ async function testGenerator(options = {}) {
  * @param {Object} options - Generator options (like CLI args)
  * @returns {Promise<Object>} - Object with output, exitCalled, and exitCode
  */
-async function testDryRun(options = {}) {
-  const Generator = require('../generators/app');
-  const { store } = require('../lib/store');
+export async function testDryRun(options = {}) {
+  const { default: Generator } = await import('../generators/app/index.js');
+  const { store } = await import('../lib/store.js');
   const capturedExit = { called: false, code: null };
 
   // Reset the store before each test to prevent file accumulation
@@ -256,6 +233,8 @@ async function testDryRun(options = {}) {
   const result = await captureOutput(async () => {
     const generator = new Generator([], {
       env: createMockYeomanEnvironment(),
+      namespace: 'test:app',
+      resolved: import.meta.url,
       ...options,
     });
 
@@ -312,16 +291,3 @@ async function testDryRun(options = {}) {
     exitCode: capturedExit.code === null ? result.exitCode : capturedExit.code,
   };
 }
-
-module.exports = {
-  createMockYeomanEnvironment,
-  captureOutput,
-  testGenerator,
-  testDryRun,
-  stripAnsi,
-  assertOutputMatches,
-  assertOutputDoesNotMatch,
-  assertFailure,
-  assertSuccess,
-  assertFilesCreated,
-};

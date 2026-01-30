@@ -3,19 +3,19 @@
  * Consolidates all validation logic from fields.js and cli-validation.js
  */
 
-const fs = require('fs');
+import fs from 'node:fs';
+import { fieldNameToCliArg } from './filters.js';
 
 /**
  * Check if a location is accessible for writing
  * @param {string} location - The file/directory path to check
  * @returns {boolean} True if accessible, false otherwise
  */
-function hasAccessTo(location) {
+export function hasAccessTo(location) {
   try {
-    // eslint-disable-next-line no-bitwise
     fs.accessSync(location, fs.constants.F_OK | fs.constants.W_OK);
     return true;
-  } catch (_) {
+  } catch {
     return false;
   }
 }
@@ -25,7 +25,7 @@ function hasAccessTo(location) {
  * @param {string} folder - The folder name to validate
  * @returns {boolean|string} true if valid, error message if invalid
  */
-function isInvalidFolderName(folder) {
+export function isInvalidFolderName(folder) {
   return !folder.includes(' ') || 'Folder names should not include spaces';
 }
 
@@ -34,7 +34,7 @@ function isInvalidFolderName(folder) {
  * @param {string} entryName - The entry name to validate
  * @returns {boolean|string} true if valid, error message if invalid
  */
-function isInvalidEntryName(entryName) {
+export function isInvalidEntryName(entryName) {
   return !entryName.includes(' ') || 'Bundle names should not include spaces';
 }
 
@@ -43,7 +43,7 @@ function isInvalidEntryName(entryName) {
  * @param {string} slackGroup - The Slack group to validate
  * @returns {boolean|string} true if valid, error message if invalid
  */
-function isInvalidSlackGroup(slackGroup) {
+export function isInvalidSlackGroup(slackGroup) {
   if (slackGroup === 'none') return true;
   return (
     /^@[a-z-]+$/.test(slackGroup) ||
@@ -59,7 +59,7 @@ function isInvalidSlackGroup(slackGroup) {
  * @param {string} rootUrl - The root URL to validate
  * @returns {boolean|string} - true if valid, error message if invalid
  */
-function validateRootUrl(rootUrl) {
+export function validateRootUrl(rootUrl) {
   if (!rootUrl) return true; // Allow empty for format validation - required check handled separately
 
   // Must start with '/'
@@ -85,7 +85,7 @@ function validateRootUrl(rootUrl) {
  * @param {string} formNumber - The form number to validate
  * @returns {boolean|string} - true if valid, error message if invalid
  */
-function validateFormNumber(formNumber) {
+export function validateFormNumber(formNumber) {
   if (!formNumber) return true; // Allow empty for format validation - required check handled separately
 
   // Basic format check: should contain letters, numbers, and hyphens
@@ -101,7 +101,7 @@ function validateFormNumber(formNumber) {
  * @param {string} appName - The app name to validate
  * @returns {boolean|string} - true if valid, error message if invalid
  */
-function validateAppName(appName) {
+export function validateAppName(appName) {
   if (!appName) return 'Application name is required';
 
   // Check length
@@ -121,7 +121,7 @@ function validateAppName(appName) {
  * @param {string} entryName - The entry name to validate
  * @returns {boolean|string} - true if valid, error message if invalid
  */
-function validateEntryName(entryName) {
+export function validateEntryName(entryName) {
   if (!entryName) return true; // Allow empty for format validation - required check handled separately
 
   // Must be valid JavaScript identifier (roughly)
@@ -137,7 +137,7 @@ function validateEntryName(entryName) {
  * @param {string} folderName - The folder name to validate
  * @returns {boolean|string} - true if valid, error message if invalid
  */
-function validateFolderName(folderName) {
+export function validateFolderName(folderName) {
   if (!folderName) return true; // Allow empty for format validation - required check handled separately
 
   // Check for spaces
@@ -159,8 +159,7 @@ function validateFolderName(folderName) {
  * @param {Object} fieldDefinitions - Field definitions object
  * @returns {Array} Array of error messages
  */
-function validateRequiredFields(generator, fieldDefinitions) {
-  const { fieldNameToCliArg } = require('./filters');
+export function validateRequiredFields(generator, fieldDefinitions) {
   const errors = [];
 
   Object.keys(fieldDefinitions).forEach((fieldName) => {
@@ -187,7 +186,7 @@ function validateRequiredFields(generator, fieldDefinitions) {
  * @param {Object} newApp - The new app being created
  * @returns {Array} Array of duplicate error messages
  */
-function checkForDuplicates(registry, newApp) {
+export function checkForDuplicates(registry, newApp) {
   const duplicates = [];
 
   if (registry.find((entry) => entry.appName === newApp.appName)) {
@@ -208,17 +207,3 @@ function checkForDuplicates(registry, newApp) {
 
   return duplicates;
 }
-
-module.exports = {
-  hasAccessTo,
-  isInvalidFolderName,
-  isInvalidEntryName,
-  isInvalidSlackGroup,
-  validateRootUrl,
-  validateFormNumber,
-  validateAppName,
-  validateEntryName,
-  validateFolderName,
-  validateRequiredFields,
-  checkForDuplicates,
-};

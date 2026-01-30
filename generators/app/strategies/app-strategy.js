@@ -1,13 +1,11 @@
-'use strict';
-
-const BaseStrategy = require('./base-strategy');
-const yosay = require('yosay');
+import BaseStrategy from './base-strategy.js';
+import yosay from 'yosay';
 
 /**
  * Strategy for generating basic (non-form) applications
  * Handles simple React apps without form-specific functionality
  */
-class AppStrategy extends BaseStrategy {
+export default class AppStrategy extends BaseStrategy {
   /**
    * Get the fields required for basic app generation
    * @returns {Array<string>} Array of required field names
@@ -70,5 +68,3 @@ class AppStrategy extends BaseStrategy {
     return yosay(contentRepoMessage);
   }
 }
-
-module.exports = AppStrategy;

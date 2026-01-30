@@ -1,5 +1,5 @@
-const assert = require('assert');
-const {
+import assert from 'node:assert';
+import {
   testDryRun,
   assertOutputMatches,
   assertOutputDoesNotMatch,
@@ -7,8 +7,8 @@ const {
   assertSuccess,
   assertFilesCreated,
   stripAnsi,
-} = require('./helpers');
-const { FILE_COUNT_EXPECTATIONS } = require('./constants');
+} from './helpers.js';
+import { FILE_COUNT_EXPECTATIONS } from './constants.js';
 
 describe('Non-Interactive Dry Run Mode', () => {
   describe('Validation Errors', () => {

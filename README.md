@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Node.js 14.15.0
+- Node.js 22.0.0+
 
 ## Installation
 
@@ -12,54 +12,83 @@ The generator is already installed as a `devDependency` of [`vets-website`](http
 
 If you're working on this generator itself, you'll need to link it locally to test your changes.
 
-### 1. Install dependencies and create global symlink
-
-From the root of this repo (`generator-vets-website`):
+### Quick Start (Recommended)
 
 ```sh
-nvm use # from .nvmrc
-npm install
-npm link  # Creates a global symlink to this local package
+# From generator-vets-website root:
+nvm use                      # Use Node version from .nvmrc
+npm install                  # Install dependencies
+npm run link:vets-website    # Link to vets-website for testing
 ```
 
-### 2. Link the global symlink into vets-website
+This creates a symlink so vets-website uses your local development version.
 
-From the root of `vets-website`:
-
-```sh
-npm link @department-of-veterans-affairs/generator-vets-website
-```
-
-This tells vets-website to use your local development version instead of the published npm version.
-
-### 3. Test your changes
+### Test Your Changes
 
 ```sh
 # From vets-website root:
 yarn new:app
 ```
 
-Any changes to the generator will be automatically included due to the npm link.
+Any changes to the generator will be automatically reflected due to the npm link.
 
-### 4. Run tests
+### Clean Up
 
 ```sh
 # From generator-vets-website root:
-npm test
+npm run unlink:vets-website
 ```
 
-Note that these tests only cover non-interactive mode
-You should also manually test `yarn new:app` in vets-website.
+### Manual Setup (Alternative)
 
-### 5. Clean up when done
+If you prefer to set up the links manually:
+
+1. **Create global symlink** (from generator-vets-website):
+   ```sh
+   npm link
+   ```
+
+2. **Link into vets-website** (from vets-website):
+   ```sh
+   npm link @department-of-veterans-affairs/generator-vets-website
+   ```
+
+3. **Clean up when done**:
+   ```sh
+   # From vets-website:
+   npm unlink --no-save @department-of-veterans-affairs/generator-vets-website
+   # From generator-vets-website:
+   npm unlink
+   ```
+
+## Available Scripts
+
+| Script | Description |
+|--------|-------------|
+| `npm test` | Run unit tests (89 tests) |
+| `npm run lint` | Run ESLint |
+| `npm run e2e` | Run all E2E tests |
+| `npm run e2e:dry-run` | Run E2E tests for dry-run modes only |
+| `npm run e2e:real` | Run E2E tests with real file generation |
+| `npm run link:vets-website` | Link generator to vets-website for local development |
+| `npm run unlink:vets-website` | Remove link from vets-website |
+
+### E2E Testing
+
+The E2E test suite validates the generator works correctly end-to-end:
 
 ```sh
-# From vets-website root:
-npm unlink --no-save @department-of-veterans-affairs/generator-vets-website
+# Run all E2E tests (unit tests + dry-run + real generation)
+npm run e2e
 
-# From generator-vets-website root:
-npm unlink
+# Run only dry-run E2E tests (no files created)
+npm run e2e:dry-run
+
+# Run real file generation tests (creates files in temp directory)
+npm run e2e:real
 ```
+
+**Note:** E2E tests require `vets-website` to be cloned as a sibling directory (`../vets-website`).
 
 ## Usage
 
@@ -272,33 +301,29 @@ If you want the field to be available as a command-line argument, add it to the 
 
 ### 6. Test Your Changes
 
-1. Link the generator locally (see Local Development Setup)
-2. Test both interactive and non-interactive modes
-3. Verify the field appears in prompts and generates correctly in templates
+1. Link the generator locally: `npm run link:vets-website`
+2. Run unit tests: `npm test`
+3. Run E2E tests: `npm run e2e`
+4. Test manually in vets-website: `yarn new:app`
+5. Verify the field appears in prompts and generates correctly in templates
 
 ## Node.js Version Migration Notes
 
-### Current State (Node 14.15.0)
+### Current State (Node 22+)
 
-This generator currently requires Node.js 14.15.0 to maintain compatibility with consumer environments that may not have upgraded to newer Node.js versions yet. The generator uses:
+This generator requires Node.js 22.0.0+ and uses:
 
-- `yeoman-generator@^5.6.1` (CommonJS, Node 12+ compatible)
-- All dependencies are compatible with Node 14.15.0
+- `yeoman-generator@^7.5.0` (ESM-only, Node 18.17+ required)
+- ES Modules throughout the codebase
+- All dependencies are compatible with Node 22+
 
-### Migration to Node 22+ - Blockers and Considerations
+### Migration from v3.x (Node 14)
 
-**Why we can't migrate to Node 22 immediately:**
+Version 4.0.0 is a major breaking change that requires Node.js 22+ due to:
 
-1. **Consumer Compatibility**: When users run `yo @department-of-veterans-affairs/vets-website`, they execute our generator directly in their Node.js environment. If we upgrade to Node 22, all consumers must also upgrade.
+1. **ESM Conversion**: All code has been converted from CommonJS to ES Modules
+2. **Dependency Upgrades**: yeoman-generator, chalk, and other packages now require Node 18.17+
+3. **Consumer Requirements**: Users must upgrade to Node 22+ to use this generator
 
-2. **Yeoman Generator Dependencies**:
-   - `yeoman-generator@7.x+` requires Node 18.17+ and is ESM-only
-   - `yeoman-environment@4.x+` also requires Node 18+ and is ESM-only
-   - These versions are incompatible with our current CommonJS
-   - Migrate current test structure to yeoman-environment
-
-3. **Breaking Changes**: The migration would require:
-   - Converting all generator code from CommonJS to ESM (`require()` → `import`)
-   - Updating all consumers to Node 18.17+ minimum
-   - Potentially breaking existing CI/CD pipelines that rely on Node 14
+If you need to use the generator with Node 14, please use version 3.x
 
