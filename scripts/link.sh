@@ -20,6 +20,17 @@ cd "$GENERATOR_DIR"
 source ~/.nvm/nvm.sh 2>/dev/null || true
 nvm use 2>/dev/null || true
 
+NODE_MAJOR=$(node -v 2>&1 | cut -d'v' -f2 | cut -d'.' -f1) || NODE_MAJOR=""
+if [ -z "$NODE_MAJOR" ] || [ "$NODE_MAJOR" -lt 22 ] 2>/dev/null; then
+    echo "ERROR: This script requires Node.js 22 or later."
+    if [ -n "$NODE_MAJOR" ]; then
+        echo "Current version: $(node -v 2>&1 || echo 'unknown')"
+    else
+        echo "Node.js was not found or could not be run."
+    fi
+    exit 1
+fi
+
 echo "Step 1: Create global npm link from generator"
 npm link
 echo "OK: Created global symlink"
