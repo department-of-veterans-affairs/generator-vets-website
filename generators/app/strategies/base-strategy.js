@@ -1,10 +1,8 @@
-'use strict';
-
 /**
  * Base strategy class that defines the interface for all generation strategies
  * This provides common functionality and enforces the strategy contract
  */
-class BaseStrategy {
+export default class BaseStrategy {
   constructor() {
     if (this.constructor === BaseStrategy) {
       throw new Error('BaseStrategy is abstract and cannot be instantiated directly');
@@ -114,5 +112,3 @@ class BaseStrategy {
     }
   }
 }
-
-module.exports = BaseStrategy;

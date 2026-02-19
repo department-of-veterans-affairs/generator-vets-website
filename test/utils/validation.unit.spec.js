@@ -1,12 +1,12 @@
-const assert = require('assert');
-const {
+import assert from 'node:assert';
+import {
   isInvalidFolderName,
   isInvalidSlackGroup,
   validateRootUrl,
   validateFormNumber,
   validateAppName,
   validateFolderName,
-} = require('../../utils/validation');
+} from '../../utils/validation.js';
 
 describe('validation', () => {
   describe('isInvalidFolderName', () => {

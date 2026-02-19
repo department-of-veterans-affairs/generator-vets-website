@@ -1,5 +1,5 @@
-const assert = require('assert');
-const {
+import assert from 'node:assert';
+import {
   validateEntryName,
   validateFormNumber,
   validateOmbNumber,
@@ -7,7 +7,7 @@ const {
   validateRespondentBurden,
   validateTemplateType,
   isNonInteractiveMode,
-} = require('../../lib/cli-validation');
+} from '../../lib/cli-validation.js';
 
 describe('cli-validation', () => {
   describe('validateFormNumber', () => {
