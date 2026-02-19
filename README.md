@@ -301,4 +301,3 @@ This generator currently requires Node.js 14.15.0 to maintain compatibility with
    - Converting all generator code from CommonJS to ESM (`require()` → `import`)
    - Updating all consumers to Node 18.17+ minimum
    - Potentially breaking existing CI/CD pipelines that rely on Node 14
-
