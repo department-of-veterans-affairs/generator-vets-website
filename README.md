@@ -333,4 +333,3 @@ Version 4.0.0 is a major breaking change that requires Node.js 22+ due to:
 3. **Consumer Requirements**: Users must upgrade to Node 22+ to use this generator
 
 If you need to use the generator with Node 14, please use version 3.x
-
