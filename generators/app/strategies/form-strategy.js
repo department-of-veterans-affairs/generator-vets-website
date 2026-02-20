@@ -1,15 +1,14 @@
-'use strict';
-
-const BaseStrategy = require('./base-strategy');
-const chalk = require('chalk');
-const { TEMPLATE_TYPES } = require('../../../utils/constants');
-const {
+import BaseStrategy from './base-strategy.js';
+import chalk from 'chalk';
+import { TEMPLATE_TYPES } from '../../../utils/constants.js';
+import {
   handleExpirationDateAlias,
   computeFormProperties,
-} = require('../../../lib/form-helpers');
-const { isDryRunMode } = require('../../../lib/dry-run-helpers');
-const { calculateSubFolder } = require('../../../utils/generator-helpers');
-const { generateFormIdConst } = require('../../../utils/filters');
+} from '../../../lib/form-helpers.js';
+import { isDryRunMode } from '../../../lib/dry-run-helpers.js';
+import { calculateSubFolder } from '../../../utils/generator-helpers.js';
+import { generateFormIdConst } from '../../../utils/filters.js';
+import { generatePrompts, getFieldDefinitions } from '../../../lib/prompts.js';
 
 function capitalizeFirstLetter(str) {
   if (!str || typeof str !== 'string') return str;
@@ -19,7 +18,7 @@ function capitalizeFirstLetter(str) {
 /**
  * Strategy for generating form-based applications
  */
-class FormStrategy extends BaseStrategy {
+export default class FormStrategy extends BaseStrategy {
   getRequiredFields() {
     return [
       'appName',
@@ -35,9 +34,6 @@ class FormStrategy extends BaseStrategy {
   }
 
   getAdditionalPrompts(generator, _store) {
-    const { generatePrompts } = require('../../../lib/prompts');
-    const { getFieldDefinitions } = require('../../../lib/prompts');
-
     const formFields = getFieldDefinitions('form');
     return generatePrompts(generator, formFields);
   }
@@ -388,5 +384,3 @@ class FormStrategy extends BaseStrategy {
     }
   }
 }
-
-module.exports = FormStrategy;

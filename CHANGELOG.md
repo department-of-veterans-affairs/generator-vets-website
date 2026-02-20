@@ -2,6 +2,42 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
+## [4.0.0] - 2026-01-30
+### BREAKING CHANGES
+- **Node.js 22+ required**: This version requires Node.js 22.0.0 or higher
+- **ES Modules**: The entire codebase has been converted from CommonJS to ES Modules
+- **Yeoman Generator 7.x**: Upgraded to yeoman-generator 7.5.0 (ESM-only)
+
+### Changed
+- Upgraded all dependencies to Node 22 compatible versions
+- Converted all files from CommonJS (`require/module.exports`) to ES Modules (`import/export`)
+- Upgraded `yeoman-generator` from 5.7.0 to 7.5.0
+- Upgraded `chalk` from 4.1.2 to 5.4.1
+- Upgraded `yosay` from 2.0.2 to 3.0.0
+- Upgraded `eslint` from 8.x to 9.18.0 with new flat config format
+- Upgraded `mocha` from 10.x to 11.0.1
+- Upgraded `prettier` from 2.x to 3.4.2
+- Upgraded `husky` from 8.x to 9.1.7
+- Upgraded `lint-staged` from 13.x to 16.0.0
+- Updated CI workflow to use Node.js 22.17.0
+- Updated `README.md` to describe changes and new commands
+- Updated `package.json` with new script commands for better dx
+
+### Added
+- `eslint.config.js` for ESLint 9 flat configuration
+- `yo` as dev dependency for E2E testing
+- E2E test scripts (`scripts/e2e-dry-run.sh`, `scripts/e2e-real-generation.sh`, `scripts/e2e-all.sh`)
+- Out of sync repos generate command (`scripts/run-generator`)
+- `uuid` package for productId generation
+- `globals` package for ESLint configuration
+- `mem-fs` and `mem-fs-editor` dev dependencies for test mocking
+
+### Removed
+- `.eslintignore` file (now uses `ignores` in eslint.config.js)
+- `eslintConfig` section from package.json
+- `resolutions` overrides from package.json
+- `eslint-config-xo` dependency
+
 ## [3.18.0] - 2025-11-21
 ### Added
 - New prompt for 'Should this form appear on the My VA dashboard for users with in-progress applications?'

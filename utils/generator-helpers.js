@@ -1,14 +1,13 @@
-const chalk = require('chalk');
+import chalk from 'chalk';
 
 /**
  * Generate a UUID v4
  * @returns {string} A UUID v4 string
  */
-function uuidv4() {
+export function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    // eslint-disable-next-line no-bitwise
     const r = (Math.random() * 16) | 0;
-    // eslint-disable-next-line no-bitwise, eqeqeq
+
     const v = c == 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
@@ -16,25 +15,22 @@ function uuidv4() {
 
 /**
  * Check Node.js compatibility and exit if not compatible
- * TODO: Remove this after upgrading to node 16+
- * For now Node 14.15 is required, so give a helpful error message if we are not using that.
+ * Now requires Node 22+ after the ESM migration
  */
-function checkNodeCompatibility() {
+export function checkNodeCompatibility() {
   const nodeVersion = process.version;
   const majorVersion = parseInt(nodeVersion.slice(1).split('.')[0], 10);
 
-  if (majorVersion !== 14) {
+  if (majorVersion < 22) {
     console.error(
       `${chalk.red('Error:')} Node.js ${nodeVersion} is not supported by this generator.`,
     );
     console.error(
-      `${chalk.yellow('Required version:')} Node.js 14.15.0 (use 'nvm use' to switch)`,
+      `${chalk.yellow('Required version:')} Node.js 22.0.0 or higher (use 'nvm use' to switch)`,
     );
-    console.error(`${chalk.cyan('Please switch to Node.js 14.15.0 and try again.')}`);
+    console.error(`${chalk.cyan('Please switch to Node.js 22+ and try again.')}`);
     console.error(
-      `${chalk.gray(
-        'Note: This restriction will be removed when we upgrade to yeoman-generator 5.10.0+',
-      )}`,
+      `${chalk.gray('Note: This generator was upgraded to ESM and requires Node 22+')}`,
     );
     process.exit(1);
   }
@@ -45,7 +41,7 @@ function checkNodeCompatibility() {
  * @param {*} boolLike - Value to convert to boolean
  * @returns {boolean}
  */
-function makeBool(boolLike) {
+export function makeBool(boolLike) {
   if (typeof boolLike === 'boolean') {
     return boolLike;
   }
@@ -75,7 +71,7 @@ function makeBool(boolLike) {
  * @param {string} folderName - The folder name (e.g., "edu-benefits/0993")
  * @returns {string} The subfolder path (e.g., "../")
  */
-function calculateSubFolder(folderName) {
+export function calculateSubFolder(folderName) {
   if (!folderName) {
     return '';
   }
@@ -89,10 +85,3 @@ function calculateSubFolder(folderName) {
 
   return '';
 }
-
-module.exports = {
-  uuidv4,
-  checkNodeCompatibility,
-  makeBool,
-  calculateSubFolder,
-};

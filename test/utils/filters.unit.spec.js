@@ -1,11 +1,11 @@
-const assert = require('assert');
-const {
+import assert from 'node:assert';
+import {
   folderNameFilter,
   rootUrlFilter,
   fieldNameToCliArg,
   generateFormIdConst,
   generateTrackingPrefix,
-} = require('../../utils/filters');
+} from '../../utils/filters.js';
 
 describe('filters', () => {
   describe('folderNameFilter', () => {

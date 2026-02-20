@@ -1,50 +1,48 @@
-'use strict';
-
-const fs = require('fs');
-const path = require('path');
-const Generator = require('yeoman-generator');
-const chalk = require('chalk');
-const yosay = require('yosay');
-const {
+import fs from 'node:fs';
+import path from 'node:path';
+import Generator from 'yeoman-generator';
+import chalk from 'chalk';
+import yosay from 'yosay';
+import {
   validateAllCliArguments,
   isNonInteractiveMode,
-} = require('../../lib/cli-validation');
-const { initializeFileTracking } = require('../../lib/fs-tracker');
-const { getFieldDefinitions } = require('../../lib/prompts');
-const {
+  validateRequiredCliArguments,
+} from '../../lib/cli-validation.js';
+import { initializeFileTracking } from '../../lib/fs-tracker.js';
+import { getFieldDefinitions, generatePrompts } from '../../lib/prompts.js';
+import {
   generateOptions,
   initializePropsFromOptions,
-} = require('../../lib/generator-config');
-const { generatePrompts } = require('../../lib/prompts');
-const {
+} from '../../lib/generator-config.js';
+import {
   isInvalidFolderName,
   isInvalidEntryName,
   isInvalidSlackGroup,
   checkForDuplicates,
-} = require('../../utils/validation');
-const {
+} from '../../utils/validation.js';
+import {
   uuidv4,
   checkNodeCompatibility,
   makeBool,
-} = require('../../utils/generator-helpers');
-const {
+} from '../../utils/generator-helpers.js';
+import {
   isDryRunMode,
   initializeDryRunMode,
   normalizeDryRunOptions,
   shouldSkipValidation,
   handleDryRunPrompting,
   showTrackedFiles,
-} = require('../../lib/dry-run-helpers');
-const { store } = require('../../lib/store');
+} from '../../lib/dry-run-helpers.js';
+import { store } from '../../lib/store.js';
 
 // Import strategies
-const AppStrategy = require('./strategies/app-strategy');
-const FormStrategy = require('./strategies/form-strategy');
+import AppStrategy from './strategies/app-strategy.js';
+import FormStrategy from './strategies/form-strategy.js';
 
 /**
  * Unified generator that handles both app and form generation using strategies
  */
-module.exports = class extends Generator {
+export default class VetsWebsiteGenerator extends Generator {
   constructor(args, options) {
     checkNodeCompatibility();
     super(args, options);
@@ -130,7 +128,6 @@ module.exports = class extends Generator {
     // If non-interactive mode, skip all prompts and validate required fields
     if (isNonInteractiveMode(this.options)) {
       // Validate that all required fields are provided
-      const { validateRequiredCliArguments } = require('../../lib/cli-validation');
       const missingFieldErrors = validateRequiredCliArguments(this.options);
       const formatValidationErrors = validateAllCliArguments(this.options);
       const allErrors = [...missingFieldErrors, ...formatValidationErrors];
@@ -242,9 +239,9 @@ module.exports = class extends Generator {
       let registry;
 
       try {
-        const registryContent = require('fs').readFileSync(registryFile, 'utf8');
+        const registryContent = fs.readFileSync(registryFile, 'utf8');
         registry = JSON.parse(registryContent);
-      } catch (_) {
+      } catch {
         if (!isDryRunMode(this.options)) {
           this.log(
             chalk.yellow(
@@ -454,4 +451,4 @@ ${duplicates.join('\n')}`;
       }
     }
   }
-};
+}

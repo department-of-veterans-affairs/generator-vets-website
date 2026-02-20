@@ -1,5 +1,6 @@
 {
   "timeout": 5000,
   "recursive": true,
-  "spec": "test/**/*.spec.js"
+  "spec": "test/**/*.spec.js",
+  "node-option": ["experimental-vm-modules"]
 }
